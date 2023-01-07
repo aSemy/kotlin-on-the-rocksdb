@@ -84,6 +84,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: build-report-${{ runner.os }}-${{ github.action }}
+          name: build-report-${{ runner.os }}${{ github.action }}
           path: "**/build/reports/"
           if-no-files-found: ignore
