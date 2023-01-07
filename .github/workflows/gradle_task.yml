@@ -39,13 +39,15 @@ jobs:
         if: runner.os == 'Linux'
         run: >-
           sudo apt-get update 
-          && sudo apt-get install librocksdb-dev
+          && sudo apt-get install librocksdb-dev libgflags-dev libsnappy-dev libbz2-dev liblz4-dev libzstd-dev
           && dpkg -L librocksdb-dev
 
       - name: Install macOS dependencies
         id: setup-macos
         if: runner.os == 'macOS'
-        run: brew install rocksdb
+        run: >-
+          brew install rocksdb
+          && brew --rocksdb
 
       - name: Install Windows dependencies
         id: setup-windows
