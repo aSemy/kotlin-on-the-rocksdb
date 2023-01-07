@@ -47,7 +47,7 @@ jobs:
         if: runner.os == 'macOS'
         run: >-
           brew install rocksdb
-          && brew --rocksdb
+          && brew --prefix rocksdb
 
       - name: Install Windows dependencies
         id: setup-windows
