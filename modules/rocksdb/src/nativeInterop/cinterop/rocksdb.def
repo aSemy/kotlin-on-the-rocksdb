@@ -23,7 +23,8 @@ excludeDependentModules = false
 #/usr/local/bin/
 #/usr/local/lib/
 #linkerOpts.osx = -lobjc -framework Foundation -framework AppKit -L/usr/local/lib -L/usr/local/bin -L/usr/local/Cellar/rocksdb/7.8.3/lib
-linkerOpts.osx = -L/usr/local/lib \
+
+linkerOpts.linux = -L/usr/local/lib \
   -lrocksdb \
   -llz4 \
   -lsnappy \
@@ -32,5 +33,11 @@ linkerOpts.osx = -L/usr/local/lib \
   -lsnappy \
   -lz
 
- # -lzlib
-  #-lbzip2 \
+linkerOpts.osx = -L/usr/local/lib \
+  -lrocksdb \
+  -llz4 \
+  -lsnappy \
+  -lzstd \
+  -lbz2 \
+  -lsnappy \
+  -lz
