@@ -37,7 +37,10 @@ jobs:
       - name: Install Linux dependencies
         id: setup-linux
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install librocksdb-dev
+        run: >-
+          sudo apt-get update 
+          && sudo apt-get install librocksdb-dev
+          && dpkg -L librocksdb-dev
 
       - name: Install macOS dependencies
         id: setup-macos
@@ -47,7 +50,7 @@ jobs:
       - name: Install Windows dependencies
         id: setup-windows
         if: runner.os == 'Windows'
-        run: vcpkg install rocksdb
+        run: vcpkg install rocksdb:x64-windows
 
 
       #          libgflags-dev
