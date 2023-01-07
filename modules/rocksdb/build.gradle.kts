@@ -12,9 +12,9 @@ kotlin {
           includeDirs("$projectDir/src/nativeInterop/libs/rocksdb")
         }
 
-        kotlinOptions.freeCompilerArgs = listOf(
-          "-include-binary", "$projectDir/src/nativeInterop/libs/rocksdb/librocksdb.a",
-        )
+//        kotlinOptions.freeCompilerArgs = listOf(
+//          "-include-binary", "$projectDir/src/nativeInterop/libs/rocksdb/librocksdb.a",
+//        )
       }
     }
     binaries {
