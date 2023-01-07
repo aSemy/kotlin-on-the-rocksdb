@@ -47,7 +47,7 @@ jobs:
       - name: Install Windows dependencies
         id: setup-windows
         if: runner.os == 'Windows'
-        run: choco install rocksdb
+        run: vcpkg install rocksdb
 
 
       #          libgflags-dev
