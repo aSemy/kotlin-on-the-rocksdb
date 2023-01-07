@@ -1,0 +1,36 @@
+package = org.rocksdb
+
+headers = c.h
+
+headerFilter = *
+
+# strictEnums =
+
+#staticLibraries = librocksdb.a
+
+#compilerOpts =
+#compilerOpts.osx =
+
+#excludeDependentModules = true
+excludeDependentModules = false
+#compilerOpts = -I/path
+#linkerOpts = -lpng
+
+#compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu
+#compilerOpts.osx = -I/opt/local/include -L/usr/opt/include -L/usr/local/include -L/usr/local/Cellar/rocksdb/7.8.3/include
+#linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu
+
+#/usr/local/bin/
+#/usr/local/lib/
+#linkerOpts.osx = -lobjc -framework Foundation -framework AppKit -L/usr/local/lib -L/usr/local/bin -L/usr/local/Cellar/rocksdb/7.8.3/lib
+linkerOpts.osx = -L/usr/local/lib \
+  -lrocksdb \
+  -llz4 \
+  -lsnappy \
+  -lzstd \
+  -lbz2 \
+  -lsnappy \
+  -lz
+
+ # -lzlib
+  #-lbzip2 \
