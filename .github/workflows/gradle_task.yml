@@ -30,32 +30,60 @@ permissions:
 
 jobs:
 
+  setup:
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 60
+    steps:
+      - name: Install Linux dependencies
+        id: setup-linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get install rocksdb
+
+      - name: Install macOS dependencies
+        id: setup-macos
+        if: runner.os == 'macOS'
+        run: brew install rocksdb
+
+      - name: Install Windows dependencies
+        id: setup-windows
+        if: runner.os == 'Windows'
+        run: choco install rocksdb
+
+
+      #          libgflags-dev
+      #          libsnappy-dev
+      #          libbz2-dev
+      #          liblz4-dev
+      #          libzstd-dev
+
   run-task:
     runs-on: ${{ inputs.runs-on }}
     name: "./gradlew ${{ inputs.gradle-task}} @ ${{ inputs.runs-on }}"
     timeout-minutes: 60
+    needs: setup
     steps:
-      -  name: Checkout the repo
-         uses: actions/checkout@v3
 
-      -  name: Setup JDK
-         uses: actions/setup-java@v3
-         with:
-           distribution: temurin
-           java-version: 11
+      - name: Checkout the repo
+        uses: actions/checkout@v3
 
-      -  uses: gradle/gradle-build-action@v2
-         with:
-           gradle-home-cache-cleanup: true
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
 
-      -  name: Run ${{ inputs.gradle-task }}
-         run: >-
-           ./gradlew ${{ inputs.gradle-task }}
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
 
-      -  name: Upload build reports
-         if: failure()
-         uses: actions/upload-artifact@v3
-         with:
-           name: build-report-${{ runner.os }}-${{ github.action }}
-           path: "**/build/reports/"
-           if-no-files-found: ignore
+      - name: Run ${{ inputs.gradle-task }}
+        run: >-
+          ./gradlew ${{ inputs.gradle-task }}
+
+      - name: Upload build reports
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-report-${{ runner.os }}-${{ github.action }}
+          path: "**/build/reports/"
+          if-no-files-found: ignore
