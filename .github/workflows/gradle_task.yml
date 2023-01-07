@@ -37,7 +37,7 @@ jobs:
       - name: Install Linux dependencies
         id: setup-linux
         if: runner.os == 'Linux'
-        run: sudo apt-get install rocksdb
+        run: sudo apt-get install librocksdb-dev
 
       - name: Install macOS dependencies
         id: setup-macos
