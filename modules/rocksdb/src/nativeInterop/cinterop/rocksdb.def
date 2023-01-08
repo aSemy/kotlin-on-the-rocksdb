@@ -22,4 +22,4 @@ excludeDependentModules = false
 
 linkerOpts.linux = -L/usr/local/lib -L/usr/lib -lrocksdb
 linkerOpts.osx = -L/usr/local/lib -L/usr/lib -lrocksdb
-linkerOpts.mingw = -L/usr/local/lib -L/usr/lib -lrocksdb
+linkerOpts.mingw = -LMINGW64_DIR/lib -lrocksdb
