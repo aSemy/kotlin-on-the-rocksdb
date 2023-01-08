@@ -73,9 +73,9 @@ jobs:
           && echo "C:\vcpkg\installed\x64-windows\lib" >> $GITHUB_PATH
           && echo "C:\vcpkg\installed\x64-windows\lib\manual-link" >> $GITHUB_PATH
           && echo "C:\vcpkg\packages\rocksdb_x64-windows\lib" >> $GITHUB_PATH
-          && ls -la C:\vcpkg\installed\x64-windows\lib\manual-link
-          && ls -la C:\vcpkg\installed\x64-windows\lib\
-          && ls -la C:\vcpkg\packages\rocksdb_x64-windows\lib
+          && ls C:\vcpkg\installed\x64-windows\lib\manual-link
+          && ls C:\vcpkg\installed\x64-windows\lib\
+          && ls C:\vcpkg\packages\rocksdb_x64-windows\lib
 
       ### Gradle task ###
 
