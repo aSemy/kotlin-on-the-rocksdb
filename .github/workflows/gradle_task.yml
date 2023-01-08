@@ -69,14 +69,15 @@ jobs:
         id: setup-windows
         if: runner.os == 'Windows'
         # https://vcpkg.io/en/docs/users/buildsystems/manual-integration.html
+#          vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
         run: >-
-          vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
-          && echo "C:\vcpkg\installed\x64-windows\lib" >> $GITHUB_PATH
-          && echo "C:\vcpkg\packages\rocksdb_x64-windows\lib" >> $GITHUB_PATH
+          vcpkg install rocksdb --triplet x64-windows-static
+          && echo "C:\vcpkg\installed\x64-windows-static\lib" >> $GITHUB_PATH
+          && echo "C:\vcpkg\packages\rocksdb_x64-windows-static\lib" >> $GITHUB_PATH
           && ls C:\vcpkg\
-          && ls C:\vcpkg\installed\x64-windows\lib\
-          && ls C:\vcpkg\packages\rocksdb_x64-windows\lib
+          && ls C:\vcpkg\installed\x64-windows-static\lib\
           && tree C:\vcpkg\ /F
+#          && ls C:\vcpkg\packages\rocksdb_x64-windows\lib
 
       ### Gradle task ###
 
