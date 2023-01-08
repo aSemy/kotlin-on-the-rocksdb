@@ -69,8 +69,8 @@ jobs:
         if: runner.os == 'Windows'
         run: >-
           vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
-          && echo "C:/vcpkg/installed/x64-windows/lib" >> $GITHUB_PATH
-          && echo "C:/vcpkg/packages/rocksdb_x64-windows/lib" >> $GITHUB_PATH
+          && echo "C:\vcpkg\installed\x64-windows/lib" >> $GITHUB_PATH
+          && echo "C:\vcpkg\packages\rocksdb_x64-windows\lib" >> $GITHUB_PATH
 
       ### Gradle task ###
 
