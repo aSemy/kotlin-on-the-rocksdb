@@ -28,8 +28,8 @@ jobs:
           - os: ubuntu-latest
             task: linuxX64Test
           - os: windows-latest
-#            task: mingwX64Test
-            task: tasks
+            task: mingwX64Test
+#            task: tasks
       fail-fast: false
     uses: ./.github/workflows/gradle_task.yml
     with:
