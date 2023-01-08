@@ -36,6 +36,8 @@ jobs:
     timeout-minutes: 60
     steps:
 
+      ### Preparatory tasks ###
+
       - name: Install Linux dependencies
         id: setup-linux
         if: runner.os == 'Linux'
@@ -54,13 +56,17 @@ jobs:
       - name: Install Windows dependencies
         id: setup-windows
         if: runner.os == 'Windows'
-        run: vcpkg install rocksdb:x64-windows
+        run: vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
 
-      #          libgflags-dev
-      #          libsnappy-dev
-      #          libbz2-dev
-      #          liblz4-dev
-      #          libzstd-dev
+      - uses: actions/cache@v3
+        id: cache-windows
+        if: runner.os == 'Windows'
+        with:
+          path: ~\AppData\Local\vcpkg
+          key: vcpkg-${{ runner.os }}
+
+
+      ### Gradle task ###
 
       - name: Checkout the repo
         uses: actions/checkout@v3
