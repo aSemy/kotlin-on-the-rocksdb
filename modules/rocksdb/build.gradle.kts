@@ -18,8 +18,8 @@ kotlin {
       }
     }
     binaries {
-//      binaries.staticLib()
-      executable { entryPoint = "dev.adamko.kotlin.on.the.rocksdb.main" }
+      binaries.staticLib()
+//      executable { entryPoint = "dev.adamko.kotlin.on.the.rocksdb.main" }
     }
   }
 
