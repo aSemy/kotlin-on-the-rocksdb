@@ -62,7 +62,9 @@ jobs:
         id: cache-windows
         if: runner.os == 'Windows'
         with:
-          path: ~\AppData\Local\vcpkg
+          path: |
+            ~/AppData/Local/vcpkg
+            C:/vcpkg/downloads
           key: vcpkg-${{ runner.os }}
 
 
