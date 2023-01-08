@@ -61,23 +61,31 @@ jobs:
             ~/AppData/Local/vcpkg
             C:/vcpkg/downloads
             C:/vcpkg/installed
+            C:/msys64/mingw64
           key: vcpkg-${{ runner.os }}
-#            C:/vcpkg/packages
-#            C:/vcpkg/buildtrees
+      #            C:/vcpkg/packages
+      #            C:/vcpkg/buildtrees
+
+      #      - name: Install Windows dependencies
+      #        id: setup-windows
+      #        if: runner.os == 'Windows'
+      #        # https://vcpkg.io/en/docs/users/buildsystems/manual-integration.html
+      ##          vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
+      #        run: >-
+      #          vcpkg install rocksdb --triplet x64-windows-static
+      #          && echo "C:\vcpkg\installed\x64-windows-static\lib" >> $GITHUB_PATH
+      #          && echo "C:\vcpkg\packages\rocksdb_x64-windows-static\lib" >> $GITHUB_PATH
+      #          && ls C:\vcpkg\
+      #          && ls C:\vcpkg\installed\x64-windows-static\lib\
+      #          && tree C:\vcpkg\ /F
+      ##          && ls C:\vcpkg\packages\rocksdb_x64-windows\lib
 
       - name: Install Windows dependencies
         id: setup-windows
         if: runner.os == 'Windows'
-        # https://vcpkg.io/en/docs/users/buildsystems/manual-integration.html
-#          vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
         run: >-
-          vcpkg install rocksdb --triplet x64-windows-static
-          && echo "C:\vcpkg\installed\x64-windows-static\lib" >> $GITHUB_PATH
-          && echo "C:\vcpkg\packages\rocksdb_x64-windows-static\lib" >> $GITHUB_PATH
-          && ls C:\vcpkg\
-          && ls C:\vcpkg\installed\x64-windows-static\lib\
-          && tree C:\vcpkg\ /F
-#          && ls C:\vcpkg\packages\rocksdb_x64-windows\lib
+          pacman -S mingw-w64-x86_64-rocksdb
+      
 
       ### Gradle task ###
 
