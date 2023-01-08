@@ -36,7 +36,7 @@ jobs:
     timeout-minutes: 60
     steps:
 
-      ### Preparatory tasks ###
+      ### Install requirements ###
 
       - name: Install Linux dependencies
         id: setup-linux
@@ -53,13 +53,6 @@ jobs:
           brew install rocksdb gflags snappy bzip2 lz4 zstd
           && brew --prefix rocksdb
 
-      - name: Install Windows dependencies
-        id: setup-windows
-        if: runner.os == 'Windows'
-        run: >-
-          vcpkg integrate install
-          && vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
-
       - uses: actions/cache@v3
         id: cache-windows
         if: runner.os == 'Windows'
@@ -68,6 +61,13 @@ jobs:
             ~/AppData/Local/vcpkg
             C:/vcpkg/
           key: vcpkg-${{ runner.os }}
+
+      - name: Install Windows dependencies
+        id: setup-windows
+        if: runner.os == 'Windows'
+        run: >-
+          vcpkg integrate install
+          && vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
 
 
       ### Gradle task ###
