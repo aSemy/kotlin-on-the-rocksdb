@@ -56,7 +56,9 @@ jobs:
       - name: Install Windows dependencies
         id: setup-windows
         if: runner.os == 'Windows'
-        run: vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
+        run: >-
+          vcpkg integrate install
+          && vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
 
       - uses: actions/cache@v3
         id: cache-windows
