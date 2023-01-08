@@ -1,6 +1,6 @@
-# Kotlin on the Rocks
+# [Kotlin on the Rocks](https://github.com/aSemy/kotlin-on-the-rocksdb)
 
-Kotlin/Native bindings for [RocksDB](https://github.com/facebook/rocksdb/).
+[Kotlin/Native](https://kotlinlang.org/docs/native-overview.html) bindings for [RocksDB](https://github.com/facebook/rocksdb/).
 
 #### Status
 
