@@ -12,6 +12,7 @@ kotlin {
           includeDirs("$projectDir/src/nativeInterop/libs/rocksdb")
         }
 
+        // maybe download librocksdb.a for each platform, and dynamically embed, so there's no need to install the lib locally?
 //        kotlinOptions.freeCompilerArgs = listOf(
 //          "-include-binary", "$projectDir/src/nativeInterop/libs/rocksdb/librocksdb.a",
 //        )
