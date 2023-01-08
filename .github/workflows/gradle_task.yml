@@ -59,8 +59,10 @@ jobs:
         with:
           path: |
             ~/AppData/Local/vcpkg
-            C:/vcpkg/
+            C:/vcpkg/downloads
           key: vcpkg-${{ runner.os }}
+#            C:/vcpkg/packages
+#            C:/vcpkg/buildtrees
 
       - name: Install Windows dependencies
         id: setup-windows
