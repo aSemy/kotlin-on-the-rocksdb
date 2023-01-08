@@ -60,6 +60,7 @@ jobs:
           path: |
             ~/AppData/Local/vcpkg
             C:/vcpkg/downloads
+            C:/vcpkg/installed
           key: vcpkg-${{ runner.os }}
 #            C:/vcpkg/packages
 #            C:/vcpkg/buildtrees
