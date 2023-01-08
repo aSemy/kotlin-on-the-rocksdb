@@ -74,7 +74,6 @@ jobs:
           && echo "C:\vcpkg\installed\x64-windows\lib" >> $GITHUB_PATH
           && echo "C:\vcpkg\packages\rocksdb_x64-windows\lib" >> $GITHUB_PATH
           && ls C:\vcpkg\
-          && ls C:\vcpkg\x64-windows\lib\
           && ls C:\vcpkg\installed\x64-windows\lib\
           && ls C:\vcpkg\packages\rocksdb_x64-windows\lib
           && tree C:\vcpkg\ /F
