@@ -22,7 +22,7 @@ jobs:
   gradle-check:
     strategy:
       matrix:
-        option:
+        include:
           - os: macos-11
             task: macosX64Test
           - os: ubuntu-latest
@@ -32,6 +32,6 @@ jobs:
       fail-fast: false
     uses: ./.github/workflows/gradle_task.yml
     with:
-      runs-on: ${{ matrix.option.os }}
+      runs-on: ${{ matrix.os }}
       gradle-task: >-
-        ${{ matrix.option.task }} --stacktrace
+        ${{ matrix.task }} --stacktrace
