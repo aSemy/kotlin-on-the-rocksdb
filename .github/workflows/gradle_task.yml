@@ -48,7 +48,7 @@ jobs:
         id: setup-macos
         if: runner.os == 'macOS'
         run: >-
-          brew install rocksdb
+          brew install rocksdb gflags snappy bzip2 lz4 zstd
           && brew --prefix rocksdb
 
       - name: Install Windows dependencies
