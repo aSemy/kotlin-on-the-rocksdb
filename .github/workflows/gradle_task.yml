@@ -85,6 +85,7 @@ jobs:
           && ls C:/msys2/msys64/
           && tree C:/msys2/msys64/ /F
           && tree C:/msys2/msys64/mingw64/ /F
+          && echo $MSYS2_ROOT
 
       ### Gradle task ###
 
