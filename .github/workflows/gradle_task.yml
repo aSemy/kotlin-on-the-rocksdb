@@ -58,7 +58,7 @@ jobs:
         if: runner.os == 'Windows'
         with:
           path: |
-            C:/msys64/mingw64
+            C:/msys2/
           key: static-libs-${{ runner.os }}
       #            ~/AppData/Local/vcpkg
       #            C:/vcpkg/downloads
