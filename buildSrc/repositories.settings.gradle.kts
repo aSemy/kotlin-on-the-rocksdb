@@ -29,7 +29,7 @@ dependencyResolutionManagement {
               }
             }
           }
-          metadataSources { artifact() }
+          metadataSources.artifact()
         }
       }
       filter { includeModuleByRegex(".*", ".*kotlin-native-prebuilt.*") }

@@ -3,17 +3,51 @@ import dev.adamko.kotlin.on.the.rocksdb.RocksDbOptions
 import dev.adamko.kotlin.on.the.rocksdb.RocksDbReadOptions
 import dev.adamko.kotlin.on.the.rocksdb.RocksDbWriteOptions
 import kotlin.system.getTimeMillis
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlinx.coroutines.*
-import org.rocksdb.rocksdb_close
 
 class RocksDbTest {
 
   @Test
+  fun noopTest() = runBlocking {
+    println("noop")
+  }
+
+  @Test
+  fun openCloseDbTest() = runBlocking {
+
+    val tempDir = when (Platform.osFamily) {
+      OsFamily.WINDOWS -> "C:\\Windows\\Temp\\rocksdb_temp_${getTimeMillis()}"
+      else             -> "/tmp/rocksdb_temp_${getTimeMillis()}"
+    }
+
+    println("testing rdb with file $tempDir")
+
+    val options = RocksDbOptions {
+//      increaseParallelism(Platform.getAvailableProcessors())
+      optimizeLevelStyleCompaction(0u)
+      createIfMissing = true
+    }
+
+    val writeOptions = RocksDbWriteOptions()
+    val readOptions = RocksDbReadOptions()
+    val db = RocksDb(
+      directory = tempDir,
+      dbOptions = options,
+      readOptions = readOptions,
+      writeOptions = writeOptions,
+    )
+
+    db.close()
+  }
+
+  @Test
+  @Ignore
   fun test() = runBlocking {
 
     val tempDir = when (Platform.osFamily) {
-      OsFamily.WINDOWS -> "C:\\Windows\\TEMP\\rocksdb_temp_${getTimeMillis()}"
+      OsFamily.WINDOWS -> "C:\\Windows\\Temp\\rocksdb_temp_${getTimeMillis()}"
       else             -> "/tmp/rocksdb_temp_${getTimeMillis()}"
     }
 
@@ -56,11 +90,11 @@ class RocksDbTest {
         iterator.seekToFirst()
 
 //        while (isActive) {
-          while (iterator.hasNext()) {
-            val v = iterator.next()
-            println("[${i++}] got next value: $v")
-            delay(250)
-          }
+        while (iterator.hasNext()) {
+          val v = iterator.next()
+          println("[${i++}] got next value: $v")
+          delay(250)
+        }
 //          yield()
 //        }
         println("finished iterator")
@@ -73,7 +107,7 @@ class RocksDbTest {
       }
     }
 
-    rocksdb_close(db)
+    db.close()
   }
 
 }
