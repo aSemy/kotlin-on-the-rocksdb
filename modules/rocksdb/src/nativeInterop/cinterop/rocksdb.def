@@ -30,7 +30,7 @@ linkerOpts = -lrocksdb -L/usr/local/lib -L/usr/lib
 # -LC:/msys64/mingw64/lib
  #-LC:/Tools/msys64/mingw64/lib -LC:/Tools/msys2/mingw64/lib
 
-linkerOpts.mingw = -LC:/msys64/mingw64/lib
+linkerOpts.mingw = -LC:/msys2/msys64/mingw64/lib
 
 #linkerOpts.mingw =         -LC:/msys2/lib \
 #                           -LC:/msys64/mingw64/lib \

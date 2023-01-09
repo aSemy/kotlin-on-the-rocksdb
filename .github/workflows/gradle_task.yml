@@ -84,7 +84,7 @@ jobs:
         if: runner.os == 'Windows'
         with:
 #          msystem: MINGW64
-          location: C:/
+          location: C:/msys2
           update: true
           # https://packages.msys2.org/package/mingw-w64-x86_64-rocksdb?repo=mingw64
           install: >
@@ -110,8 +110,9 @@ jobs:
       - if: runner.os == 'Windows'
         run: >-
           ls C:/
-          && tree C:/msys64/ /F
-          && tree C:/msys64/mingw64/ /F
+          && ls C:/msys2/msys64/
+          && tree C:/msys2/msys64/ /F
+          && tree C:/msys2/msys64/mingw64/ /F
 
       ### Gradle task ###
 
