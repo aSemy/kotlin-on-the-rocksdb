@@ -6,14 +6,14 @@ headers = include/c.h
 
 # strictEnums =
 
-staticLibraries = librocksdb.a   \
-                  libzstd.a      \
-                  libz.a         \
-                  libsnappy.a    \
-                  liblz4.a       \
-                  libbz2.a
+#libraryPaths = /usr/local/lib /usr/lib
 
-libraryPaths = /usr/local/lib /usr/lib
+staticLibraries.mingw = librocksdb.a   \
+                        libzstd.a      \
+                        libz.a         \
+                        libsnappy.a    \
+                        liblz4.a       \
+                        libbz2.a
 libraryPaths.mingw = C:/msys2/msys64/mingw64/lib
 
 #compilerOpts =
