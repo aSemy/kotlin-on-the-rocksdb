@@ -53,37 +53,10 @@ jobs:
           brew install rocksdb gflags snappy bzip2 lz4 zstd
           && brew --prefix rocksdb
 
-#      - uses: actions/cache@v3
-#        id: cache-windows
-#        if: runner.os == 'Windows'
-#        with:
-#          path: |
-#            C:/msys64/
-#          key: static-libs-${{ runner.os }}
-      #            ~/AppData/Local/vcpkg
-      #            C:/vcpkg/downloads
-      #            C:/vcpkg/installed
-      #            C:/vcpkg/packages
-      #            C:/vcpkg/buildtrees
-
-      #      - name: Install Windows dependencies
-      #        id: setup-windows
-      #        if: runner.os == 'Windows'
-      #        # https://vcpkg.io/en/docs/users/buildsystems/manual-integration.html
-      ##          vcpkg install rocksdb gflags snappy bzip2 lz4 zstd --triplet x64-windows
-      #        run: >-
-      #          vcpkg install rocksdb --triplet x64-windows-static
-      #          && echo "C:\vcpkg\installed\x64-windows-static\lib" >> $GITHUB_PATH
-      #          && echo "C:\vcpkg\packages\rocksdb_x64-windows-static\lib" >> $GITHUB_PATH
-      #          && ls C:\vcpkg\
-      #          && ls C:\vcpkg\installed\x64-windows-static\lib\
-      #          && tree C:\vcpkg\ /F
-      ##          && ls C:\vcpkg\packages\rocksdb_x64-windows\lib
-
       - uses: msys2/setup-msys2@v2
         if: runner.os == 'Windows'
         with:
-#          msystem: MINGW64
+          # msystem: MINGW64
           location: C:/msys2
           update: true
           # https://packages.msys2.org/package/mingw-w64-x86_64-rocksdb?repo=mingw64
@@ -105,7 +78,6 @@ jobs:
           && pacman -Ql mingw-w64-x86_64-snappy
           && pacman -Ql mingw-w64-x86_64-lz4
           && pacman -Ql mingw-w64-x86_64-bzip2
-#          && pacman -Fl mingw-w64-x86_64-rocksdb
 
       - if: runner.os == 'Windows'
         run: >-

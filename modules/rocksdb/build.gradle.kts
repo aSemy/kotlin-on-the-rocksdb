@@ -10,35 +10,11 @@ kotlin {
       cinterops {
         val rocksdb by creating rocksdb@{
           includeDirs("$projectDir/src/nativeInterop/external/rocksdb")
-
-//          val libraryPath = when (target?.konanTarget?.family) {
-//            null -> error("missing target in cinterop ${this@rocksdb.name}")
-//            Family.MINGW -> "$projectDir/src/nativeInterop/external/rocksdb/lib-mingw"
-//            Family.LINUX -> "$projectDir/src/nativeInterop/external/rocksdb/lib-macos"
-//            Family.OSX -> "$projectDir/src/nativeInterop/external/rocksdb/lib-macos"
-//            else -> error("unsupported target in cinterop ${this@rocksdb.name}")
-//          }
-//          extraOpts("-libraryPath", libraryPath)
-//          extraOpts("-include-binary",  "$projectDir/src/nativeInterop/libs/rocksdb/librocksdb.a")
-
-//          if (target?.konanTarget?.family == org.jetbrains.kotlin.konan.target.Family.MINGW) {
-//            val msys2root = File(System.getenv("MSYS2_ROOT") ?: "C:/msys64/")
-//            fun lib(lib: String) = msys2root.resolve("lib/lib${lib}.a").canonicalPath
-//            linkerOpts(
-//              lib("rocksdb"),
-//            )
-//          }
         }
-
-        // maybe download librocksdb.a for each platform, and dynamically embed, so there's no need to install the lib locally?
-//        kotlinOptions.freeCompilerArgs = listOf(
-//          "-include-binary", "$projectDir/src/nativeInterop/libs/rocksdb/librocksdb.a",
-//        )
       }
     }
     binaries {
       binaries.staticLib()
-//      executable { entryPoint = "dev.adamko.kotlin.on.the.rocksdb.main" }
     }
   }
 
