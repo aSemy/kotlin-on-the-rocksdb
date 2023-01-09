@@ -86,9 +86,16 @@ jobs:
           msystem: MINGW64
           update: true
           install: mingw-w64-x86_64-rocksdb
+
       - if: runner.os == 'Windows'
         run: >-
           tree C:/msys64/ /F
+
+      - if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: >-
+          pacman -Ql mingw-w64-x86_64-rocksdb
+          && pacman -Fl mingw-w64-x86_64-rocksdb
 
       ### Gradle task ###
 
