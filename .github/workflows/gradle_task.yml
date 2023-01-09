@@ -58,11 +58,11 @@ jobs:
         if: runner.os == 'Windows'
         with:
           path: |
-            ~/AppData/Local/vcpkg
-            C:/vcpkg/downloads
-            C:/vcpkg/installed
             C:/msys64/mingw64
-          key: vcpkg-${{ runner.os }}
+          key: static-libs-${{ runner.os }}
+      #            ~/AppData/Local/vcpkg
+      #            C:/vcpkg/downloads
+      #            C:/vcpkg/installed
       #            C:/vcpkg/packages
       #            C:/vcpkg/buildtrees
 
@@ -80,12 +80,11 @@ jobs:
       #          && tree C:\vcpkg\ /F
       ##          && ls C:\vcpkg\packages\rocksdb_x64-windows\lib
 
-      - name: Install Windows dependencies
-        id: setup-windows
-        if: runner.os == 'Windows'
-        run: >-
-          pacman -S mingw-w64-x86_64-rocksdb
-      
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: rocksdb
 
       ### Gradle task ###
 
