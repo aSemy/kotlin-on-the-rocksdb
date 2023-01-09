@@ -85,7 +85,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: rocksdb
+          install: mingw-w64-rocksdb
 
       ### Gradle task ###
 
