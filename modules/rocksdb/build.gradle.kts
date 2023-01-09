@@ -21,13 +21,13 @@ kotlin {
 //          extraOpts("-libraryPath", libraryPath)
 //          extraOpts("-include-binary",  "$projectDir/src/nativeInterop/libs/rocksdb/librocksdb.a")
 
-          if (target?.konanTarget?.family == org.jetbrains.kotlin.konan.target.Family.MINGW) {
-            val msys2root = File(System.getenv("MSYS2_ROOT") ?: "C:/msys64/")
-            fun lib(lib: String) = msys2root.resolve("lib/lib${lib}.a").canonicalPath
-            linkerOpts(
-              lib("rocksdb"),
-            )
-          }
+//          if (target?.konanTarget?.family == org.jetbrains.kotlin.konan.target.Family.MINGW) {
+//            val msys2root = File(System.getenv("MSYS2_ROOT") ?: "C:/msys64/")
+//            fun lib(lib: String) = msys2root.resolve("lib/lib${lib}.a").canonicalPath
+//            linkerOpts(
+//              lib("rocksdb"),
+//            )
+//          }
         }
 
         // maybe download librocksdb.a for each platform, and dynamically embed, so there's no need to install the lib locally?
