@@ -8,8 +8,18 @@ kotlin {
   targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
     compilations.getByName("main") {
       cinterops {
-        val rocksdb by creating {
-          includeDirs("$projectDir/src/nativeInterop/libs/rocksdb")
+        val rocksdb by creating rocksdb@{
+          includeDirs("$projectDir/src/nativeInterop/external/rocksdb")
+
+//          val libraryPath = when (target?.konanTarget?.family) {
+//            null -> error("missing target in cinterop ${this@rocksdb.name}")
+//            Family.MINGW -> "$projectDir/src/nativeInterop/external/rocksdb/lib-mingw"
+//            Family.LINUX -> "$projectDir/src/nativeInterop/external/rocksdb/lib-macos"
+//            Family.OSX -> "$projectDir/src/nativeInterop/external/rocksdb/lib-macos"
+//            else -> error("unsupported target in cinterop ${this@rocksdb.name}")
+//          }
+//          extraOpts("-libraryPath", libraryPath)
+//          extraOpts("-include-binary",  "$projectDir/src/nativeInterop/libs/rocksdb/librocksdb.a")
         }
 
         // maybe download librocksdb.a for each platform, and dynamically embed, so there's no need to install the lib locally?
