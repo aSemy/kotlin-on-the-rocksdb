@@ -93,6 +93,9 @@ jobs:
         run: pacman -Ql mingw-w64-x86_64-rocksdb
 #          && pacman -Fl mingw-w64-x86_64-rocksdb
 
+      - if: runner.os == 'Windows'
+        run: tree C:/mingw64/lib /F
+
       ### Gradle task ###
 
       - name: Checkout the repo
