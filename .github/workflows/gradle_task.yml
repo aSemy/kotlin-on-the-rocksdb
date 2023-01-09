@@ -96,7 +96,7 @@ jobs:
 
       - if: runner.os == 'Windows'
         run: >-
-          tree C:/mingw64/ /F
+          tree C:/msys64/ /F
           && ls C:/
 
       ### Gradle task ###
