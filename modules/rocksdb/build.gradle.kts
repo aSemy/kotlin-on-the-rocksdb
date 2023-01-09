@@ -8,18 +8,26 @@ kotlin {
   targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
     compilations.getByName("main") {
       cinterops {
-        val rocksdb by creating {
-          includeDirs("$projectDir/src/nativeInterop/libs/rocksdb")
-        }
+        val rocksdb by creating rocksdb@{
+          includeDirs("$projectDir/src/nativeInterop/external/rocksdb")
 
-//        kotlinOptions.freeCompilerArgs = listOf(
-//          "-include-binary", "$projectDir/src/nativeInterop/libs/rocksdb/librocksdb.a",
-//        )
+//          if (target?.konanTarget?.family == org.jetbrains.kotlin.konan.target.Family.MINGW) {
+//            //            val msys2root = File(System.getenv("MSYS2_ROOT") ?: "C:/msys2/msys64/mingw64/lib/")
+//            fun lib(lib: String) = "C:/msys2/msys64/mingw64/lib/lib${lib}.a"
+//            linkerOpts(
+//              lib("rocksdb"),
+//              lib("zstd"),
+//              lib("z"),
+//              lib("snappy"),
+//              lib("lz4"),
+//            )
+//            logger.lifecycle("linkerOpts for ${this@rocksdb.name}: $linkerOpts")
+//          }
+        }
       }
     }
     binaries {
-//      binaries.staticLib()
-      executable { entryPoint = "dev.adamko.kotlin.on.the.rocksdb.main" }
+      binaries.staticLib()
     }
   }
 

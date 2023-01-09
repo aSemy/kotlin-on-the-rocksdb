@@ -2,10 +2,7 @@ package dev.adamko.kotlin.on.the.rocksdb
 
 import cnames.structs.rocksdb_t
 import kotlinx.cinterop.*
-import org.rocksdb.rocksdb_create_iterator
-import org.rocksdb.rocksdb_get
-import org.rocksdb.rocksdb_open
-import org.rocksdb.rocksdb_put
+import org.rocksdb.*
 import platform.posix.size_tVar
 
 
@@ -61,6 +58,7 @@ class RocksDb(
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_t> = db.getPointer(scope)
 
+  fun close() = rocksdb_close(db)
 
   companion object {
     fun create(

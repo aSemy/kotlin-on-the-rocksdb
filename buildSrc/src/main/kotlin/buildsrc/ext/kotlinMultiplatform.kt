@@ -1,11 +1,8 @@
 package buildsrc.ext
 
 import java.lang.System.getProperty
-import org.gradle.api.Action
 import org.gradle.api.GradleException
-import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 
 
@@ -19,13 +16,6 @@ fun KotlinMultiplatformExtension.nativeTarget(
     HostOs.LINUX   -> linuxX64("native", configure)
   }
 }
-
-
-fun KotlinDependencyHandler.platform(
-  notation: Any, configureAction: Action<Dependency> = Action {},
-): Dependency =
-  project.dependencies.platform(notation, configureAction)
-
 
 enum class HostOs {
   WINDOWS, MAC, LINUX;

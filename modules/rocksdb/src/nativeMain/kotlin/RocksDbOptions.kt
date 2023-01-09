@@ -4,16 +4,15 @@ import cnames.structs.rocksdb_cache_t
 import cnames.structs.rocksdb_compactionfilter_t
 import cnames.structs.rocksdb_compactionfilterfactory_t
 import cnames.structs.rocksdb_comparator_t
+import cnames.structs.rocksdb_env_t
 import cnames.structs.rocksdb_options_t
+import cnames.structs.rocksdb_universal_compaction_options_t
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
 import kotlin.UByte
 import kotlin.ULong
 import kotlin.Unit
-import kotlin.error
-import kotlin.native.OsFamily
-import kotlin.native.Platform
 import kotlinx.cinterop.AutofreeScope
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValuesRef
@@ -64,7 +63,7 @@ class RocksDbOptions(
 
   fun comparator(comparator: CPointer<rocksdb_comparator_t>?) =
     rocksdb_options_set_comparator(options, comparator)
-//  fun compressionOptions(compressionOptions: CPointer<rocksdb_compressionOptions_t>?) = rocksdb_options_set_compression_options(options, compressionOptions)
+  //  fun compressionOptions(compressionOptions: CPointer<rocksdb_compressionOptions_t>?) = rocksdb_options_set_compression_options(options, compressionOptions)
 //  fun compressionPerLevel(compressionPerLevel: CPointer<rocksdb_compressionPerLevel_t>?) = rocksdb_options_set_compression_per_level(options, compressionPerLevel)
 //  fun cuckooTableFactory(cuckooTableFactory: CPointer<rocksdb_cuckooTableFactory_t>?) = rocksdb_options_set_cuckoo_table_factory(options, cuckooTableFactory)
 //  fun dbLogDir(dbLogDir: CPointer<rocksdb_dbLogDir_t>?) = rocksdb_options_set_db_log_dir(options, dbLogDir)
@@ -88,7 +87,7 @@ class RocksDbOptions(
   fun uint64addMergeOperator() = rocksdb_options_set_uint64add_merge_operator(options)
 
   fun universalCompactionOptions(
-    compactionOptions:  CValuesRef<rocksdb_universal_compaction_options_t>
+    compactionOptions: CValuesRef<rocksdb_universal_compaction_options_t>
   ) = rocksdb_options_set_universal_compaction_options(options, compactionOptions)
 
   fun walDir(dir: String) = rocksdb_options_set_wal_dir(options, dir)
@@ -119,10 +118,7 @@ class RocksDbOptions(
 
   var allowIngestBehind: Boolean
     get() = rocksdb_options_get_allow_ingest_behind(options).toBoolean();
-    set(value) = rocksdb_options_set_allow_ingest_behind(
-      options,
-      value.toUByte()
-    )
+    set(value) = rocksdb_options_set_allow_ingest_behind(options, value.toUByte())
 
   var allowMmapReads
     get() = rocksdb_options_get_allow_mmap_reads(options)

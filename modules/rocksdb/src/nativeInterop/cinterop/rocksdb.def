@@ -1,12 +1,20 @@
 package = org.rocksdb
 
-headers = c.h
+headers = include/c.h
 
-headerFilter = *
+#headerFilter = *
 
 # strictEnums =
 
-#staticLibraries = librocksdb.a
+#libraryPaths = /usr/local/lib /usr/lib
+
+# staticLibraries.mingw = librocksdb.a   \
+#                         libzstd.a      \
+#                         libz.a         \
+#                         libsnappy.a    \
+#                         liblz4.a       \
+#                         libbz2.a
+# libraryPaths.mingw = C:/msys2/msys64/mingw64/lib
 
 #compilerOpts =
 #compilerOpts.osx =
@@ -20,6 +28,23 @@ excludeDependentModules = false
 #compilerOpts.osx = -I/opt/local/include -L/usr/opt/include -L/usr/local/include -L/usr/local/Cellar/rocksdb/7.8.3/include
 #linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu
 
-linkerOpts.linux = -L/usr/local/lib -L/usr/lib -lrocksdb
 
-linkerOpts.osx = -L/usr/local/lib -L/usr/lib -lrocksdb
+linkerOpts = -lrocksdb -L/usr/local/lib -L/usr/lib
+#linkerOpts.linux = -L/usr/local/lib -L/usr/lib
+#linkerOpts.osx = -L/usr/local/lib -L/usr/lib
+#linkerOpts.mingw = -LMINGW64_DIR/lib -lrocksdb
+#linkerOpts.mingw = -LC:/msys64/mingw64/lib -LC:/Tools/msys64/mingw64/lib -LC:/Tools/msys2/mingw64/lib -lrocksdb
+#linkerOpts.mingw_x64 = -L/mingw64/lib/ -LC:/mingw64/lib/
+# -LC:/msys64/mingw64/lib
+ #-LC:/Tools/msys64/mingw64/lib -LC:/Tools/msys2/mingw64/lib
+
+#linkerOpts.mingw = -LC:/msys2/msys64/mingw64/lib
+
+#linkerOpts.mingw =         -LC:/msys2/lib \
+#                           -LC:/msys64/mingw64/lib \
+#                           -LC:/Tools/msys64/mingw64/lib \
+#                           -LC:/Tools/msys2/mingw64/lib
+# linkerOpts.mingw_x64 =     -LC:/msys2/lib \
+#                            -LC:/msys64/mingw64/lib \
+#                            -LC:/Tools/msys64/mingw64/lib \
+#                            -LC:/Tools/msys2/mingw64/lib
