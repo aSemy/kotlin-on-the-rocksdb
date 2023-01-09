@@ -90,7 +90,9 @@ jobs:
 
       - if: runner.os == 'Windows'
         shell: msys2 {0}
-        run: pacman -Ql mingw-w64-x86_64-rocksdb
+        run:
+          pacman -Ql mingw-w64-x86_64-rocksdb
+          && tree /mingw64/lib
 #          && pacman -Fl mingw-w64-x86_64-rocksdb
 
       - if: runner.os == 'Windows'
