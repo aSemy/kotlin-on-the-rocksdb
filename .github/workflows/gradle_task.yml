@@ -53,13 +53,13 @@ jobs:
           brew install rocksdb gflags snappy bzip2 lz4 zstd
           && brew --prefix rocksdb
 
-      - uses: actions/cache@v3
-        id: cache-windows
-        if: runner.os == 'Windows'
-        with:
-          path: |
-            C:/msys2/
-          key: static-libs-${{ runner.os }}
+#      - uses: actions/cache@v3
+#        id: cache-windows
+#        if: runner.os == 'Windows'
+#        with:
+#          path: |
+#            C:/msys64/
+#          key: static-libs-${{ runner.os }}
       #            ~/AppData/Local/vcpkg
       #            C:/vcpkg/downloads
       #            C:/vcpkg/installed
@@ -84,23 +84,34 @@ jobs:
         if: runner.os == 'Windows'
         with:
 #          msystem: MINGW64
-          location: C:/msys2
+          location: C:/
           update: true
-          install: mingw-w64-x86_64-rocksdb
-#          mingw-w64-clang-x86_64-rocksdb
-      # https://packages.msys2.org/package/mingw-w64-x86_64-rocksdb?repo=mingw64
+          # https://packages.msys2.org/package/mingw-w64-x86_64-rocksdb?repo=mingw64
+          install: >
+            mingw-w64-x86_64-rocksdb
+            mingw-w64-x86_64-zstd
+            mingw-w64-x86_64-zlib
+            mingw-w64-x86_64-snappy
+            mingw-w64-x86_64-lz4
+            mingw-w64-x86_64-bzip2
 
       - if: runner.os == 'Windows'
         shell: msys2 {0}
         run:
-          pacman -Ql mingw-w64-x86_64-rocksdb
-          && cygpath -m /
+          cygpath -m /
+          && pacman -Ql mingw-w64-x86_64-rocksdb
+          && pacman -Ql mingw-w64-x86_64-zstd
+          && pacman -Ql mingw-w64-x86_64-zlib
+          && pacman -Ql mingw-w64-x86_64-snappy
+          && pacman -Ql mingw-w64-x86_64-lz4
+          && pacman -Ql mingw-w64-x86_64-bzip2
 #          && pacman -Fl mingw-w64-x86_64-rocksdb
 
       - if: runner.os == 'Windows'
         run: >-
           ls C:/
-          && tree C:/msys2/ /F
+          && tree C:/msys64/ /F
+          && tree C:/msys64/mingw64/ /F
 
       ### Gradle task ###
 
