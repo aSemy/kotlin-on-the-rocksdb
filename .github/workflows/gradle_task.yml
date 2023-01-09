@@ -85,7 +85,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: mingw-w64-x86_64-rocksdb
+          install: mingw-w64-x86_64-rocksdb mingw-w64-clang-x86_64-rocksdb
       # https://packages.msys2.org/package/mingw-w64-x86_64-rocksdb?repo=mingw64
 
       - if: runner.os == 'Windows'
