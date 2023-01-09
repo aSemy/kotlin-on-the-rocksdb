@@ -26,4 +26,5 @@ linkerOpts = -lrocksdb -L/usr/local/lib -L/usr/lib
 #linkerOpts.osx = -L/usr/local/lib -L/usr/lib
 #linkerOpts.mingw = -LMINGW64_DIR/lib -lrocksdb
 #linkerOpts.mingw = -LC:/msys64/mingw64/lib -LC:/Tools/msys64/mingw64/lib -LC:/Tools/msys2/mingw64/lib -lrocksdb
-#linkerOpts.mingw = -LC:/msys64/mingw64/lib -LC:/Tools/msys64/mingw64/lib -LC:/Tools/msys2/mingw64/lib
+linkerOpts.mingw = -LC:/msys64/mingw64/lib
+ #-LC:/Tools/msys64/mingw64/lib -LC:/Tools/msys2/mingw64/lib
