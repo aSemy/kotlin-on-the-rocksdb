@@ -4,7 +4,7 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class RestoreOptions(
-  private val restoreOptions: CPointer<rocksdb_restore_options_t>?
+  private val restoreOptions: CPointer<rocksdb_restore_options_t> = rocksdb_restore_options_create() ?: error("could not instantiate new RestoreOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_restore_options_destroy(restoreOptions) 
@@ -13,17 +13,15 @@ class RestoreOptions(
     v: Int, 
   ): Unit = 
     rocksdb_restore_options_set_keep_log_files(restoreOptions, v) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_restore_options_t> = 
-      rocksdb_restore_options_create() 
-       ?: error("could not execute 'rocksdb_restore_options_create'")
-  }
 }
 
 class BackupEngineOptions(
-  private val backupEngineOptions: CPointer<rocksdb_backup_engine_options_t>?
+  private val backupEngineOptions: CPointer<rocksdb_backup_engine_options_t>
 ) {
+  constructor(
+    backupDir: String?, 
+  ): this(rocksdb_backup_engine_options_create(backupDir) ?: error("could not instantiate new BackupEngineOptions"))
+
   fun setBackupDir(
     backupDir: String?, 
   ): Unit = 
@@ -76,35 +74,28 @@ class BackupEngineOptions(
   var shareFilesWithChecksumNaming: Int
     get() = rocksdb_backup_engine_options_get_share_files_with_checksum_naming(backupEngineOptions)
     set(value) = rocksdb_backup_engine_options_set_share_files_with_checksum_naming(backupEngineOptions, value)
-
-  companion object {
-    fun create(
-      backupDir: String?, 
-    ): CPointer<rocksdb_backup_engine_options_t> = 
-      rocksdb_backup_engine_options_create(backupDir) 
-       ?: error("could not execute 'rocksdb_backup_engine_options_create'")
-  }
 }
 
 class CheckpointObject(
-  private val checkpointObject: CPointer<rocksdb_checkpoint_t>?
+  private val checkpointObject: CPointer<rocksdb_checkpoint_t>
 ) {
+  constructor(
+    db: CValuesRef<rocksdb_t>?, 
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
+  ): this(rocksdb_checkpoint_object_create(db, errorPointer) ?: error("could not instantiate new CheckpointObject"))
+
   fun destroy(): Unit = 
     rocksdb_checkpoint_object_destroy(checkpointObject) 
-
-  companion object {
-    fun create(
-      db: CValuesRef<rocksdb_t>?, 
-      errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-    ): CPointer<rocksdb_checkpoint_t> = 
-      rocksdb_checkpoint_object_create(db, errorPointer) 
-       ?: error("could not execute 'rocksdb_checkpoint_object_create'")
-  }
 }
 
 class WriteBatch(
-  private val writeBatch: CPointer<rocksdb_writebatch_t>?
+  private val writeBatch: CPointer<rocksdb_writebatch_t> = rocksdb_writebatch_create() ?: error("could not instantiate new WriteBatch")
 ) {
+  constructor(
+    rep: String?, 
+    size: ULong, 
+  ): this(rocksdb_writebatch_create_from(rep, size) ?: error("could not instantiate new WriteBatch"))
+
   fun destroy(): Unit = 
     rocksdb_writebatch_destroy(writeBatch) 
 
@@ -252,7 +243,7 @@ class WriteBatch(
   ): Unit = 
     rocksdb_writebatch_deletev(writeBatch, numKeys, keysList, keysListSizes) 
 
-  fun deleteCf(
+  fun delete(
     columnFamily: CValuesRef<rocksdb_column_family_handle_t>?, 
     numKeys: Int, 
     keysList: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
@@ -326,24 +317,21 @@ class WriteBatch(
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
   ): Unit = 
     rocksdb_writebatch_pop_save_point(writeBatch, errorPointer) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_writebatch_t> = 
-      rocksdb_writebatch_create() 
-       ?: error("could not execute 'rocksdb_writebatch_create'")
-    
-    fun createFrom(
-      rep: String?, 
-      size: ULong, 
-    ): CPointer<rocksdb_writebatch_t> = 
-      rocksdb_writebatch_create_from(rep, size) 
-       ?: error("could not execute 'rocksdb_writebatch_create_from'")
-  }
 }
 
 class WriteBatchWi(
-  private val writeBatchWi: CPointer<rocksdb_writebatch_wi_t>?
+  private val writeBatchWi: CPointer<rocksdb_writebatch_wi_t>
 ) {
+  constructor(
+    reservedBytes: ULong, 
+    overwriteKeys: Boolean, 
+  ): this(rocksdb_writebatch_wi_create(reservedBytes, overwriteKeys.toUByte()) ?: error("could not instantiate new WriteBatchWi"))
+  
+  constructor(
+    rep: String?, 
+    size: ULong, 
+  ): this(rocksdb_writebatch_wi_create_from(rep, size) ?: error("could not instantiate new WriteBatchWi"))
+
   fun destroy(): Unit = 
     rocksdb_writebatch_wi_destroy(writeBatchWi) 
 
@@ -462,7 +450,7 @@ class WriteBatchWi(
   ): Unit = 
     rocksdb_writebatch_wi_deletev(writeBatchWi, numKeys, keysList, keysListSizes) 
 
-  fun deleteCf(
+  fun delete(
     columnFamily: CValuesRef<rocksdb_column_family_handle_t>?, 
     numKeys: Int, 
     keysList: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
@@ -582,26 +570,10 @@ class WriteBatchWi(
     cf: CValuesRef<rocksdb_column_family_handle_t>?, 
   ): CPointer<rocksdb_iterator_t>? = 
     rocksdb_writebatch_wi_create_iterator_with_base_cf(writeBatchWi, baseIterator, cf) 
-
-  companion object {
-    fun create(
-      reservedBytes: ULong, 
-      overwriteKeys: Boolean, 
-    ): CPointer<rocksdb_writebatch_wi_t> = 
-      rocksdb_writebatch_wi_create(reservedBytes, overwriteKeys.toUByte()) 
-       ?: error("could not execute 'rocksdb_writebatch_wi_create'")
-    
-    fun createFrom(
-      rep: String?, 
-      size: ULong, 
-    ): CPointer<rocksdb_writebatch_wi_t> = 
-      rocksdb_writebatch_wi_create_from(rep, size) 
-       ?: error("could not execute 'rocksdb_writebatch_wi_create_from'")
-  }
 }
 
 class BlockBasedOptions(
-  private val blockBasedOptions: CPointer<rocksdb_block_based_table_options_t>?
+  private val blockBasedOptions: CPointer<rocksdb_block_based_table_options_t> = rocksdb_block_based_options_create() ?: error("could not instantiate new BlockBasedOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_block_based_options_destroy(blockBasedOptions) 
@@ -710,16 +682,10 @@ class BlockBasedOptions(
     arg1: Boolean, 
   ): Unit = 
     rocksdb_block_based_options_set_pin_top_level_index_and_filter(blockBasedOptions, arg1.toUByte()) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_block_based_table_options_t> = 
-      rocksdb_block_based_options_create() 
-       ?: error("could not execute 'rocksdb_block_based_options_create'")
-  }
 }
 
 class CuckooOptions(
-  private val cuckooOptions: CPointer<rocksdb_cuckoo_table_options_t>?
+  private val cuckooOptions: CPointer<rocksdb_cuckoo_table_options_t> = rocksdb_cuckoo_options_create() ?: error("could not instantiate new CuckooOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_cuckoo_options_destroy(cuckooOptions) 
@@ -748,16 +714,10 @@ class CuckooOptions(
     v: Boolean, 
   ): Unit = 
     rocksdb_cuckoo_options_set_use_module_hash(cuckooOptions, v.toUByte()) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_cuckoo_table_options_t> = 
-      rocksdb_cuckoo_options_create() 
-       ?: error("could not execute 'rocksdb_cuckoo_options_create'")
-  }
 }
 
 class RocksDbOptions(
-  private val rocksDbOptions: CPointer<rocksdb_options_t>?
+  private val rocksDbOptions: CPointer<rocksdb_options_t> = rocksdb_options_create() ?: error("could not instantiate new RocksDbOptions")
 ) {
   fun setBlockBasedTableFactory(
     tableOptions: CValuesRef<rocksdb_block_based_table_options_t>?, 
@@ -1364,33 +1324,23 @@ class RocksDbOptions(
   var walCompression: Int
     get() = rocksdb_options_get_wal_compression(rocksDbOptions)
     set(value) = rocksdb_options_set_wal_compression(rocksDbOptions, value)
-
-  companion object {
-    fun create(): CPointer<rocksdb_options_t> = 
-      rocksdb_options_create() 
-       ?: error("could not execute 'rocksdb_options_create'")
-  }
 }
 
 class RateLimiter(
-  private val rateLimiter: CPointer<rocksdb_ratelimiter_t>?
+  private val rateLimiter: CPointer<rocksdb_ratelimiter_t>
 ) {
+  constructor(
+    rateBytesPerSec: Long, 
+    refillPeriodUs: Long, 
+    fairness: Int, 
+  ): this(rocksdb_ratelimiter_create(rateBytesPerSec, refillPeriodUs, fairness) ?: error("could not instantiate new RateLimiter"))
+
   fun destroy(): Unit = 
     rocksdb_ratelimiter_destroy(rateLimiter) 
-
-  companion object {
-    fun create(
-      rateBytesPerSec: Long, 
-      refillPeriodUs: Long, 
-      fairness: Int, 
-    ): CPointer<rocksdb_ratelimiter_t> = 
-      rocksdb_ratelimiter_create(rateBytesPerSec, refillPeriodUs, fairness) 
-       ?: error("could not execute 'rocksdb_ratelimiter_create'")
-  }
 }
 
 class PerfContext(
-  private val perfContext: CPointer<rocksdb_perfcontext_t>?
+  private val perfContext: CPointer<rocksdb_perfcontext_t> = rocksdb_perfcontext_create() ?: error("could not instantiate new PerfContext")
 ) {
   fun reset(): Unit = 
     rocksdb_perfcontext_reset(perfContext) 
@@ -1407,17 +1357,18 @@ class PerfContext(
 
   fun destroy(): Unit = 
     rocksdb_perfcontext_destroy(perfContext) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_perfcontext_t> = 
-      rocksdb_perfcontext_create() 
-       ?: error("could not execute 'rocksdb_perfcontext_create'")
-  }
 }
 
 class CompactionFilter(
-  private val compactionFilter: CPointer<rocksdb_compactionfilter_t>?
+  private val compactionFilter: CPointer<rocksdb_compactionfilter_t>
 ) {
+  constructor(
+    state: CValuesRef<*>?, 
+    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
+    filter: CPointer<CFunction<Function9<COpaquePointer?, Int, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, CPointer<CPointerVarOf<CPointer<ByteVar>>>?, CPointer<ULongVarOf<ULong>>?, CPointer<UByteVarOf<UByte>>?, UByte>>>?, 
+    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
+  ): this(rocksdb_compactionfilter_create(state, destructor, filter, name) ?: error("could not instantiate new CompactionFilter"))
+
   fun setIgnoreSnapshots(
     arg1: Boolean, 
   ): Unit = 
@@ -1425,109 +1376,78 @@ class CompactionFilter(
 
   fun destroy(): Unit = 
     rocksdb_compactionfilter_destroy(compactionFilter) 
-
-  companion object {
-    fun create(
-      state: CValuesRef<*>?, 
-      destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
-      filter: CPointer<CFunction<Function9<COpaquePointer?, Int, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, CPointer<CPointerVarOf<CPointer<ByteVar>>>?, CPointer<ULongVarOf<ULong>>?, CPointer<UByteVarOf<UByte>>?, UByte>>>?, 
-      name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
-    ): CPointer<rocksdb_compactionfilter_t> = 
-      rocksdb_compactionfilter_create(state, destructor, filter, name) 
-       ?: error("could not execute 'rocksdb_compactionfilter_create'")
-  }
 }
 
 class CompactionFilterFactory(
-  private val compactionFilterFactory: CPointer<rocksdb_compactionfilterfactory_t>?
+  private val compactionFilterFactory: CPointer<rocksdb_compactionfilterfactory_t>
 ) {
+  constructor(
+    state: CValuesRef<*>?, 
+    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
+    createCompactionFilter: CPointer<CFunction<Function2<COpaquePointer?, CPointer<rocksdb_compactionfiltercontext_t>?, CPointer<rocksdb_compactionfilter_t>?>>>?, 
+    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
+  ): this(rocksdb_compactionfilterfactory_create(state, destructor, createCompactionFilter, name) ?: error("could not instantiate new CompactionFilterFactory"))
+
   fun destroy(): Unit = 
     rocksdb_compactionfilterfactory_destroy(compactionFilterFactory) 
-
-  companion object {
-    fun create(
-      state: CValuesRef<*>?, 
-      destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
-      createCompactionFilter: CPointer<CFunction<Function2<COpaquePointer?, CPointer<rocksdb_compactionfiltercontext_t>?, CPointer<rocksdb_compactionfilter_t>?>>>?, 
-      name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
-    ): CPointer<rocksdb_compactionfilterfactory_t> = 
-      rocksdb_compactionfilterfactory_create(state, destructor, createCompactionFilter, name) 
-       ?: error("could not execute 'rocksdb_compactionfilterfactory_create'")
-  }
 }
 
 class Comparator(
-  private val comparator: CPointer<rocksdb_comparator_t>?
+  private val comparator: CPointer<rocksdb_comparator_t>
 ) {
+  constructor(
+    state: CValuesRef<*>?, 
+    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
+    compare: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
+    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
+  ): this(rocksdb_comparator_create(state, destructor, compare, name) ?: error("could not instantiate new Comparator"))
+  
+  constructor(
+    state: CValuesRef<*>?, 
+    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
+    compare: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
+    compareTs: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
+    compareWithoutTs: CPointer<CFunction<Function7<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte, CPointer<ByteVar>?, ULong, UByte, Int>>>?, 
+    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
+    timestampSize: ULong, 
+  ): this(rocksdb_comparator_with_ts_create(state, destructor, compare, compareTs, compareWithoutTs, name, timestampSize) ?: error("could not instantiate new Comparator"))
+
   fun destroy(): Unit = 
     rocksdb_comparator_destroy(comparator) 
-
-  companion object {
-    fun create(
-      state: CValuesRef<*>?, 
-      destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
-      compare: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
-      name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
-    ): CPointer<rocksdb_comparator_t> = 
-      rocksdb_comparator_create(state, destructor, compare, name) 
-       ?: error("could not execute 'rocksdb_comparator_create'")
-    
-    fun withTsCreate(
-      state: CValuesRef<*>?, 
-      destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
-      compare: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
-      compareTs: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
-      compareWithoutTs: CPointer<CFunction<Function7<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte, CPointer<ByteVar>?, ULong, UByte, Int>>>?, 
-      name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
-      timestampSize: ULong, 
-    ): CPointer<rocksdb_comparator_t> = 
-      rocksdb_comparator_with_ts_create(state, destructor, compare, compareTs, compareWithoutTs, name, timestampSize) 
-       ?: error("could not execute 'rocksdb_comparator_with_ts_create'")
-  }
 }
 
 class ComparatorWithTs(
-  private val comparatorWithTs: CPointer<rocksdb_comparator_t>?
+  private val comparatorWithTs: CPointer<rocksdb_comparator_t>
 ) {
-
-
-  companion object {
-    fun create(
-      state: CValuesRef<*>?, 
-      destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
-      compare: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
-      compareTs: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
-      compareWithoutTs: CPointer<CFunction<Function7<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte, CPointer<ByteVar>?, ULong, UByte, Int>>>?, 
-      name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
-      timestampSize: ULong, 
-    ): CPointer<rocksdb_comparator_t> = 
-      rocksdb_comparator_with_ts_create(state, destructor, compare, compareTs, compareWithoutTs, name, timestampSize) 
-       ?: error("could not execute 'rocksdb_comparator_with_ts_create'")
-  }
+  constructor(
+    state: CValuesRef<*>?, 
+    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
+    compare: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
+    compareTs: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?, 
+    compareWithoutTs: CPointer<CFunction<Function7<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte, CPointer<ByteVar>?, ULong, UByte, Int>>>?, 
+    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
+    timestampSize: ULong, 
+  ): this(rocksdb_comparator_with_ts_create(state, destructor, compare, compareTs, compareWithoutTs, name, timestampSize) ?: error("could not instantiate new ComparatorWithTs"))
 }
 
 class MergeOperator(
-  private val mergeOperator: CPointer<rocksdb_mergeoperator_t>?
+  private val mergeOperator: CPointer<rocksdb_mergeoperator_t>
 ) {
+  constructor(
+    state: CValuesRef<*>?, 
+    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
+    fullMerge: CPointer<CFunction<Function10<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, CPointer<CPointerVarOf<CPointer<ByteVar>>>?, CPointer<ULongVarOf<ULong>>?, Int, CPointer<UByteVarOf<UByte>>?, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?, 
+    partialMerge: CPointer<CFunction<Function8<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<CPointerVarOf<CPointer<ByteVar>>>?, CPointer<ULongVarOf<ULong>>?, Int, CPointer<UByteVarOf<UByte>>?, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?, 
+    deleteValue: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, Unit>>>?, 
+    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
+  ): this(rocksdb_mergeoperator_create(state, destructor, fullMerge, partialMerge, deleteValue, name) ?: error("could not instantiate new MergeOperator"))
+
   fun destroy(): Unit = 
     rocksdb_mergeoperator_destroy(mergeOperator) 
-
-  companion object {
-    fun create(
-      state: CValuesRef<*>?, 
-      destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
-      fullMerge: CPointer<CFunction<Function10<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, CPointer<CPointerVarOf<CPointer<ByteVar>>>?, CPointer<ULongVarOf<ULong>>?, Int, CPointer<UByteVarOf<UByte>>?, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?, 
-      partialMerge: CPointer<CFunction<Function8<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<CPointerVarOf<CPointer<ByteVar>>>?, CPointer<ULongVarOf<ULong>>?, Int, CPointer<UByteVarOf<UByte>>?, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?, 
-      deleteValue: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, Unit>>>?, 
-      name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
-    ): CPointer<rocksdb_mergeoperator_t> = 
-      rocksdb_mergeoperator_create(state, destructor, fullMerge, partialMerge, deleteValue, name) 
-       ?: error("could not execute 'rocksdb_mergeoperator_create'")
-  }
 }
 
 class ReadOptions(
-  private val readOptions: CPointer<rocksdb_readoptions_t>?
+  private val readOptions: CPointer<rocksdb_readoptions_t> = rocksdb_readoptions_create() ?: error("could not instantiate new ReadOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_readoptions_destroy(readOptions) 
@@ -1617,16 +1537,10 @@ class ReadOptions(
   var ioTimeout: ULong
     get() = rocksdb_readoptions_get_io_timeout(readOptions)
     set(value) = rocksdb_readoptions_set_io_timeout(readOptions, value)
-
-  companion object {
-    fun create(): CPointer<rocksdb_readoptions_t> = 
-      rocksdb_readoptions_create() 
-       ?: error("could not execute 'rocksdb_readoptions_create'")
-  }
 }
 
 class WriteOptions(
-  private val writeOptions: CPointer<rocksdb_writeoptions_t>?
+  private val writeOptions: CPointer<rocksdb_writeoptions_t> = rocksdb_writeoptions_create() ?: error("could not instantiate new WriteOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_writeoptions_destroy(writeOptions) 
@@ -1658,16 +1572,10 @@ class WriteOptions(
   var memtableInsertHintPerBatch: Boolean
     get() = rocksdb_writeoptions_get_memtable_insert_hint_per_batch(writeOptions).toBoolean()
     set(value) = rocksdb_writeoptions_set_memtable_insert_hint_per_batch(writeOptions, value.toUByte())
-
-  companion object {
-    fun create(): CPointer<rocksdb_writeoptions_t> = 
-      rocksdb_writeoptions_create() 
-       ?: error("could not execute 'rocksdb_writeoptions_create'")
-  }
 }
 
 class CompactOptions(
-  private val compactOptions: CPointer<rocksdb_compactoptions_t>?
+  private val compactOptions: CPointer<rocksdb_compactoptions_t> = rocksdb_compactoptions_create() ?: error("could not instantiate new CompactOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_compactoptions_destroy(compactOptions) 
@@ -1693,16 +1601,10 @@ class CompactOptions(
   var targetLevel: Int
     get() = rocksdb_compactoptions_get_target_level(compactOptions)
     set(value) = rocksdb_compactoptions_set_target_level(compactOptions, value)
-
-  companion object {
-    fun create(): CPointer<rocksdb_compactoptions_t> = 
-      rocksdb_compactoptions_create() 
-       ?: error("could not execute 'rocksdb_compactoptions_create'")
-  }
 }
 
 class FlushOptions(
-  private val flushOptions: CPointer<rocksdb_flushoptions_t>?
+  private val flushOptions: CPointer<rocksdb_flushoptions_t> = rocksdb_flushoptions_create() ?: error("could not instantiate new FlushOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_flushoptions_destroy(flushOptions) 
@@ -1710,30 +1612,18 @@ class FlushOptions(
   var wait: Boolean
     get() = rocksdb_flushoptions_get_wait(flushOptions).toBoolean()
     set(value) = rocksdb_flushoptions_set_wait(flushOptions, value.toUByte())
-
-  companion object {
-    fun create(): CPointer<rocksdb_flushoptions_t> = 
-      rocksdb_flushoptions_create() 
-       ?: error("could not execute 'rocksdb_flushoptions_create'")
-  }
 }
 
 class JemallocNoDumpAllocator(
-  private val jemallocNoDumpAllocator: CPointer<rocksdb_memory_allocator_t>?
+  private val jemallocNoDumpAllocator: CPointer<rocksdb_memory_allocator_t>
 ) {
-
-
-  companion object {
-    fun create(
-      errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-    ): CPointer<rocksdb_memory_allocator_t> = 
-      rocksdb_jemalloc_nodump_allocator_create(errorPointer) 
-       ?: error("could not execute 'rocksdb_jemalloc_nodump_allocator_create'")
-  }
+  constructor(
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
+  ): this(rocksdb_jemalloc_nodump_allocator_create(errorPointer) ?: error("could not instantiate new JemallocNoDumpAllocator"))
 }
 
 class LruCacheOptions(
-  private val lruCacheOptions: CPointer<rocksdb_lru_cache_options_t>?
+  private val lruCacheOptions: CPointer<rocksdb_lru_cache_options_t> = rocksdb_lru_cache_options_create() ?: error("could not instantiate new LruCacheOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_lru_cache_options_destroy(lruCacheOptions) 
@@ -1752,46 +1642,41 @@ class LruCacheOptions(
     arg1: CValuesRef<rocksdb_memory_allocator_t>?, 
   ): Unit = 
     rocksdb_lru_cache_options_set_memory_allocator(lruCacheOptions, arg1) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_lru_cache_options_t> = 
-      rocksdb_lru_cache_options_create() 
-       ?: error("could not execute 'rocksdb_lru_cache_options_create'")
-  }
 }
 
 class DbPath(
-  private val dbPath: CPointer<rocksdb_dbpath_t>?
+  private val dbPath: CPointer<rocksdb_dbpath_t>
 ) {
+  constructor(
+    path: String?, 
+    targetSize: ULong, 
+  ): this(rocksdb_dbpath_create(path, targetSize) ?: error("could not instantiate new DbPath"))
+
   fun destroy(): Unit = 
     rocksdb_dbpath_destroy(dbPath) 
-
-  companion object {
-    fun create(
-      path: String?, 
-      targetSize: ULong, 
-    ): CPointer<rocksdb_dbpath_t> = 
-      rocksdb_dbpath_create(path, targetSize) 
-       ?: error("could not execute 'rocksdb_dbpath_create'")
-  }
 }
 
 class EnvOptions(
-  private val envOptions: CPointer<rocksdb_envoptions_t>?
+  private val envOptions: CPointer<rocksdb_envoptions_t> = rocksdb_envoptions_create() ?: error("could not instantiate new EnvOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_envoptions_destroy(envOptions) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_envoptions_t> = 
-      rocksdb_envoptions_create() 
-       ?: error("could not execute 'rocksdb_envoptions_create'")
-  }
 }
 
 class SstFileWriter(
-  private val sstFileWriter: CPointer<rocksdb_sstfilewriter_t>?
+  private val sstFileWriter: CPointer<rocksdb_sstfilewriter_t>
 ) {
+  constructor(
+    env: CValuesRef<rocksdb_envoptions_t>?, 
+    ioOptions: CValuesRef<rocksdb_options_t>?, 
+  ): this(rocksdb_sstfilewriter_create(env, ioOptions) ?: error("could not instantiate new SstFileWriter"))
+  
+  constructor(
+    env: CValuesRef<rocksdb_envoptions_t>?, 
+    ioOptions: CValuesRef<rocksdb_options_t>?, 
+    comparator: CValuesRef<rocksdb_comparator_t>?, 
+  ): this(rocksdb_sstfilewriter_create_with_comparator(env, ioOptions, comparator) ?: error("could not instantiate new SstFileWriter"))
+
   fun open(
     name: String?, 
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
@@ -1873,27 +1758,10 @@ class SstFileWriter(
 
   fun destroy(): Unit = 
     rocksdb_sstfilewriter_destroy(sstFileWriter) 
-
-  companion object {
-    fun create(
-      env: CValuesRef<rocksdb_envoptions_t>?, 
-      ioOptions: CValuesRef<rocksdb_options_t>?, 
-    ): CPointer<rocksdb_sstfilewriter_t> = 
-      rocksdb_sstfilewriter_create(env, ioOptions) 
-       ?: error("could not execute 'rocksdb_sstfilewriter_create'")
-    
-    fun createWithComparator(
-      env: CValuesRef<rocksdb_envoptions_t>?, 
-      ioOptions: CValuesRef<rocksdb_options_t>?, 
-      comparator: CValuesRef<rocksdb_comparator_t>?, 
-    ): CPointer<rocksdb_sstfilewriter_t> = 
-      rocksdb_sstfilewriter_create_with_comparator(env, ioOptions, comparator) 
-       ?: error("could not execute 'rocksdb_sstfilewriter_create_with_comparator'")
-  }
 }
 
 class IngestExternalFileOptions(
-  private val ingestExternalFileOptions: CPointer<rocksdb_ingestexternalfileoptions_t>?
+  private val ingestExternalFileOptions: CPointer<rocksdb_ingestexternalfileoptions_t> = rocksdb_ingestexternalfileoptions_create() ?: error("could not instantiate new IngestExternalFileOptions")
 ) {
   fun setMoveFiles(
     moveFiles: Boolean, 
@@ -1922,46 +1790,30 @@ class IngestExternalFileOptions(
 
   fun destroy(): Unit = 
     rocksdb_ingestexternalfileoptions_destroy(ingestExternalFileOptions) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_ingestexternalfileoptions_t> = 
-      rocksdb_ingestexternalfileoptions_create() 
-       ?: error("could not execute 'rocksdb_ingestexternalfileoptions_create'")
-  }
 }
 
 class SliceTransform(
-  private val sliceTransform: CPointer<rocksdb_slicetransform_t>?
+  private val sliceTransform: CPointer<rocksdb_slicetransform_t> = rocksdb_slicetransform_create_noop() ?: error("could not instantiate new SliceTransform")
 ) {
+  constructor(
+    state: CValuesRef<*>?, 
+    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
+    transform: CPointer<CFunction<Function4<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?, 
+    inDomain: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?, 
+    inRange: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?, 
+    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
+  ): this(rocksdb_slicetransform_create(state, destructor, transform, inDomain, inRange, name) ?: error("could not instantiate new SliceTransform"))
+  
+  constructor(
+    arg0: ULong, 
+  ): this(rocksdb_slicetransform_create_fixed_prefix(arg0) ?: error("could not instantiate new SliceTransform"))
+
   fun destroy(): Unit = 
     rocksdb_slicetransform_destroy(sliceTransform) 
-
-  companion object {
-    fun create(
-      state: CValuesRef<*>?, 
-      destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
-      transform: CPointer<CFunction<Function4<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?, 
-      inDomain: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?, 
-      inRange: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?, 
-      name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
-    ): CPointer<rocksdb_slicetransform_t> = 
-      rocksdb_slicetransform_create(state, destructor, transform, inDomain, inRange, name) 
-       ?: error("could not execute 'rocksdb_slicetransform_create'")
-    
-    fun createFixedPrefix(
-      arg0: ULong, 
-    ): CPointer<rocksdb_slicetransform_t> = 
-      rocksdb_slicetransform_create_fixed_prefix(arg0) 
-       ?: error("could not execute 'rocksdb_slicetransform_create_fixed_prefix'")
-    
-    fun createNoop(): CPointer<rocksdb_slicetransform_t> = 
-      rocksdb_slicetransform_create_noop() 
-       ?: error("could not execute 'rocksdb_slicetransform_create_noop'")
-  }
 }
 
 class UniversalCompactionOptions(
-  private val universalCompactionOptions: CPointer<rocksdb_universal_compaction_options_t>?
+  private val universalCompactionOptions: CPointer<rocksdb_universal_compaction_options_t> = rocksdb_universal_compaction_options_create() ?: error("could not instantiate new UniversalCompactionOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_universal_compaction_options_destroy(universalCompactionOptions) 
@@ -1989,16 +1841,10 @@ class UniversalCompactionOptions(
   var stopStyle: Int
     get() = rocksdb_universal_compaction_options_get_stop_style(universalCompactionOptions)
     set(value) = rocksdb_universal_compaction_options_set_stop_style(universalCompactionOptions, value)
-
-  companion object {
-    fun create(): CPointer<rocksdb_universal_compaction_options_t> = 
-      rocksdb_universal_compaction_options_create() 
-       ?: error("could not execute 'rocksdb_universal_compaction_options_create'")
-  }
 }
 
 class FifoCompactionOptions(
-  private val fifoCompactionOptions: CPointer<rocksdb_fifo_compaction_options_t>?
+  private val fifoCompactionOptions: CPointer<rocksdb_fifo_compaction_options_t> = rocksdb_fifo_compaction_options_create() ?: error("could not instantiate new FifoCompactionOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_fifo_compaction_options_destroy(fifoCompactionOptions) 
@@ -2006,46 +1852,28 @@ class FifoCompactionOptions(
   var maxTableFilesSize: ULong
     get() = rocksdb_fifo_compaction_options_get_max_table_files_size(fifoCompactionOptions)
     set(value) = rocksdb_fifo_compaction_options_set_max_table_files_size(fifoCompactionOptions, value)
-
-  companion object {
-    fun create(): CPointer<rocksdb_fifo_compaction_options_t> = 
-      rocksdb_fifo_compaction_options_create() 
-       ?: error("could not execute 'rocksdb_fifo_compaction_options_create'")
-  }
 }
 
 class TransactionDbCheckpointObject(
-  private val transactionDbCheckpointObject: CPointer<rocksdb_checkpoint_t>?
+  private val transactionDbCheckpointObject: CPointer<rocksdb_checkpoint_t>
 ) {
-
-
-  companion object {
-    fun create(
-      txnDb: CValuesRef<rocksdb_transactiondb_t>?, 
-      errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-    ): CPointer<rocksdb_checkpoint_t> = 
-      rocksdb_transactiondb_checkpoint_object_create(txnDb, errorPointer) 
-       ?: error("could not execute 'rocksdb_transactiondb_checkpoint_object_create'")
-  }
+  constructor(
+    txnDb: CValuesRef<rocksdb_transactiondb_t>?, 
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
+  ): this(rocksdb_transactiondb_checkpoint_object_create(txnDb, errorPointer) ?: error("could not instantiate new TransactionDbCheckpointObject"))
 }
 
 class OptimisticTransactionDbCheckpointObject(
-  private val optimisticTransactionDbCheckpointObject: CPointer<rocksdb_checkpoint_t>?
+  private val optimisticTransactionDbCheckpointObject: CPointer<rocksdb_checkpoint_t>
 ) {
-
-
-  companion object {
-    fun create(
-      otxnDb: CValuesRef<rocksdb_optimistictransactiondb_t>?, 
-      errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-    ): CPointer<rocksdb_checkpoint_t> = 
-      rocksdb_optimistictransactiondb_checkpoint_object_create(otxnDb, errorPointer) 
-       ?: error("could not execute 'rocksdb_optimistictransactiondb_checkpoint_object_create'")
-  }
+  constructor(
+    otxnDb: CValuesRef<rocksdb_optimistictransactiondb_t>?, 
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
+  ): this(rocksdb_optimistictransactiondb_checkpoint_object_create(otxnDb, errorPointer) ?: error("could not instantiate new OptimisticTransactionDbCheckpointObject"))
 }
 
 class TransactionDbOptions(
-  private val transactionDbOptions: CPointer<rocksdb_transactiondb_options_t>?
+  private val transactionDbOptions: CPointer<rocksdb_transactiondb_options_t> = rocksdb_transactiondb_options_create() ?: error("could not instantiate new TransactionDbOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_transactiondb_options_destroy(transactionDbOptions) 
@@ -2069,16 +1897,10 @@ class TransactionDbOptions(
     defaultLockTimeout: Long, 
   ): Unit = 
     rocksdb_transactiondb_options_set_default_lock_timeout(transactionDbOptions, defaultLockTimeout) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_transactiondb_options_t> = 
-      rocksdb_transactiondb_options_create() 
-       ?: error("could not execute 'rocksdb_transactiondb_options_create'")
-  }
 }
 
 class TransactionOptions(
-  private val transactionOptions: CPointer<rocksdb_transaction_options_t>?
+  private val transactionOptions: CPointer<rocksdb_transaction_options_t> = rocksdb_transaction_options_create() ?: error("could not instantiate new TransactionOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_transaction_options_destroy(transactionOptions) 
@@ -2117,16 +1939,10 @@ class TransactionOptions(
     v: Boolean, 
   ): Unit = 
     rocksdb_transaction_options_set_skip_prepare(transactionOptions, v.toUByte()) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_transaction_options_t> = 
-      rocksdb_transaction_options_create() 
-       ?: error("could not execute 'rocksdb_transaction_options_create'")
-  }
 }
 
 class OptimisticTransactionOptions(
-  private val optimisticTransactionOptions: CPointer<rocksdb_optimistictransaction_options_t>?
+  private val optimisticTransactionOptions: CPointer<rocksdb_optimistictransaction_options_t> = rocksdb_optimistictransaction_options_create() ?: error("could not instantiate new OptimisticTransactionOptions")
 ) {
   fun destroy(): Unit = 
     rocksdb_optimistictransaction_options_destroy(optimisticTransactionOptions) 
@@ -2135,16 +1951,10 @@ class OptimisticTransactionOptions(
     v: Boolean, 
   ): Unit = 
     rocksdb_optimistictransaction_options_set_set_snapshot(optimisticTransactionOptions, v.toUByte()) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_optimistictransaction_options_t> = 
-      rocksdb_optimistictransaction_options_create() 
-       ?: error("could not execute 'rocksdb_optimistictransaction_options_create'")
-  }
 }
 
 class MemoryConsumers(
-  private val memoryConsumers: CPointer<rocksdb_memory_consumers_t>?
+  private val memoryConsumers: CPointer<rocksdb_memory_consumers_t> = rocksdb_memory_consumers_create() ?: error("could not instantiate new MemoryConsumers")
 ) {
   fun addDb(
     db: CValuesRef<rocksdb_t>?, 
@@ -2158,17 +1968,16 @@ class MemoryConsumers(
 
   fun destroy(): Unit = 
     rocksdb_memory_consumers_destroy(memoryConsumers) 
-
-  companion object {
-    fun create(): CPointer<rocksdb_memory_consumers_t> = 
-      rocksdb_memory_consumers_create() 
-       ?: error("could not execute 'rocksdb_memory_consumers_create'")
-  }
 }
 
 class ApproximateMemoryUsage(
-  private val approximateMemoryUsage: CPointer<rocksdb_memory_usage_t>?
+  private val approximateMemoryUsage: CPointer<rocksdb_memory_usage_t>
 ) {
+  constructor(
+    consumers: CValuesRef<rocksdb_memory_consumers_t>?, 
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
+  ): this(rocksdb_approximate_memory_usage_create(consumers, errorPointer) ?: error("could not instantiate new ApproximateMemoryUsage"))
+
   fun destroy(): Unit = 
     rocksdb_approximate_memory_usage_destroy(approximateMemoryUsage) 
 
@@ -2183,13 +1992,4 @@ class ApproximateMemoryUsage(
 
   val cacheTotal: ULong
     get() = rocksdb_approximate_memory_usage_get_cache_total(approximateMemoryUsage)
-
-  companion object {
-    fun create(
-      consumers: CValuesRef<rocksdb_memory_consumers_t>?, 
-      errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-    ): CPointer<rocksdb_memory_usage_t> = 
-      rocksdb_approximate_memory_usage_create(consumers, errorPointer) 
-       ?: error("could not execute 'rocksdb_approximate_memory_usage_create'")
-  }
 }

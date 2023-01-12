@@ -100,54 +100,78 @@ object KLibProcessor {
           )
         }.partition { it.static }
 
-        println("${creatable.name} - staticFns [${staticFns.size}]: ${staticFns.map { it.name }}")
-        println("${creatable.name} - memberFns [${memberFns.size}]: ${memberFns.map { it.name }}")
+        val (constructorFns, staticUtilFns) = staticFns.partition { fn ->
+          fn.fn.valueParameters.none { it.sameTypeAs(creatable.type) }
+              && fn.fn.returnType.kotlinType(nullable = false) == creatable.type.kotlinType(nullable = false)
+        }
 
-        val elements = (memberFns + valsAndVars).joinToString("\n\n") { vv ->
-          when (vv) {
+        val elements = (memberFns + valsAndVars).joinToString("\n\n") { element ->
+          when (element) {
             is RdbCreateableElement.Fn  ->
-              vv.createKotlinFn().prependIndent("  ")
+              element.createKotlinFn().prependIndent("  ")
 
             is RdbCreateableElement.Val ->
               """
-              |  val ${vv.prettyName}: ${vv.returnTypeClassifier.kotlinType()}
-              |    get() = ${vv.getterFn.name}(${creatable.propName})${vv.returnTypeClassifier.getterConverter()}
+              |  val ${element.prettyName}: ${element.returnTypeClassifier.kotlinType()}
+              |    get() = ${element.getterFn.name}(${creatable.propName})${element.returnTypeClassifier.getterConverter()}
             """.trimMargin()
 
             is RdbCreateableElement.Var -> {
 
               val setterConverter = when {
-                vv.returnTypeClassifier.kotlinType() == "Boolean" -> when {
-                  vv.setterFn.valueParameters[1].type.classifier.kotlinType() == "Int" -> ".toInt()"
-                  else                                                                 -> vv.returnTypeClassifier.setterConverter()
+                element.returnTypeClassifier.kotlinType() == "Boolean" -> when {
+                  element.setterFn.valueParameters[1].type.classifier.kotlinType() == "Int" -> ".toInt()"
+                  else                                                                      -> element.returnTypeClassifier.setterConverter()
                 }
 
-                else                                              -> ""
+                else                                                   -> ""
               }
 
               """
-                |  var ${vv.prettyName}: ${vv.returnTypeClassifier.kotlinType()}
-                |    get() = ${vv.getterFn.name}(${creatable.propName})${vv.returnTypeClassifier.getterConverter()}
-                |    set(value) = ${vv.setterFn.name}(${creatable.propName}, value$setterConverter)
+                |  var ${element.prettyName}: ${element.returnTypeClassifier.kotlinType()}
+                |    get() = ${element.getterFn.name}(${creatable.propName})${element.returnTypeClassifier.getterConverter()}
+                |    set(value) = ${element.setterFn.name}(${creatable.propName}, value$setterConverter)
               """.trimMargin()
             }
           }
         }
 
+        val noArgConstructor =
+          constructorFns.firstOrNull { it.fn.valueParameters.isEmpty() }?.let { fn ->
+            """ = ${fn.fn.name}() ?: error("could not instantiate new ${creatable.prettyName}")"""
+          } ?: ""
+        val constructors = constructorFns.filter {
+          it.fn.valueParameters.isNotEmpty()
+        }.joinToString("\n\n") {
+          it.createKotlinConstructor()
+        }.prependIndent("  ")
+
+        val companionObject = if (staticUtilFns.isEmpty()) {
+          ""
+        } else {
+          """
+            |companion object {
+            |${staticUtilFns.joinToString("\n\n") { it.createKotlinFn() }.prependIndent("  ")}
+            |}
+          """.trimMargin()
+        }.prependIndent("  ")
+
+        val classContent = listOf(
+          constructors,
+          elements,
+          companionObject,
+        ).filter { it.isNotBlank() }
+          .joinToString(separator = "\n\n")
+
         """
           |
           |class ${creatable.prettyName}(
-          |  private val ${creatable.propName}: ${creatable.type.kotlinType()}
+          |  private val ${creatable.propName}: ${creatable.type.kotlinType(nullable = false)}$noArgConstructor
           |) {
-          |$elements
-          |
-          |  companion object {
-          |${staticFns.joinToString("\n\n") { it.createKotlinFn() }.prependIndent("    ")}
-          |  }
+          |$classContent
           |}
           |
         """.trimMargin()
-
       }.values.joinToString(
         "",
         prefix = """
@@ -250,16 +274,7 @@ private fun RdbCreateableElement.Fn.createKotlinFn(): String {
     fn.valueParameters
   }
 
-  data class Param(
-    val actual: KmValueParameter,
-  ) {
-    val prettyName = actual.name.knmNameToPrettyName()
-    val kotlinType = actual.type.kotlinType()
-    val converter = actual.type.classifier.setterConverter()
-    val paramString = "${prettyName}: ${kotlinType}, "
-  }
-
-  val params = filteredParams.map(::Param)
+  val params = filteredParams.map(RdbCreateableElement.Fn::Param)
 
   val fnArgs = params.joinToString("\n") { it.paramString }
   val fnArgNames = params.joinToString(", ") {
@@ -267,7 +282,7 @@ private fun RdbCreateableElement.Fn.createKotlinFn(): String {
   }
 
   val nullable = if (static) false else null
-  val elvis = if (static) """${'\n'}  ?: error("could not execute '${fn.name}'")""" else ""
+  val elvis = if (static) """${'\n'} ?: error("could not execute '${fn.name}'")""" else ""
 
   return if (fnArgs.isBlank()) {
     """
@@ -282,6 +297,22 @@ private fun RdbCreateableElement.Fn.createKotlinFn(): String {
       |  ${fn.name}(${if (!static) "${owner.propName}, " else ""}$fnArgNames)${fn.returnType.classifier.getterConverter()} $elvis
     """.trimMargin()
   }
+}
+
+private fun RdbCreateableElement.Fn.createKotlinConstructor(): String {
+
+  val params = fn.valueParameters.map(RdbCreateableElement.Fn::Param)
+
+  val fnArgs = params.joinToString("\n") { it.paramString }
+  val fnArgNames = params.joinToString(", ") {
+    it.prettyName + it.converter
+  }
+
+  return """
+      |constructor(
+      |${fnArgs.prependIndent("  ")}
+      |): this(${fn.name}($fnArgNames) ?: error("could not instantiate new ${owner.prettyName}"))
+    """.trimMargin()
 }
 
 
@@ -324,6 +355,15 @@ private sealed interface RdbCreateableElement {
     val owner: RdbCreateable,
   ) : RdbCreateableElement {
     val static = fn.valueParameters.none { it.sameTypeAs(owner.type) }
+
+    data class Param(
+      val actual: KmValueParameter,
+    ) {
+      val prettyName = actual.name.knmNameToPrettyName()
+      val kotlinType = actual.type.kotlinType()
+      val converter = actual.type.classifier.setterConverter()
+      val paramString = "${prettyName}: ${kotlinType}, "
+    }
   }
 }
 
@@ -343,6 +383,7 @@ private fun String.knmNameToPrettyName() =
     .replace("putv_cf", "put")
     .replace("merge_cf", "merge")
     .replace("delete_cf", "delete")
+    .replace("deletev_cf", "delete")
     .replace("range_cf", "range")
     .split("_")
     .joinToString("") {
