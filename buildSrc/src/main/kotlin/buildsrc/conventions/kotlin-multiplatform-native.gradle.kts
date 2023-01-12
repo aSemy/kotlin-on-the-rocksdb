@@ -1,5 +1,7 @@
 package buildsrc.conventions
 
+import buildsrc.ext.uppercaseFirstChar
+import java.util.Locale
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -68,7 +70,7 @@ kotlin {
 
 // create lifecycle task for each Kotlin Platform, that will run all tests
 KotlinPlatformType.values().forEach { kotlinPlatform ->
-  val kotlinPlatformName = kotlinPlatform.name.capitalize()
+  val kotlinPlatformName = kotlinPlatform.name.uppercaseFirstChar()
 
   val testKotlinTargetLifecycleTask = tasks.create("allKotlin${kotlinPlatformName}Tests") {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
