@@ -1,4 +1,4 @@
-# [Kotlin on the Rocks](https://github.com/aSemy/kotlin-on-the-rocksdb)
+# [Kotlin on the RocksDB](https://github.com/aSemy/kotlin-on-the-rocksdb)
 
 [Kotlin/Native](https://kotlinlang.org/docs/native-overview.html) bindings for [RocksDB](https://github.com/facebook/rocksdb/).
 
