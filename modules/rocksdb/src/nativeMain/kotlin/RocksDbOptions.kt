@@ -7,21 +7,15 @@ import cnames.structs.rocksdb_comparator_t
 import cnames.structs.rocksdb_env_t
 import cnames.structs.rocksdb_options_t
 import cnames.structs.rocksdb_universal_compaction_options_t
-import kotlin.Boolean
-import kotlin.Int
-import kotlin.String
-import kotlin.UByte
-import kotlin.ULong
-import kotlin.Unit
 import kotlinx.cinterop.AutofreeScope
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValuesRef
 import org.rocksdb.*
 
 // maybe copy & paste docs from https://github.com/facebook/rocksdb/blob/main/include/rocksdb/options.h?
-class RocksDbOptions(
+class RocksDbOptions2(
   private val options: CPointer<rocksdb_options_t> = create(),
-  configure: RocksDbOptions.() -> Unit = {},
+  configure: RocksDbOptions2.() -> Unit = {},
 ) : CValuesRef<rocksdb_options_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_options_t> =

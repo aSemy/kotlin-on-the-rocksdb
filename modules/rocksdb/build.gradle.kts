@@ -1,3 +1,5 @@
+import buildsrc.knparse.KLibProcessor
+
 plugins {
   buildsrc.conventions.`kotlin-multiplatform-native`
   kotlin("plugin.serialization")
@@ -95,5 +97,15 @@ val rocksDbOptionsGen by tasks.registering {
       .forEach { option ->
         println("fun $option() = rocksdb_options_$option(options)")
       }
+  }
+}
+
+val parseKLib by tasks.registering {
+  val outFile = projectDir.resolve("src/nativeMain/kotlin/generatedOptions.kt")
+  outputs.file(outFile)
+  doLast {
+    val gen =
+      KLibProcessor.processFeatureContext(File("/Users/semene000/projects/adam/kotlin/kotlin-on-the-rocksdb/modules/rocksdb/build/classes/kotlin/macosX64/main/cinterop/rocksdb-cinterop-rocksdb.klib"))
+    outFile.writeText(gen)
   }
 }
