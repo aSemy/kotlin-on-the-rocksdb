@@ -58,54 +58,25 @@ kotlin {
   }
 }
 
-val rocksDbOptionsGen by tasks.registering {
+val generateRocksDbWrappers by tasks.registering {
   group = project.name
-
-  description = "util for helping generate vals/vars for rocksdb option classes"
-
-  val headers = layout.projectDirectory.file("src/nativeInterop/libs/rocksdb/c.h")
-  inputs.file(headers)
-  outputs.dir(temporaryDir)
-  doLast {
-    val headersText = headers.asFile.readText()
-
-    val getters = Regex("rocksdb_options_get_([a-zA-Z0-9_]+)").findAll(headersText).map {
-      it.groupValues[1]
-    }.toSet()
-
-    val setters = Regex("rocksdb_options_set_([a-zA-Z0-9_]+)").findAll(headersText).map {
-      it.groupValues[1]
-    }.toSet()
-
-    (getters union setters).map { option ->
-      if (option in setters && option in getters) {
-        "var $option get() = rocksdb_options_get_$option(options); set(value) { rocksdb_options_set_$option(options, value) }"
-      } else if (option in getters) {
-        "val $option get() = rocksdb_options_get_$option(options)"
-      } else {
-        "fun $option() = rocksdb_options_set_$option(options)"
-      }
-    }.sorted().forEach {
-      println(it)
-    }
-
-    println("// functions")
-
-    Regex("rocksdb_options_([^get|set][a-zA-Z0-9_]+)").findAll(headersText).map {
-      it.groupValues[1]
-    }.toSet()
-      .forEach { option ->
-        println("fun $option() = rocksdb_options_$option(options)")
-      }
-  }
-}
-
-val parseKLib by tasks.registering {
+  description = "generate idiomatic-Kotlin wrappers for RocksDB cinterop code"
   val outFile = projectDir.resolve("src/nativeMain/kotlin/generatedOptions.kt")
   outputs.file(outFile)
+
+  val klibFile: Provider<File> = tasks
+      .withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>()
+      .named("cinteropRocksdbLinuxX64")
+      .flatMap { it.outputFileProvider }
+
+  inputs.file(klibFile)
+
+  dependsOn(tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>())
+
   doLast {
-    val gen =
-      KLibProcessor.processFeatureContext(File("/Users/semene000/projects/adam/kotlin/kotlin-on-the-rocksdb/modules/rocksdb/build/classes/kotlin/macosX64/main/cinterop/rocksdb-cinterop-rocksdb.klib"))
+    val gen = KLibProcessor.processFeatureContext(
+      klibFile.get()
+    )
     outFile.writeText(gen)
   }
 }
