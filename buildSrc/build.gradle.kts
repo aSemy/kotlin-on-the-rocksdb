@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-
 plugins {
   `kotlin-dsl`
 }
@@ -24,14 +21,4 @@ kotlin {
   jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of(buildSrcJvmTarget))
   }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions {
-    jvmTarget = buildSrcJvmTarget
-  }
-}
-
-kotlinDslPluginOptions {
-  jvmTarget.set(buildSrcJvmTarget)
 }
