@@ -157,6 +157,10 @@ object KLibProcessor {
         }.prependIndent("  ")
 
         val classContent = listOf(
+          """
+            |override fun getPointer(scope: AutofreeScope): CPointer<${creatable.coreKotlinType}> =
+            |  ${creatable.propName}.getPointer(scope)
+          """.trimMargin().prependIndent("  "),
           constructors,
           elements,
           companionObject,
@@ -167,7 +171,8 @@ object KLibProcessor {
           |
           |class ${creatable.prettyName}(
           |  private val ${creatable.propName}: ${creatable.type.kotlinType(nullable = false)}$noArgConstructor
-          |) {
+          |) : CValuesRef<${creatable.coreKotlinType}>() {
+          |
           |$classContent
           |}
           |
@@ -257,6 +262,7 @@ private class RdbCreateable(
   val createFnName: String = createFn.name
   val prettyName: String = createableNameMap[name] ?: error("missing pretty name for $name")
   val type: KmType = createFn.returnType
+  val coreKotlinType: String = type.arguments.first().type!!.kotlinType(nullable = false)
   val propName: String = prettyName.lowercaseFirstChar()
 
   val createFn = RdbCreateableElement.Fn(

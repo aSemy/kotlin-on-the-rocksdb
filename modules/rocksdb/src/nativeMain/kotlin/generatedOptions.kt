@@ -5,7 +5,11 @@ import kotlinx.cinterop.*
 
 class RestoreOptions(
   private val restoreOptions: CPointer<rocksdb_restore_options_t> = rocksdb_restore_options_create() ?: error("could not instantiate new RestoreOptions")
-) {
+) : CValuesRef<rocksdb_restore_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_restore_options_t> =
+    restoreOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_restore_options_destroy(restoreOptions) 
 
@@ -17,7 +21,11 @@ class RestoreOptions(
 
 class BackupEngineOptions(
   private val backupEngineOptions: CPointer<rocksdb_backup_engine_options_t>
-) {
+) : CValuesRef<rocksdb_backup_engine_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_backup_engine_options_t> =
+    backupEngineOptions.getPointer(scope)
+
   constructor(
     backupDir: String?, 
   ): this(rocksdb_backup_engine_options_create(backupDir) ?: error("could not instantiate new BackupEngineOptions"))
@@ -78,7 +86,11 @@ class BackupEngineOptions(
 
 class CheckpointObject(
   private val checkpointObject: CPointer<rocksdb_checkpoint_t>
-) {
+) : CValuesRef<rocksdb_checkpoint_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_checkpoint_t> =
+    checkpointObject.getPointer(scope)
+
   constructor(
     db: CValuesRef<rocksdb_t>?, 
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
@@ -90,7 +102,11 @@ class CheckpointObject(
 
 class WriteBatch(
   private val writeBatch: CPointer<rocksdb_writebatch_t> = rocksdb_writebatch_create() ?: error("could not instantiate new WriteBatch")
-) {
+) : CValuesRef<rocksdb_writebatch_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_writebatch_t> =
+    writeBatch.getPointer(scope)
+
   constructor(
     rep: String?, 
     size: ULong, 
@@ -321,7 +337,11 @@ class WriteBatch(
 
 class WriteBatchWi(
   private val writeBatchWi: CPointer<rocksdb_writebatch_wi_t>
-) {
+) : CValuesRef<rocksdb_writebatch_wi_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_writebatch_wi_t> =
+    writeBatchWi.getPointer(scope)
+
   constructor(
     reservedBytes: ULong, 
     overwriteKeys: Boolean, 
@@ -574,7 +594,11 @@ class WriteBatchWi(
 
 class BlockBasedOptions(
   private val blockBasedOptions: CPointer<rocksdb_block_based_table_options_t> = rocksdb_block_based_options_create() ?: error("could not instantiate new BlockBasedOptions")
-) {
+) : CValuesRef<rocksdb_block_based_table_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_block_based_table_options_t> =
+    blockBasedOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_block_based_options_destroy(blockBasedOptions) 
 
@@ -686,7 +710,11 @@ class BlockBasedOptions(
 
 class CuckooOptions(
   private val cuckooOptions: CPointer<rocksdb_cuckoo_table_options_t> = rocksdb_cuckoo_options_create() ?: error("could not instantiate new CuckooOptions")
-) {
+) : CValuesRef<rocksdb_cuckoo_table_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_cuckoo_table_options_t> =
+    cuckooOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_cuckoo_options_destroy(cuckooOptions) 
 
@@ -718,7 +746,11 @@ class CuckooOptions(
 
 class RocksDbOptions(
   private val rocksDbOptions: CPointer<rocksdb_options_t> = rocksdb_options_create() ?: error("could not instantiate new RocksDbOptions")
-) {
+) : CValuesRef<rocksdb_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_options_t> =
+    rocksDbOptions.getPointer(scope)
+
   fun setBlockBasedTableFactory(
     tableOptions: CValuesRef<rocksdb_block_based_table_options_t>?, 
   ): Unit = 
@@ -1328,7 +1360,11 @@ class RocksDbOptions(
 
 class RateLimiter(
   private val rateLimiter: CPointer<rocksdb_ratelimiter_t>
-) {
+) : CValuesRef<rocksdb_ratelimiter_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_ratelimiter_t> =
+    rateLimiter.getPointer(scope)
+
   constructor(
     rateBytesPerSec: Long, 
     refillPeriodUs: Long, 
@@ -1341,7 +1377,11 @@ class RateLimiter(
 
 class PerfContext(
   private val perfContext: CPointer<rocksdb_perfcontext_t> = rocksdb_perfcontext_create() ?: error("could not instantiate new PerfContext")
-) {
+) : CValuesRef<rocksdb_perfcontext_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_perfcontext_t> =
+    perfContext.getPointer(scope)
+
   fun reset(): Unit = 
     rocksdb_perfcontext_reset(perfContext) 
 
@@ -1361,7 +1401,11 @@ class PerfContext(
 
 class CompactionFilter(
   private val compactionFilter: CPointer<rocksdb_compactionfilter_t>
-) {
+) : CValuesRef<rocksdb_compactionfilter_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_compactionfilter_t> =
+    compactionFilter.getPointer(scope)
+
   constructor(
     state: CValuesRef<*>?, 
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
@@ -1380,7 +1424,11 @@ class CompactionFilter(
 
 class CompactionFilterFactory(
   private val compactionFilterFactory: CPointer<rocksdb_compactionfilterfactory_t>
-) {
+) : CValuesRef<rocksdb_compactionfilterfactory_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_compactionfilterfactory_t> =
+    compactionFilterFactory.getPointer(scope)
+
   constructor(
     state: CValuesRef<*>?, 
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
@@ -1394,7 +1442,11 @@ class CompactionFilterFactory(
 
 class Comparator(
   private val comparator: CPointer<rocksdb_comparator_t>
-) {
+) : CValuesRef<rocksdb_comparator_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_comparator_t> =
+    comparator.getPointer(scope)
+
   constructor(
     state: CValuesRef<*>?, 
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
@@ -1418,7 +1470,11 @@ class Comparator(
 
 class ComparatorWithTs(
   private val comparatorWithTs: CPointer<rocksdb_comparator_t>
-) {
+) : CValuesRef<rocksdb_comparator_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_comparator_t> =
+    comparatorWithTs.getPointer(scope)
+
   constructor(
     state: CValuesRef<*>?, 
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
@@ -1432,7 +1488,11 @@ class ComparatorWithTs(
 
 class MergeOperator(
   private val mergeOperator: CPointer<rocksdb_mergeoperator_t>
-) {
+) : CValuesRef<rocksdb_mergeoperator_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_mergeoperator_t> =
+    mergeOperator.getPointer(scope)
+
   constructor(
     state: CValuesRef<*>?, 
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
@@ -1448,7 +1508,11 @@ class MergeOperator(
 
 class ReadOptions(
   private val readOptions: CPointer<rocksdb_readoptions_t> = rocksdb_readoptions_create() ?: error("could not instantiate new ReadOptions")
-) {
+) : CValuesRef<rocksdb_readoptions_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_readoptions_t> =
+    readOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_readoptions_destroy(readOptions) 
 
@@ -1541,7 +1605,11 @@ class ReadOptions(
 
 class WriteOptions(
   private val writeOptions: CPointer<rocksdb_writeoptions_t> = rocksdb_writeoptions_create() ?: error("could not instantiate new WriteOptions")
-) {
+) : CValuesRef<rocksdb_writeoptions_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_writeoptions_t> =
+    writeOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_writeoptions_destroy(writeOptions) 
 
@@ -1576,7 +1644,11 @@ class WriteOptions(
 
 class CompactOptions(
   private val compactOptions: CPointer<rocksdb_compactoptions_t> = rocksdb_compactoptions_create() ?: error("could not instantiate new CompactOptions")
-) {
+) : CValuesRef<rocksdb_compactoptions_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_compactoptions_t> =
+    compactOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_compactoptions_destroy(compactOptions) 
 
@@ -1605,7 +1677,11 @@ class CompactOptions(
 
 class FlushOptions(
   private val flushOptions: CPointer<rocksdb_flushoptions_t> = rocksdb_flushoptions_create() ?: error("could not instantiate new FlushOptions")
-) {
+) : CValuesRef<rocksdb_flushoptions_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_flushoptions_t> =
+    flushOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_flushoptions_destroy(flushOptions) 
 
@@ -1616,7 +1692,11 @@ class FlushOptions(
 
 class JemallocNoDumpAllocator(
   private val jemallocNoDumpAllocator: CPointer<rocksdb_memory_allocator_t>
-) {
+) : CValuesRef<rocksdb_memory_allocator_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_memory_allocator_t> =
+    jemallocNoDumpAllocator.getPointer(scope)
+
   constructor(
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
   ): this(rocksdb_jemalloc_nodump_allocator_create(errorPointer) ?: error("could not instantiate new JemallocNoDumpAllocator"))
@@ -1624,7 +1704,11 @@ class JemallocNoDumpAllocator(
 
 class LruCacheOptions(
   private val lruCacheOptions: CPointer<rocksdb_lru_cache_options_t> = rocksdb_lru_cache_options_create() ?: error("could not instantiate new LruCacheOptions")
-) {
+) : CValuesRef<rocksdb_lru_cache_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_lru_cache_options_t> =
+    lruCacheOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_lru_cache_options_destroy(lruCacheOptions) 
 
@@ -1646,7 +1730,11 @@ class LruCacheOptions(
 
 class DbPath(
   private val dbPath: CPointer<rocksdb_dbpath_t>
-) {
+) : CValuesRef<rocksdb_dbpath_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_dbpath_t> =
+    dbPath.getPointer(scope)
+
   constructor(
     path: String?, 
     targetSize: ULong, 
@@ -1658,14 +1746,22 @@ class DbPath(
 
 class EnvOptions(
   private val envOptions: CPointer<rocksdb_envoptions_t> = rocksdb_envoptions_create() ?: error("could not instantiate new EnvOptions")
-) {
+) : CValuesRef<rocksdb_envoptions_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_envoptions_t> =
+    envOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_envoptions_destroy(envOptions) 
 }
 
 class SstFileWriter(
   private val sstFileWriter: CPointer<rocksdb_sstfilewriter_t>
-) {
+) : CValuesRef<rocksdb_sstfilewriter_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_sstfilewriter_t> =
+    sstFileWriter.getPointer(scope)
+
   constructor(
     env: CValuesRef<rocksdb_envoptions_t>?, 
     ioOptions: CValuesRef<rocksdb_options_t>?, 
@@ -1762,7 +1858,11 @@ class SstFileWriter(
 
 class IngestExternalFileOptions(
   private val ingestExternalFileOptions: CPointer<rocksdb_ingestexternalfileoptions_t> = rocksdb_ingestexternalfileoptions_create() ?: error("could not instantiate new IngestExternalFileOptions")
-) {
+) : CValuesRef<rocksdb_ingestexternalfileoptions_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_ingestexternalfileoptions_t> =
+    ingestExternalFileOptions.getPointer(scope)
+
   fun setMoveFiles(
     moveFiles: Boolean, 
   ): Unit = 
@@ -1794,7 +1894,11 @@ class IngestExternalFileOptions(
 
 class SliceTransform(
   private val sliceTransform: CPointer<rocksdb_slicetransform_t> = rocksdb_slicetransform_create_noop() ?: error("could not instantiate new SliceTransform")
-) {
+) : CValuesRef<rocksdb_slicetransform_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_slicetransform_t> =
+    sliceTransform.getPointer(scope)
+
   constructor(
     state: CValuesRef<*>?, 
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
@@ -1814,7 +1918,11 @@ class SliceTransform(
 
 class UniversalCompactionOptions(
   private val universalCompactionOptions: CPointer<rocksdb_universal_compaction_options_t> = rocksdb_universal_compaction_options_create() ?: error("could not instantiate new UniversalCompactionOptions")
-) {
+) : CValuesRef<rocksdb_universal_compaction_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_universal_compaction_options_t> =
+    universalCompactionOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_universal_compaction_options_destroy(universalCompactionOptions) 
 
@@ -1845,7 +1953,11 @@ class UniversalCompactionOptions(
 
 class FifoCompactionOptions(
   private val fifoCompactionOptions: CPointer<rocksdb_fifo_compaction_options_t> = rocksdb_fifo_compaction_options_create() ?: error("could not instantiate new FifoCompactionOptions")
-) {
+) : CValuesRef<rocksdb_fifo_compaction_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_fifo_compaction_options_t> =
+    fifoCompactionOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_fifo_compaction_options_destroy(fifoCompactionOptions) 
 
@@ -1856,7 +1968,11 @@ class FifoCompactionOptions(
 
 class TransactionDbCheckpointObject(
   private val transactionDbCheckpointObject: CPointer<rocksdb_checkpoint_t>
-) {
+) : CValuesRef<rocksdb_checkpoint_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_checkpoint_t> =
+    transactionDbCheckpointObject.getPointer(scope)
+
   constructor(
     txnDb: CValuesRef<rocksdb_transactiondb_t>?, 
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
@@ -1865,7 +1981,11 @@ class TransactionDbCheckpointObject(
 
 class OptimisticTransactionDbCheckpointObject(
   private val optimisticTransactionDbCheckpointObject: CPointer<rocksdb_checkpoint_t>
-) {
+) : CValuesRef<rocksdb_checkpoint_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_checkpoint_t> =
+    optimisticTransactionDbCheckpointObject.getPointer(scope)
+
   constructor(
     otxnDb: CValuesRef<rocksdb_optimistictransactiondb_t>?, 
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
@@ -1874,7 +1994,11 @@ class OptimisticTransactionDbCheckpointObject(
 
 class TransactionDbOptions(
   private val transactionDbOptions: CPointer<rocksdb_transactiondb_options_t> = rocksdb_transactiondb_options_create() ?: error("could not instantiate new TransactionDbOptions")
-) {
+) : CValuesRef<rocksdb_transactiondb_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_transactiondb_options_t> =
+    transactionDbOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_transactiondb_options_destroy(transactionDbOptions) 
 
@@ -1901,7 +2025,11 @@ class TransactionDbOptions(
 
 class TransactionOptions(
   private val transactionOptions: CPointer<rocksdb_transaction_options_t> = rocksdb_transaction_options_create() ?: error("could not instantiate new TransactionOptions")
-) {
+) : CValuesRef<rocksdb_transaction_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_transaction_options_t> =
+    transactionOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_transaction_options_destroy(transactionOptions) 
 
@@ -1943,7 +2071,11 @@ class TransactionOptions(
 
 class OptimisticTransactionOptions(
   private val optimisticTransactionOptions: CPointer<rocksdb_optimistictransaction_options_t> = rocksdb_optimistictransaction_options_create() ?: error("could not instantiate new OptimisticTransactionOptions")
-) {
+) : CValuesRef<rocksdb_optimistictransaction_options_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_optimistictransaction_options_t> =
+    optimisticTransactionOptions.getPointer(scope)
+
   fun destroy(): Unit = 
     rocksdb_optimistictransaction_options_destroy(optimisticTransactionOptions) 
 
@@ -1955,7 +2087,11 @@ class OptimisticTransactionOptions(
 
 class MemoryConsumers(
   private val memoryConsumers: CPointer<rocksdb_memory_consumers_t> = rocksdb_memory_consumers_create() ?: error("could not instantiate new MemoryConsumers")
-) {
+) : CValuesRef<rocksdb_memory_consumers_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_memory_consumers_t> =
+    memoryConsumers.getPointer(scope)
+
   fun addDb(
     db: CValuesRef<rocksdb_t>?, 
   ): Unit = 
@@ -1972,7 +2108,11 @@ class MemoryConsumers(
 
 class ApproximateMemoryUsage(
   private val approximateMemoryUsage: CPointer<rocksdb_memory_usage_t>
-) {
+) : CValuesRef<rocksdb_memory_usage_t>() {
+
+  override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_memory_usage_t> =
+    approximateMemoryUsage.getPointer(scope)
+
   constructor(
     consumers: CValuesRef<rocksdb_memory_consumers_t>?, 
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
