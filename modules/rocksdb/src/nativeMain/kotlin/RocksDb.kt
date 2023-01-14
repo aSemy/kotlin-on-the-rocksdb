@@ -12,7 +12,7 @@ import platform.posix.size_tVar
 class RocksDb(
   directory: String,
   dbOptions: RocksDbOptions,
-  private val readOptions: RocksDbReadOptions,
+  private val readOptions: ReadOptions,
   private val writeOptions: RocksDbWriteOptions,
   private val db: CPointer<rocksdb_t> = create(dbOptions, directory),
 ) : CValuesRef<rocksdb_t>() {
@@ -53,7 +53,7 @@ class RocksDb(
     }
   }
 
-  fun iterator(readOptions: RocksDbReadOptions = this@RocksDb.readOptions): RocksDbIterator =
+  fun iterator(readOptions: ReadOptions = this@RocksDb.readOptions): RocksDbIterator =
     RocksDbIterator(rocksdb_create_iterator(db, readOptions) ?: error("could not create iterator"))
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_t> = db.getPointer(scope)
