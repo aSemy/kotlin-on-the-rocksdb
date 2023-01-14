@@ -24,7 +24,7 @@ class RocksDbTest {
 
     println("testing rdb with file $tempDir")
 
-    val options = RocksDbOptions {
+    val options = RocksDbOptions().apply {
 //      increaseParallelism(Platform.getAvailableProcessors())
       optimizeLevelStyleCompaction(0u)
       createIfMissing = true
@@ -53,7 +53,7 @@ class RocksDbTest {
 
     println("testing rdb with file $tempDir")
 
-    val options = RocksDbOptions {
+    val options = RocksDbOptions().apply {
 //      increaseParallelism(Platform.getAvailableProcessors())
       optimizeLevelStyleCompaction(0u)
       createIfMissing = true
