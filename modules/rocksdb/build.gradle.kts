@@ -11,7 +11,7 @@ kotlin {
     compilations.getByName("main") {
       cinterops {
         val rocksdb by creating rocksdb@{
-          includeDirs("$projectDir/src/nativeInterop/external/rocksdb")
+          includeDirs("$projectDir/src/nativeInterop/external/rocksdb/include")
 
 //          if (target?.konanTarget?.family == org.jetbrains.kotlin.konan.target.Family.MINGW) {
 //            //            val msys2root = File(System.getenv("MSYS2_ROOT") ?: "C:/msys2/msys64/mingw64/lib/")
