@@ -1,7 +1,5 @@
-import dev.adamko.kotlin.on.the.rocksdb.RocksDb
-import dev.adamko.kotlin.on.the.rocksdb.RocksDbOptions
-import dev.adamko.kotlin.on.the.rocksdb.RocksDbReadOptions
-import dev.adamko.kotlin.on.the.rocksdb.RocksDbWriteOptions
+package dev.adamko.kotlin.on.the.rocksdb
+
 import kotlin.system.getTimeMillis
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -31,7 +29,7 @@ class RocksDbTest {
     }
 
     val writeOptions = RocksDbWriteOptions()
-    val readOptions = RocksDbReadOptions()
+    val readOptions = ReadOptions()
     val db = RocksDb(
       directory = tempDir,
       dbOptions = options,
@@ -60,7 +58,7 @@ class RocksDbTest {
     }
 
     val writeOptions = RocksDbWriteOptions()
-    val readOptions = RocksDbReadOptions()
+    val readOptions = ReadOptions()
     val db = RocksDb(
       directory = tempDir,
       dbOptions = options,
