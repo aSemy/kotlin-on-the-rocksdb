@@ -16,6 +16,7 @@ kotlin {
   sourceSets {
     configureEach {
       languageSettings.optIn("kotlin.ExperimentalStdlibApi")
+      languageSettings.optIn("dev.adamko.kotlin.on.the.rocksdb.KotlinOnTheRocksDbInternalApi")
     }
 
     commonMain {
