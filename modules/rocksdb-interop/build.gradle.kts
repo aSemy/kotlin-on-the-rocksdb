@@ -104,5 +104,5 @@ val syncRocksDbWrappers by tasks.registering(Sync::class) {
   from(generateRocksDbWrappers.map { it.temporaryDir })
   into(generatedMainSrcDir)
 
-  dependsOn(tasks.matching { it.name == "copyCommonizeCInteropForIde" })
+//  dependsOn(tasks.matching { it.name == "copyCommonizeCInteropForIde" })
 }
