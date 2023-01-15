@@ -35,10 +35,7 @@ class RocksDbTest {
   @Ignore
   fun test() = runBlocking {
 
-    val tempDir = when (Platform.osFamily) {
-      OsFamily.WINDOWS -> "C:\\Windows\\Temp\\rocksdb_temp_${getTimeMillis()}"
-      else             -> "/tmp/rocksdb_temp_${getTimeMillis()}"
-    }
+    val tempDir = tempDir()
 
     println("testing rdb with file $tempDir")
 
