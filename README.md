@@ -17,9 +17,8 @@ Using the C bindings potentially allows for targeting Windows, Linux, and MacOS.
 Building requires that the following libraries are installed.
 
 * `rocksdb`
+* `bz2`
 * `lz4`
 * `snappy`
-* `zstd`
-* `bz2`
-* `snappy`
 * `zlib`
+* `zstd`
