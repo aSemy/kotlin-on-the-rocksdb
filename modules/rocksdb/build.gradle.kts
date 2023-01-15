@@ -1,4 +1,5 @@
-import buildsrc.knparse.KLibProcessor
+import buildsrc.kotr.KLibProcessor
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   buildsrc.conventions.`kotlin-multiplatform-native`
@@ -7,7 +8,7 @@ plugins {
 
 kotlin {
 
-  targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
+  targets.withType<KotlinNativeTarget>().configureEach {
     compilations.getByName("main") {
       cinterops {
         val rocksdb by creating rocksdb@{
@@ -65,9 +66,9 @@ val generateRocksDbWrappers by tasks.registering {
   outputs.file(outFile)
 
   val klibFile: Provider<File> = tasks
-      .withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>()
-      .named("cinteropRocksdbLinuxX64")
-      .flatMap { it.outputFileProvider }
+    .withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>()
+    .named("cinteropRocksdbLinuxX64")
+    .flatMap { it.outputFileProvider }
 
   inputs.file(klibFile)
 
