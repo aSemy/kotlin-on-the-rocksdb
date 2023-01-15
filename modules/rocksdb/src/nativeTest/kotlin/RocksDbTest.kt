@@ -19,7 +19,7 @@ class RocksDbTest {
       createIfMissing = true
     }
 
-    val writeOptions = RocksDbWriteOptions()
+    val writeOptions = WriteOptions()
     val readOptions = ReadOptions()
     val db = RocksDb(
       directory = tempDir,
@@ -48,7 +48,7 @@ class RocksDbTest {
       createIfMissing = true
     }
 
-    val writeOptions = RocksDbWriteOptions()
+    val writeOptions = WriteOptions()
     val readOptions = ReadOptions()
     val db = RocksDb(
       directory = tempDir,
