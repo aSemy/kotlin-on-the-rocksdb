@@ -35,6 +35,7 @@ kotlin {
 
     commonTest {
       dependencies {
+        implementation(projects.modules.rocksdbInterop)
         implementation(kotlin("test"))
       }
     }

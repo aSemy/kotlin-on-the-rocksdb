@@ -230,8 +230,9 @@ private fun KmClassifier.kotlinType(): String {
 
       when {
         // the RDB C API uses `unsigned char` for booleans
-        name == "kotlin/UByte" -> "Boolean"
-        else                   -> name.substringAfter("kotlin/")
+        name == "kotlin/UByte"          -> "Boolean"
+        name.startsWith("org/rocksdb/") -> name.substringAfter("org/rocksdb/")
+        else                            -> name.substringAfter("kotlin/")
       }
     }
 
