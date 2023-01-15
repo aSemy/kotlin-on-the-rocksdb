@@ -6,7 +6,7 @@ headerFilter = *
 
 # strictEnums =
 
-#staticLibraries = librocksdb.a
+staticLibraries = librocksdb.a
 
 #compilerOpts =
 #compilerOpts.osx =
