@@ -18,9 +18,11 @@ excludeDependentModules = false
 #compilerOpts.osx = -I/opt/local/include -L/usr/opt/include -L/usr/local/include -L/usr/local/Cellar/rocksdb/7.8.3/include
 #linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu
 
-linkerOpts.linux = -L/usr/local/lib -L/usr/lib -lrocksdb
+linkerOpts = -L/usr/local/lib -L/usr/lib  -lrocksdb
 
-linkerOpts.osx = -L/usr/local/lib -L/usr/lib -lrocksdb
+#linkerOpts.linux = -L/usr/local/lib -L/usr/lib  -lrocksdb
+
+#linkerOpts.osx = -L/usr/local/lib -L/usr/lib  -lrocksdb
 
 strictEnums = AccessHint
 
