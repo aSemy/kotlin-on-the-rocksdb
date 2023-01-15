@@ -1,4 +1,4 @@
-package buildsrc.knparse
+package buildsrc.kotr
 
 import buildsrc.ext.lowercaseFirstChar
 import buildsrc.ext.uppercaseFirstChar
@@ -13,13 +13,16 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 object KLibProcessor {
 
-  fun processFeatureContext(library: File): String {
+  fun generateRdbInterop(library: File): List<Pair<String, String>> {
+    // parse the generated klib
     val metadata = readLibraryMetadata(library)
 
+    // extract all functions from the generated klib
     val functions = metadata.fragments.flatMap { it.pkg?.functions ?: emptyList() }
 
+    // get all 'creatables' - RDB objects that have a `rocksdb_..._create()` function
     val creatables = functions
-      .filter { it.name.endsWith("_create") && it.returnType.classifier.kotlinType() != "Unit" } // && it.valueParameters.isEmpty() }
+      .filter { it.name.endsWith("_create") && it.returnType.classifier.kotlinType() != "Unit" }
       .map { fn ->
         RdbCreateable(
           fn.name.substringAfter("rocksdb_").substringBefore("_create"),
@@ -29,6 +32,7 @@ object KLibProcessor {
 
     return creatables
       .associateWith { creatable ->
+        // get the functions associated with each creatable
         functions.filter { fn ->
           fn.name.startsWith("rocksdb_${creatable.name}_") &&
               (fn.valueParameters.any { it.sameTypeAs(creatable.type) }
@@ -36,75 +40,105 @@ object KLibProcessor {
                   fn.returnType.kotlinType() == creatable.type.kotlinType()
                   )
         }
-      }.mapValues { (creatable, fns) ->
+      }.map { (creatable, fns) ->
+        // each creatable has properties that are equivalent to `val`, `var`, or a get/set function
 
-        val setterFnBaseName = "rocksdb_${creatable.name}_set_"
-        val getterFnBaseName = "rocksdb_${creatable.name}_get_"
 
+        /**
+         * If the [KMFunction] is a setter, return it along with its name (the function name
+         * without the prefix). Else, returns `null`
+         */
         fun KmFunction.toSetter(): Pair<String, KmFunction>? {
+          // each setter will start with this prefix:
+          val setterFnBaseName = "rocksdb_${creatable.name}_set_"
+
           val isSetter = name.startsWith(setterFnBaseName)
+              // a setter must have two params, the first being the creatable (the second can be anything)
               && valueParameters.size == 2
               && valueParameters.first().sameTypeAs(creatable.type)
               && returnType.isUnit()
 
-          return if (!isSetter) null else {
-            name.substringAfter(setterFnBaseName) to this
+          return when {
+            isSetter -> name.substringAfter(setterFnBaseName) to this
+            else     -> null
           }
         }
 
+        /**
+         * If the [KMFunction] is a getter, return it along with its name (the function name
+         * without the prefix). Else, returns `null`
+         */
         fun KmFunction.toGetter(): Pair<String, KmFunction>? {
+          // each getter will start with this prefix:
+          val getterFnBaseName = "rocksdb_${creatable.name}_get_"
+
+          // a getter can only have one parameter, which is the creatable being queried
           val isGetter = name.startsWith(getterFnBaseName)
               && valueParameters.size == 1
               && valueParameters.first().sameTypeAs(creatable.type)
 
-          return if (!isGetter) null else {
-            name.substringAfter(getterFnBaseName) to this
+          return when {
+            isGetter -> name.substringAfter(getterFnBaseName) to this
+            else     -> null
           }
         }
 
         val setters = fns.mapNotNull { it.toSetter() }
         val getters = fns.mapNotNull { it.toGetter() }
 
-        val valsAndVars = getters.map { (gName, getter) ->
-          val matchedSetter = setters.mapNotNull { (sName, setter) ->
-            setter.takeIf { sName == gName }
+        // convert the getters/setters into vals and vars.
+        // * vals can only have a getter
+        // * vars need a getter AND setter
+        // There will be left over setters - they'll be converted to functions later
+        val valsAndVars = getters.map { (getterName, getter) ->
+          // check if the getter can be paired with a setter
+          val matchedSetter = setters.mapNotNull { (setterName, setter) ->
+            setter.takeIf { setterName == getterName }
           }
 
           when {
             matchedSetter.isEmpty() -> RdbCreateableElement.Val(
-              name = gName,
+              name = getterName,
               getterFn = getter,
             )
 
             matchedSetter.size == 1 -> RdbCreateableElement.Var(
-              name = gName,
+              name = getterName,
               getterFn = getter,
               setterFn = matchedSetter.first(),
             )
 
-            else                    -> error("too many setters (${matchedSetter.size}) for getter: gName:$gName, matchedSetter:${matchedSetter.map { it.name }}")
+            else                    ->
+              // this error shouldn't happen...
+              error("too many setters (${matchedSetter.size}) for getter. getterName:$getterName, matchedSetter:${matchedSetter.map { it.name }}")
           }
         }
 
-        val otherFns = fns.filter { fn ->
+        val (staticFns, memberFns) = fns.filter { fn ->
+          // filter all functions that were not converted into vals/vars
           fn.name !in valsAndVars.filterIsInstance<RdbCreateableElement.Prop>()
             .flatMap { it.fnNames }
-        }
-
-        val (staticFns, memberFns) = otherFns.map { otherFn ->
+        }.map { otherFn ->
           val baseName = "rocksdb_${creatable.name}_"
           RdbCreateableElement.Fn(
             name = otherFn.name.substringAfter(baseName),
             fn = otherFn,
             owner = creatable,
           )
-        }.partition { it.static }
+        }.partition {
+          // some functions might not have creatable as a parameter - they are either
+          // static functions, or constructors
+          it.static
+        }
 
         val (constructorFns, staticUtilFns) = staticFns.partition { fn ->
+          // constructor functions do not have the creatable as a parameter, and will return
+          // the creatable
           fn.fn.valueParameters.none { it.sameTypeAs(creatable.type) }
               && fn.fn.returnType.kotlinType(nullable = false) == creatable.type.kotlinType(nullable = false)
         }
 
+        // convert vals, vars, and functions to Kotlin source code
         val elements = (memberFns + valsAndVars).joinToString("\n\n") { element ->
           when (element) {
             is RdbCreateableElement.Fn  ->
@@ -120,6 +154,7 @@ object KLibProcessor {
 
               val setterConverter = when {
                 element.returnTypeClassifier.kotlinType() == "Boolean" -> when {
+                  // sometimes booleans are ints? https://github.com/facebook/rocksdb/issues/11080
                   element.setterFn.valueParameters[1].type.classifier.kotlinType() == "Int" -> ".toInt()"
                   else                                                                      -> element.returnTypeClassifier.setterConverter()
                 }
@@ -136,7 +171,7 @@ object KLibProcessor {
           }
         }
 
-        val noArgConstructor =
+        val noArgCreateFn =
           constructorFns.firstOrNull { it.fn.valueParameters.isEmpty() }?.let { fn ->
             """ = ${fn.fn.name}() ?: error("could not instantiate new ${creatable.prettyName}")"""
           } ?: ""
@@ -167,26 +202,21 @@ object KLibProcessor {
         ).filter { it.isNotBlank() }
           .joinToString(separator = "\n\n")
 
-        """
+        creatable.prettyName to """
+          |package dev.adamko.kotlin.on.the.rocksdb
+          |
+          |import org.rocksdb.*
+          |import kotlinx.cinterop.*
           |
           |class ${creatable.prettyName}(
-          |  private val ${creatable.propName}: ${creatable.type.kotlinType(nullable = false)}$noArgConstructor
+          |  private val ${creatable.propName}: ${creatable.type.kotlinType(nullable = false)}$noArgCreateFn
           |) : CValuesRef<${creatable.coreKotlinType}>() {
           |
           |$classContent
           |}
           |
         """.trimMargin()
-      }.values.joinToString(
-        "",
-        prefix = """
-          |package dev.adamko.kotlin.on.the.rocksdb
-          |
-          |import org.rocksdb.*
-          |import kotlinx.cinterop.*
-          |
-        """.trimMargin()
-      )
+      }
   }
 }
 
@@ -199,9 +229,9 @@ private fun KmClassifier.kotlinType(): String {
     is KmClassifier.Class         -> {
 
       when {
-        name == "kotlin/UByte"             -> "Boolean"
-        name.startsWith("cnames/structs/") -> name.substringAfter("cnames/structs/")
-        else                               -> name.substringAfter("kotlin/")
+        // the RDB C API uses `unsigned char` for booleans
+        name == "kotlin/UByte" -> "Boolean"
+        else                   -> name.substringAfter("kotlin/")
       }
     }
 
@@ -228,8 +258,11 @@ private fun KmType.kotlinType(nullable: Boolean? = null, convertable: Boolean = 
   val kotlinType = when (val classifier = this.classifier) {
     is KmClassifier.Class         -> {
       when {
-        convertable && classifier.name == "kotlin/UByte" -> "Boolean"
-        else                                             -> classifier.name.substringAfterLast('/') + typeParams
+        convertable && classifier.name == "kotlin/UByte" ->
+          "Boolean"
+
+        else                                             ->
+          classifier.name.substringAfterLast('/') + typeParams
       }
     }
 
@@ -239,6 +272,7 @@ private fun KmType.kotlinType(nullable: Boolean? = null, convertable: Boolean = 
   }
 
   return when (kotlinType) {
+    // use K/N cinterop typealias helpers
     "CPointer<CPointed>" -> "COpaquePointer"
     "ByteVarOf<Byte>"    -> "ByteVar"
     else                 -> kotlinType
@@ -272,9 +306,11 @@ private class RdbCreateable(
   )
 }
 
+/** Create Kotlin source code for a function */
 private fun RdbCreateableElement.Fn.createKotlinFn(): String {
 
   val filteredParams = if (fn.valueParameters.firstOrNull().sameTypeAs(owner.type)) {
+    // drop the 'owner' param, because the property is named differently to the function arg
     fn.valueParameters.drop(1)
   } else {
     fn.valueParameters
@@ -314,10 +350,11 @@ private fun RdbCreateableElement.Fn.createKotlinConstructor(): String {
     it.prettyName + it.converter
   }
 
+  val constructorArgs = if (fnArgs.isEmpty()) "" else
+    "\n${fnArgs.prependIndent("  ")}\n"
+
   return """
-      |constructor(
-      |${fnArgs.prependIndent("  ")}
-      |): this(${fn.name}($fnArgNames) ?: error("could not instantiate new ${owner.prettyName}"))
+      |constructor($constructorArgs): this(${fn.name}($fnArgNames) ?: error("could not instantiate new ${owner.prettyName}"))
     """.trimMargin()
 }
 
@@ -326,13 +363,13 @@ private fun KmValueParameter?.sameTypeAs(otherType: KmType): Boolean {
   if (this == null) return false
 
   return type.arguments.firstOrNull()?.type?.kotlinType() == otherType.arguments.firstOrNull()?.type?.kotlinType()
-
 }
 
 
 private fun RdbCreateable.cpointerType() =
   "CPointer<${type.classifier.kotlinType().replace('/', '.')}>"
 
+/** The  */
 private sealed interface RdbCreateableElement {
   val name: String
 
@@ -384,7 +421,9 @@ private val RdbCreateableElement.returnTypeClassifier
 private val RdbCreateableElement.prettyName: String
   get() = name.knmNameToPrettyName()
 
+/** Prettify the funciton names */
 private fun String.knmNameToPrettyName() =
+  // rename similar functions, so functions are overloaded
   replace("put_cf", "put")
     .replace("putv_cf", "put")
     .replace("merge_cf", "merge")
@@ -394,7 +433,7 @@ private fun String.knmNameToPrettyName() =
     .split("_")
     .joinToString("") {
       when (it.lowercase()) {
-        "mb"                      -> it
+        "mb"                      -> it // keep MB/Mb casing, because Mb != MB
         "readahead"               -> "ReadAhead"
         "subcompactions"          -> "SubCompactions"
         "transactiondb"           -> "TransactionDb"
@@ -429,7 +468,7 @@ private fun String.knmNameToPrettyName() =
 //  val prettyName: String = createableNameMap[name] ?: error("missing pretty name for $name")
 //}
 
-
+/** A map of all known [RdbCreateable] names, along with a pretty name */
 private val createableNameMap = mapOf(
   "approximate_memory_usage" to "ApproximateMemoryUsage",
   "backup_engine_options" to "BackupEngineOptions",
@@ -490,7 +529,6 @@ private fun readLibraryMetadata(libraryPath: File): KlibModuleMetadata {
 
       override fun packageMetadataParts(fqName: String): Set<String> =
         library.packageMetadataParts(fqName)
-
     }
   )
 }

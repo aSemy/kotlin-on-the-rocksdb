@@ -2,6 +2,13 @@
 
 [Kotlin/Native](https://kotlinlang.org/docs/native-overview.html) bindings for [RocksDB](https://github.com/facebook/rocksdb/).
 
+Kotlin/Native targets:
+
+* macOS
+* Linux
+
+Support for Windows is possible, but requires further work. See https://github.com/aSemy/kotlin-on-the-rocksdb/issues/2.
+
 #### Status
 
 Very early prototype.
@@ -17,9 +24,8 @@ Using the C bindings potentially allows for targeting Windows, Linux, and MacOS.
 Building requires that the following libraries are installed.
 
 * `rocksdb`
+* `bz2`
 * `lz4`
 * `snappy`
-* `zstd`
-* `bz2`
-* `snappy`
 * `zlib`
+* `zstd`
