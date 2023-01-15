@@ -13,7 +13,7 @@ class RocksDb(
   directory: String,
   dbOptions: RocksDbOptions,
   private val readOptions: ReadOptions,
-  private val writeOptions: RocksDbWriteOptions,
+  private val writeOptions: WriteOptions,
   private val db: CPointer<rocksdb_t> = create(dbOptions, directory),
 ) : CValuesRef<rocksdb_t>() {
 

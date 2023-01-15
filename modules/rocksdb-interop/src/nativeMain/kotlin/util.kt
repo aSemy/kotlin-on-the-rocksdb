@@ -20,6 +20,6 @@ internal inline fun Boolean.toInt(): Int = if (this) 1 else INT_FALSE
 //internal inline fun Boolean.convert(): Int = if (this) 1 else 0
 
 
- fun CPointer<ByteVar>.toKString(
+fun CPointer<ByteVar>.toKString(
   length: Int
 ): String = readBytes(length).toKString()
