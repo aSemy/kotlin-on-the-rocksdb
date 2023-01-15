@@ -1,5 +1,6 @@
 package dev.adamko.kotlin.on.the.rocksdb
 
+import dev.adamko.kotlin.on.the.rocksdb.util.tempDir
 import kotlin.system.getTimeMillis
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -8,19 +9,9 @@ import kotlinx.coroutines.*
 class RocksDbTest {
 
   @Test
-  fun noopTest() = runBlocking {
-    println("noop")
-  }
-
-  @Test
   fun openCloseDbTest() = runBlocking {
 
-    val tempDir = when (Platform.osFamily) {
-      OsFamily.WINDOWS -> "C:\\Windows\\Temp\\rocksdb_temp_${getTimeMillis()}"
-      else             -> "/tmp/rocksdb_temp_${getTimeMillis()}"
-    }
-
-    println("testing rdb with file $tempDir")
+    val tempDir = tempDir()
 
     val options = RocksDbOptions().apply {
 //      increaseParallelism(Platform.getAvailableProcessors())
@@ -77,7 +68,6 @@ class RocksDbTest {
         }
         cancel("finished emitting")
       }
-
 
       val iterator = db.iterator()
 
