@@ -2,6 +2,13 @@
 
 [Kotlin/Native](https://kotlinlang.org/docs/native-overview.html) bindings for [RocksDB](https://github.com/facebook/rocksdb/).
 
+Kotlin/Native targets:
+
+* macOS
+* Linux
+
+Support for Windows is possible, but requires further work. See https://github.com/aSemy/kotlin-on-the-rocksdb/issues/2.
+
 #### Status
 
 Very early prototype.
