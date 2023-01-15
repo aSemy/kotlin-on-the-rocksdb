@@ -36,4 +36,4 @@ jobs:
     with:
       runs-on: ${{ matrix.os }}
       gradle-task: >-
-        ${{ matrix.task }} --stacktrace --info
+        ${{ matrix.task }} --stacktrace
