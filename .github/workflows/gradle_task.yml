@@ -102,8 +102,9 @@ jobs:
         id: cache-kotlin-konan
         uses: actions/cache@v3
         with:
-          path: ~/.konan/**
-          key: kotlin-konan-${{ runner.os }}
+          path: |
+            ~/.konan/**/*
+          key: ${{ runner.os }}-kotlin-konan
 
       - uses: gradle/gradle-build-action@v2
         with:
