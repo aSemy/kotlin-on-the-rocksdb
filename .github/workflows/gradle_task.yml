@@ -98,7 +98,8 @@ jobs:
           distribution: temurin
           java-version: 11
 
-      - id: cache-kotlin-konan
+      - name: Cache Kotlin Konan
+        id: cache-kotlin-konan
         uses: actions/cache@v3
         with:
           path: ~/.konan/**
