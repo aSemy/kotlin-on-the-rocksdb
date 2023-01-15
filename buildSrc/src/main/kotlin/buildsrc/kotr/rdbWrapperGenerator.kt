@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 object KLibProcessor {
 
-  fun processFeatureContext(library: File): String {
+  fun generateRdbInterop(library: File): List<Pair<String, String>> {
     // parse the generated klib
     val metadata = readLibraryMetadata(library)
 
@@ -40,7 +40,7 @@ object KLibProcessor {
                   fn.returnType.kotlinType() == creatable.type.kotlinType()
                   )
         }
-      }.mapValues { (creatable, fns) ->
+      }.map { (creatable, fns) ->
         // each creatable has properties that are equivalent to `val`, `var`, or a get/set function
 
 
@@ -202,7 +202,11 @@ object KLibProcessor {
         ).filter { it.isNotBlank() }
           .joinToString(separator = "\n\n")
 
-        """
+        creatable.prettyName to """
+          |package dev.adamko.kotlin.on.the.rocksdb
+          |
+          |import org.rocksdb.*
+          |import kotlinx.cinterop.*
           |
           |class ${creatable.prettyName}(
           |  private val ${creatable.propName}: ${creatable.type.kotlinType(nullable = false)}$noArgCreateFn
@@ -212,16 +216,7 @@ object KLibProcessor {
           |}
           |
         """.trimMargin()
-      }.values.joinToString(
-        "",
-        prefix = """
-          |package dev.adamko.kotlin.on.the.rocksdb
-          |
-          |import org.rocksdb.*
-          |import kotlinx.cinterop.*
-          |
-        """.trimMargin()
-      )
+      }
   }
 }
 

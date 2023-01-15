@@ -1,9 +1,13 @@
 import buildsrc.kotr.KLibProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 
 plugins {
   buildsrc.conventions.`kotlin-multiplatform-native`
 }
+
+// generated wrappers will be written into this dir
+val generatedMainSrcDir = layout.projectDirectory.dir("src/nativeMain/kotlinGen")
 
 kotlin {
 
@@ -44,28 +48,54 @@ kotlin {
         implementation(kotlin("test"))
       }
     }
+
+    nativeMain {
+      kotlin {
+        srcDir(generatedMainSrcDir)
+      }
+    }
   }
+}
+
+
+interface Services {
+  @get:Inject
+  val files: FileSystemOperations
 }
 
 val generateRocksDbWrappers by tasks.registering {
   group = project.name
   description = "generate idiomatic-Kotlin wrappers for RocksDB cinterop code"
-  val outFile = projectDir.resolve("src/nativeMain/kotlin/generatedOptions.kt")
-  outputs.file(outFile)
+
+  outputs.dir(temporaryDir)
+
+  val services = objects.newInstance<Services>()
 
   val klibFile: Provider<File> = tasks
-    .withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>()
+    .withType<CInteropProcess>()
     .named("cinteropRocksdbLinuxX64")
     .flatMap { it.outputFileProvider }
 
   inputs.file(klibFile)
 
-  mustRunAfter(tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>())
+  mustRunAfter(tasks.withType<CInteropProcess>())
 
-  doLast {
-    val gen = KLibProcessor.processFeatureContext(
-      klibFile.get()
-    )
-    outFile.writeText(gen)
+  doFirst {
+    services.files.delete { delete(temporaryDir) }
+    temporaryDir.mkdirs()
+
+    val files = KLibProcessor.generateRdbInterop(klibFile.get())
+
+    files.forEach { (name, content) ->
+      temporaryDir.resolve("$name.kt").writeText(content)
+    }
   }
+}
+
+
+val syncRocksDbWrappers by tasks.registering(Sync::class) {
+  group = project.name
+
+  from(generateRocksDbWrappers.map { it.temporaryDir })
+  into(generatedMainSrcDir)
 }
