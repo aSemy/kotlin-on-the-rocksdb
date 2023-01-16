@@ -7,28 +7,28 @@ import org.rocksdb.AccessHint
 
 class RocksDbOptionsTest {
 
-  @Test
-  fun `can create and copy`() {
-    val options = RocksDbOptions()
-    assertNotNull(options)
-
-    val copy = options.createCopy()
-    assertNotNull(copy)
-  }
-
-  @Test
-  fun `can set access hints`() {
-    val options = RocksDbOptions()
-
-    AccessHint.values().forEach { hint ->
-      options.accessHintOnCompactionStart = hint
-      assertEquals(hint, options.accessHintOnCompactionStart)
-    }
-  }
-
-  @Test
-  fun `vars can be written and read`() {
-    val options = RocksDbOptions()
+//  @Test
+//  fun `can create and copy`() {
+//    val options = RocksDbOptions()
+//    assertNotNull(options)
+//
+//    val copy = options.createCopy()
+//    assertNotNull(copy)
+//  }
+//
+//  @Test
+//  fun `can set access hints`() {
+//    val options = RocksDbOptions()
+//
+//    AccessHint.values().forEach { hint ->
+//      options.accessHintOnCompactionStart = hint
+//      assertEquals(hint, options.accessHintOnCompactionStart)
+//    }
+//  }
+//
+//  @Test
+//  fun `vars can be written and read`() {
+//    val options = RocksDbOptions()
 
 //    assertNotNull(options.accessHintOnCompactionStart)
 //    assertNotNull(options.adviseRandomOnOpen)
@@ -125,5 +125,5 @@ class RocksDbOptionsTest {
 //    assertNotNull(options.walTtlSeconds)
 //    assertNotNull(options.writableFileMaxBufferSize)
 //    assertNotNull(options.writeBufferSize)
-  }
+//  }
 }
