@@ -51,19 +51,28 @@ jobs:
           # vcpkgJsonGlob: '**/vcpkg.json'
           # runVcpkgInstall: true
 
-      - name: package libs
+      - name: build & package libs
         run: >-
-          ./vcpkg export rocksdb
+          ./vcpkg export 
+            rocksdb
             zstd
             zlib
             snappy
             lz4
-            bzip2 
+            bzip2
+            --zip
             --triplet=${{ matrix.triplet }}
+            --output=rocksdb-${{ matrix.triplet }}
+            --output-dir=$HOME
+
+      - name: upload packaged libs
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+#          name: build-report-${{ runner.os }}${{ github.action }}
+          path: ~/rocksdb-${{ matrix.triplet }}.zip
+          #if-no-files-found: ignore
 
       - name: invalidate vcpkg cache
         run: echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
         if: ${{ failure() || cancelled() }}
-
-
-      # TODO rename & upload packaged libs
