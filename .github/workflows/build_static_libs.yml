@@ -45,6 +45,8 @@ jobs:
         with:
           path: |
             .
+            ~/.cache/vcpkg/archives
+            ~/AppData/Local/vcpkg
           key: vcpkg-${{ runner.os }}-${{ env.VCPKG_VERSION }}
 
       - name: checkout vcpkg
