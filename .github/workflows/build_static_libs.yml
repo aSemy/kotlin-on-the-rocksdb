@@ -52,6 +52,9 @@ jobs:
           ref: 2023.01.09
           fetch-depth: 1
 
+      - name: prep
+        run: mkdir /tmp/vcpkg-cache
+
       - name: setup vcpkg
         run: ./bootstrap-vcpkg.sh
 
