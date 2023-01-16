@@ -78,5 +78,6 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v3
         with:
+          name: rocksdb-${{ matrix.rocksdb-version }}-${{ matrix.triplet }}
           path: ~/rocksdb-${{ matrix.rocksdb-version }}-${{ matrix.triplet }}.zip
           #if-no-files-found: ignore
