@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-11
+          - os: macos-latest
             task: macosX64Test
           - os: ubuntu-latest
             task: linuxX64Test
