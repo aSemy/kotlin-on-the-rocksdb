@@ -47,7 +47,7 @@ jobs:
             .
             ~/.cache/vcpkg/archives
             ~/AppData/Local/vcpkg
-          key: vcpkg-${{ runner.os }}-${{ env.VCPKG_VERSION }}
+          key: vcpkg-${{ matrix.triplet }}-${{ env.VCPKG_VERSION }}
 
       - name: checkout vcpkg
         uses: actions/checkout@v3
