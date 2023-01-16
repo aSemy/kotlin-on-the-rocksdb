@@ -84,7 +84,7 @@ jobs:
         run: |
           echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
           
-          more ./triplets/community/x64-mingw-static.cmake
+          less -de ./triplets/community/x64-mingw-static.cmake
 
       - name: update vcpkg.json
         shell: bash
