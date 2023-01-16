@@ -40,12 +40,12 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
     steps:
 
-#      - name: cache vcpkg
-#        uses: actions/cache@v3
-#        with:
-#          path: |
-#            ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
-#          key: vcpkg-${{ runner.os }}
+      - name: cache vcpkg
+        uses: actions/cache@v3
+        with:
+          path: |
+            .
+          key: vcpkg-${{ runner.os }}
 
       - name: checkout vcpkg
         uses: actions/checkout@v3
