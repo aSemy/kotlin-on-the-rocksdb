@@ -10,14 +10,13 @@ concurrency:
 
 env:
   VCPKG_DISABLE_METRICS: 1
+  ROCKSDB_VERSION: 7.8.3
 
 jobs:
   export-rocksdb:
 
     strategy:
       matrix:
-        rocksdb-version: [ 7.8.3 ]
-        os: [ macos-latest, windows-latest, ubuntu-latest ]
         include:
           - os: macos-latest
             triplet: x64-osx
@@ -50,7 +49,6 @@ jobs:
         run: ./bootstrap-vcpkg.sh
 
       - name: create vcpkg.json
-        shell: bash
         run: |
           touch vcpkg.json;
   
@@ -65,7 +63,7 @@ jobs:
               "bzip2"
             ],
             "overrides": [
-              { "name": "rocksdb", "version": "${{ matrix.rocksdb-version }}" }
+              { "name": "rocksdb", "version": "${{ env.ROCKSDB_VERSION }}" }
             ]
           }
           EOT
@@ -86,6 +84,6 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: rocksdb-${{ matrix.rocksdb-version }}
+          name: rocksdb-${{ env.ROCKSDB_VERSION }}
           path: "~/rdb-export/**/installed/${{ matrix.triplet }}/lib/*.a"
           #if-no-files-found: ignore
