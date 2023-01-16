@@ -88,14 +88,9 @@ jobs:
         shell: bash
         run: ${{ matrix.vcpkg-cmd }} install
 
-#      - name: remove vcpkg.json
-#        # "vcpkg export does not support manifest mode, in order to allow for future design considerations"
-#        shell: bash
-#        run: rm vcpkg.json
-#
-#      - name: package libs
-#        shell: bash
-#        run: ${{ matrix.vcpkg-cmd }} export rocksdb zstd zlib snappy lz4 bzip2 --raw --output=rocksdb-${{ matrix.triplet }} --output-dir=$HOME/rdb-export
+      - name: list files
+        shell: bash
+        run: tree
 
       - name: upload packaged libs
         if: success()
