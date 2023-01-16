@@ -41,8 +41,7 @@ jobs:
       - name: cache vcpkg
         uses: actions/cache@v3
         with:
-          path:
-            .
+          path: |
             /tmp/vcpkg-cache
           key: vcpkg-${{ runner.os }}
 
