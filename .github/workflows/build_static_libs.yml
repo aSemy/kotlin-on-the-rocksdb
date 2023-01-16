@@ -53,6 +53,7 @@ jobs:
           fetch-depth: 1
 
       - name: prep
+        shell: bash
         run: mkdir ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
 
       - name: setup vcpkg
