@@ -1,6 +1,7 @@
 name: Build static libs
 
 on:
+  pull_request: # TODO remove, temp added for quicker testing
   workflow_dispatch:
 
 concurrency:
