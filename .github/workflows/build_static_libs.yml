@@ -10,14 +10,13 @@ concurrency:
 
 env:
   VCPKG_DISABLE_METRICS: 1
+  ROCKSDB_VERSION: 7.3.8
 
 jobs:
   export-rocksdb:
 
     strategy:
       matrix:
-        rocksdb-version:
-          - 7.3.8
         include:
           - os: macos-latest
             triplet: x64-osx
@@ -63,7 +62,7 @@ jobs:
               "bzip2"
             ],
             "overrides": [
-              { "name": "rocksdb", "version": "${{ matrix.rocksdb-version }}" }
+              { "name": "rocksdb", "version": "${{ env.ROCKSDB_VERSION }}" }
             ]
           }
           " > vcpkg.json
