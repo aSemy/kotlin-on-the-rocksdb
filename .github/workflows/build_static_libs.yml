@@ -9,8 +9,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  VCPKG_DISABLE_METRICS: 1
   ROCKSDB_VERSION: 7.8.3
+
+  VCPKG_DISABLE_METRICS: 1
+  VCPKG_DEFAULT_BINARY_CACHE: /tmp/vcpkg-cache
 
 jobs:
   export-rocksdb:
@@ -39,7 +41,9 @@ jobs:
       - name: cache vcpkg
         uses: actions/cache@v3
         with:
-          path: .
+          path:
+            .
+            /tmp/vcpkg-cache
           key: vcpkg-${{ runner.os }}
 
       - name: checkout vcpkg
