@@ -42,7 +42,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            /tmp/vcpkg-cache
+            ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
           key: vcpkg-${{ runner.os }}
 
       - name: checkout vcpkg
@@ -53,7 +53,7 @@ jobs:
           fetch-depth: 1
 
       - name: prep
-        run: mkdir /tmp/vcpkg-cache
+        run: mkdir ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
 
       - name: setup vcpkg
         run: ./bootstrap-vcpkg.sh
