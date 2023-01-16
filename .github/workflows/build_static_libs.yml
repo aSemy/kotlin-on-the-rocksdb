@@ -14,6 +14,7 @@ env:
   VCPKG_BUILD_TYPE: release
   VCPKG_LIBRARY_LINKAGE: static
   VCPKG_DISABLE_METRICS: 1
+#  VCPKG_DEFAULT_BINARY_CACHE: /tmp/vcpkg-cache
 
 jobs:
   export-rocksdb:
@@ -39,12 +40,12 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
     steps:
 
-      - name: cache vcpkg
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
-          key: vcpkg-${{ runner.os }}
+#      - name: cache vcpkg
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+#          key: vcpkg-${{ runner.os }}
 
       - name: checkout vcpkg
         uses: actions/checkout@v3
