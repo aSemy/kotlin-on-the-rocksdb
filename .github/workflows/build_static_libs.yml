@@ -17,6 +17,7 @@ jobs:
     strategy:
       matrix:
         rocksdb-version: [ 7.8.3 ]
+        os: [ macos-latest, windows-latest, ubuntu-latest ]
         include:
           - os: macos-latest
             triplet: x64-osx
@@ -49,6 +50,7 @@ jobs:
         run: ./bootstrap-vcpkg.sh
 
       - name: create vcpkg.json
+        shell: bash
         run: |
           touch vcpkg.json;
   
