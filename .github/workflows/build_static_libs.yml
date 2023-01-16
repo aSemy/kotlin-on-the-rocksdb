@@ -100,7 +100,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: rocksdb-${{ env.ROCKSDB_VERSION }}
+          name: rocksdb-${{ env.ROCKSDB_VERSION }}-${{ matrix.triplet }}
           #if-no-files-found: ignore
           path: |
             ./vcpkg_installed/${{ matrix.triplet }}/**
