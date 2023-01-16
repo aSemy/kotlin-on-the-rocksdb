@@ -79,5 +79,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: rocksdb-${{ env.ROCKSDB_VERSION }}
-          path: "~/rdb-export/**/installed/${{ os.triplet }}/lib/*.a"
+          path: "~/rdb-export/**/installed/${{ matrix.triplet }}/lib/*.a"
           #if-no-files-found: ignore
