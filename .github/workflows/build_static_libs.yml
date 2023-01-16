@@ -46,17 +46,17 @@ jobs:
         run: ./bootstrap-vcpkg.sh
 
       - name: build & package libs
-        run: >-
-          ./vcpkg export 
-            rocksdb
-            zstd
-            zlib
-            snappy
-            lz4
-            bzip2
-            --zip
-            --triplet=${{ matrix.triplet }}
-            --output=rocksdb-${{ matrix.triplet }}
+        run: |
+          ./vcpkg export                                \ 
+            rocksdb                                     \
+            zstd                                        \
+            zlib                                        \
+            snappy                                      \
+            lz4                                         \
+            bzip2                                       \
+            --zip                                       \
+            --triplet=${{ matrix.triplet }}             \
+            --output=rocksdb-${{ matrix.triplet }}      \
             --output-dir=$HOME
 
       - name: upload packaged libs
