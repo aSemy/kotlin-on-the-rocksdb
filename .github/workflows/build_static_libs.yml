@@ -31,11 +31,11 @@ jobs:
       #- name: install CMake
       #  uses: lukka/get-cmake@latest
 
-      #- name: cache vcpkg
-      #  uses: actions/cache@v3
-      #  with:
-      #    path: ~/vcpkg
-      #    key: vcpkg-${{ runner.os }}
+      - name: cache vcpkg
+        uses: actions/cache@v3
+        with:
+          path: ~/vcpkg
+          key: vcpkg-${{ runner.os }}
 
       - name: checkout vcpkg
         uses: actions/checkout@v3
@@ -46,11 +46,7 @@ jobs:
           fetch-depth: 1
 
       - name: setup vcpkg
-        uses: lukka/run-vcpkg@v10
-        with:
-          vcpkgDirectory: ~/vcpkg
-          # vcpkgJsonGlob: '**/vcpkg.json'
-          # runVcpkgInstall: true
+        run: ~/bootstrap-vcpkg
 
       - name: build & package libs
         run: >-
@@ -73,7 +69,3 @@ jobs:
 #          name: build-report-${{ runner.os }}${{ github.action }}
           path: ~/rocksdb-${{ matrix.triplet }}.zip
           #if-no-files-found: ignore
-
-      - name: invalidate vcpkg cache
-        run: echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
-        if: ${{ failure() || cancelled() }}
