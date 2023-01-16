@@ -504,10 +504,6 @@ class RocksDbOptions(
     get() = rocksdb_options_get_advise_random_on_open(rocksDbOptions).toBoolean()
     set(value) = rocksdb_options_set_advise_random_on_open(rocksDbOptions, value.toUByte())
 
-  var accessHintOnCompactionStart: Int
-    get() = rocksdb_options_get_access_hint_on_compaction_start(rocksDbOptions)
-    set(value) = rocksdb_options_set_access_hint_on_compaction_start(rocksDbOptions, value)
-
   var useAdaptiveMutex: Boolean
     get() = rocksdb_options_get_use_adaptive_mutex(rocksDbOptions).toBoolean()
     set(value) = rocksdb_options_set_use_adaptive_mutex(rocksDbOptions, value.toUByte())
@@ -615,4 +611,8 @@ class RocksDbOptions(
   var walCompression: Int
     get() = rocksdb_options_get_wal_compression(rocksDbOptions)
     set(value) = rocksdb_options_set_wal_compression(rocksDbOptions, value)
+
+  var accessHintOnCompactionStart: AccessHint
+    get() = rocksdb_options_get_access_hint_on_compaction_start__(rocksDbOptions)
+    set(value) = rocksdb_options_set_access_hint_on_compaction_start__(rocksDbOptions, value)
 }

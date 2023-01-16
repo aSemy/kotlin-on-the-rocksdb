@@ -4,8 +4,6 @@ headers = c.h
 
 headerFilter = *
 
-# strictEnums =
-
 #staticLibraries = librocksdb.a
 
 #compilerOpts =
@@ -20,6 +18,39 @@ excludeDependentModules = false
 #compilerOpts.osx = -I/opt/local/include -L/usr/opt/include -L/usr/local/include -L/usr/local/Cellar/rocksdb/7.8.3/include
 #linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu
 
-linkerOpts.linux = -L/usr/local/lib -L/usr/lib -lrocksdb
+linkerOpts = -L/usr/local/lib -L/usr/lib  -lrocksdb
 
-linkerOpts.osx = -L/usr/local/lib -L/usr/lib -lrocksdb
+#linkerOpts.linux = -L/usr/local/lib -L/usr/lib  -lrocksdb
+
+#linkerOpts.osx = -L/usr/local/lib -L/usr/lib  -lrocksdb
+
+strictEnums = AccessHint
+
+excludedFunctions = \
+ rocksdb_options_set_access_hint_on_compaction_start \
+ rocksdb_options_get_access_hint_on_compaction_start
+
+
+---
+
+// c.h uses an int to represent AccessHint - so manually define an enum
+
+typedef enum {
+  NONE = 0,
+  NORMAL = 1,
+  SEQUENTIAL = 2,
+  WILL_NEED = 3
+} AccessHint;
+
+AccessHint rocksdb_options_get_access_hint_on_compaction_start__(
+  rocksdb_options_t* opt
+) {
+  return rocksdb_options_get_access_hint_on_compaction_start(opt);
+};
+
+void rocksdb_options_set_access_hint_on_compaction_start__(
+  rocksdb_options_t* opt,
+  AccessHint access_hint
+) {
+  rocksdb_options_set_access_hint_on_compaction_start(opt, access_hint);
+};
