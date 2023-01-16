@@ -53,6 +53,7 @@ jobs:
         run: ./bootstrap-vcpkg.sh
 
       - name: create vcpkg.json
+        shell: bash
         run: |
           touch vcpkg.json;
   
