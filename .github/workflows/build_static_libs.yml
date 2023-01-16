@@ -28,9 +28,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
 
-      #- name: install CMake
-      #  uses: lukka/get-cmake@latest
-
       - name: cache vcpkg
         uses: actions/cache@v3
         with:
@@ -46,7 +43,7 @@ jobs:
           fetch-depth: 1
 
       - name: setup vcpkg
-        run: ~/bootstrap-vcpkg
+        run: ~/bootstrap-vcpkg.sh
 
       - name: build & package libs
         run: >-
