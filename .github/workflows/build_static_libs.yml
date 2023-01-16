@@ -70,7 +70,7 @@ jobs:
 
       - name: install libs
         shell: bash
-        run: ./vcpkg install rocksdb zstd zlib snappy lz4 bzip2
+        run: ./vcpkg install
 
       - name: package libs
         shell: bash
