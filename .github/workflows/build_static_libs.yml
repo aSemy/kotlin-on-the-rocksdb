@@ -32,7 +32,7 @@ jobs:
       - name: cache vcpkg
         uses: actions/cache@v3
         with:
-          path: ~/vcpkg
+          path: .
           key: vcpkg-${{ runner.os }}
 
       - name: checkout vcpkg
@@ -40,15 +40,14 @@ jobs:
         with:
           repository: microsoft/vcpkg
           ref: 2023.01.09
-          path: ~/vcpkg
           fetch-depth: 1
 
       - name: setup vcpkg
-        run: ~/vcpkg/bootstrap-vcpkg.sh
+        run: ./bootstrap-vcpkg.sh
 
       - name: build & package libs
         run: >-
-          ~/vcpkg/vcpkg export 
+          ./vcpkg export 
             rocksdb
             zstd
             zlib
