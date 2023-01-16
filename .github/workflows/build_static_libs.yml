@@ -73,12 +73,12 @@ jobs:
 
       - name: package libs
         shell: bash
-        run: ./vcpkg export rocksdb zstd zlib snappy lz4 bzip2 --zip --output=rocksdb-${{ matrix.triplet }} --output-dir=$HOME
+        run: ./vcpkg export rocksdb zstd zlib snappy lz4 bzip2 --raw --output=rocksdb-${{ matrix.triplet }} --output-dir=$HOME/rdb-export
 
       - name: upload packaged libs
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: rocksdb-${{ env.ROCKSDB_VERSION }}-${{ matrix.triplet }}
-          path: ~/rocksdb-${{ env.ROCKSDB_VERSION }}-${{ matrix.triplet }}.zip
+          name: rocksdb-${{ env.ROCKSDB_VERSION }}
+          path: "~/rdb-export/**/installed/${{ os.triplet }}/lib/*.a"
           #if-no-files-found: ignore
