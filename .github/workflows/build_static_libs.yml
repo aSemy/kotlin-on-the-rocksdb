@@ -78,6 +78,14 @@ jobs:
           }
           EOT
 
+      - name: prep triplet - x64-mingw-static
+        if: ${{ matrix.triplet == 'x64-mingw-static' }}
+        shell: bash
+        run: |
+          echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
+          
+          more ./triplets/community/x64-mingw-static.cmake
+
       - name: update vcpkg.json
         shell: bash
         run: ${{ matrix.vcpkg-cmd }} x-update-baseline --add-initial-baseline
