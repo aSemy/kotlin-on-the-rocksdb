@@ -89,10 +89,6 @@ jobs:
         shell: bash
         run: ${{ matrix.vcpkg-cmd }} install
 
-      - name: list files
-        shell: bash
-        run: tree
-
       - name: upload packaged libs
         if: success()
         uses: actions/upload-artifact@v3
@@ -100,4 +96,4 @@ jobs:
           name: rocksdb-${{ env.ROCKSDB_VERSION }}
           #if-no-files-found: ignore
           path: |
-            ./installed/**/lib/*.a
+            ./vcpkg_installed/${{ matrix.triplet }}/**
