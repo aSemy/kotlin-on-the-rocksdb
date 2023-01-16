@@ -16,6 +16,8 @@ jobs:
 
     strategy:
       matrix:
+        rocksdb-version:
+          - 7.3.8
         include:
           - os: macos-latest
             triplet: x64-osx
@@ -47,6 +49,25 @@ jobs:
       - name: setup vcpkg
         run: ./bootstrap-vcpkg.sh
 
+      - name: create vcpkg.json
+        run: |
+          touch vcpkg.json
+          echo "
+          {
+            "dependencies": [
+              "rocksdb",
+              "zstd",
+              "zlib",
+              "snappy",
+              "lz4",
+              "bzip2"
+            ],
+            "overrides": [
+              { "name": "rocksdb", "version": "${{ matrix.rocksdb-version }}" }
+            ]
+          }
+          " > vcpkg.json
+
       - name: install libs
         run: ./vcpkg.sh install rocksdb zstd zlib snappy lz4 bzip2
 
@@ -57,6 +78,5 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          #name: build-report-${{ runner.os }}${{ github.action }}
-          path: ~/rocksdb-${{ matrix.triplet }}.zip
+          path: ~/rocksdb-${{ matrix.rocksdb-version }}-${{ matrix.triplet }}.zip
           #if-no-files-found: ignore
