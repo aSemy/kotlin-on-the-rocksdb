@@ -99,4 +99,4 @@ jobs:
           name: rocksdb-${{ env.ROCKSDB_VERSION }}
           #if-no-files-found: ignore
           path: |
-            ./installed/${{ matrix.triplet }}/lib/*.a
+            ./installed/**/lib/*.a
