@@ -48,10 +48,10 @@ jobs:
         run: ./bootstrap-vcpkg.sh
 
       - name: install libs
-        run: ./vcpkg install rocksdb zstd zlib snappy lz4 bzip2
+        run: ./vcpkg.sh install rocksdb zstd zlib snappy lz4 bzip2
 
       - name: package libs
-        run: ./vcpkg export rocksdb zstd zlib snappy lz4 bzip2 --zip --output=rocksdb-${{ matrix.triplet }} --output-dir=$HOME
+        run: ./vcpkg.sh export rocksdb zstd zlib snappy lz4 bzip2 --zip --output=rocksdb-${{ matrix.triplet }} --output-dir=$HOME
 
       - name: upload packaged libs
         if: success()
