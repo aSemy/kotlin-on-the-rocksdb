@@ -68,6 +68,10 @@ jobs:
           }
           EOT
 
+      - name: update vcpkg.json
+        shell: bash
+        run: ./vcpkg x-update-baseline --add-initial-baseline
+
       - name: install libs
         shell: bash
         run: ./vcpkg install
