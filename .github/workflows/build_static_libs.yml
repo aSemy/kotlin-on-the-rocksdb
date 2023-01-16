@@ -9,12 +9,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  VCPKG_VERSION: 2023.01.09
+  # use the latest version, so x64-windows-static-release is available
+  VCPKG_VERSION: 9a469723aee0873241d055b1345d8e21b445071c
+#  VCPKG_VERSION: 2023.01.09
   ROCKSDB_VERSION: 7.8.3
 
-  VCPKG_LIBRARY_LINKAGE: static
   VCPKG_DISABLE_METRICS: 1
-#  VCPKG_DEFAULT_BINARY_CACHE: /tmp/vcpkg-cache
 
 jobs:
   export-rocksdb:
