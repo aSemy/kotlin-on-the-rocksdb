@@ -43,11 +43,11 @@ jobs:
           fetch-depth: 1
 
       - name: setup vcpkg
-        run: ~/bootstrap-vcpkg.sh
+        run: ~/vcpkg/bootstrap-vcpkg.sh
 
       - name: build & package libs
         run: >-
-          ./vcpkg export 
+          ~/vcpkg/vcpkg export 
             rocksdb
             zstd
             zlib
