@@ -51,7 +51,7 @@ jobs:
       - name: create vcpkg.json
         run: |
           touch vcpkg.json
-          echo "
+          echo '"
           {
             "dependencies": [
               "rocksdb",
@@ -64,8 +64,7 @@ jobs:
             "overrides": [
               { "name": "rocksdb", "version": "${{ env.ROCKSDB_VERSION }}" }
             ]
-          }
-          " > vcpkg.json
+          }"' > vcpkg.json
 
       - name: install libs
         shell: bash
