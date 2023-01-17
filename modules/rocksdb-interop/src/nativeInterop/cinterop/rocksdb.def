@@ -42,13 +42,13 @@ typedef enum {
   WILL_NEED = 3
 } AccessHint;
 
-AccessHint rocksdb_options_get_access_hint_on_compaction_start__(
+static AccessHint rocksdb_options_get_access_hint_on_compaction_start__(
   rocksdb_options_t* opt
 ) {
   return rocksdb_options_get_access_hint_on_compaction_start(opt);
 };
 
-void rocksdb_options_set_access_hint_on_compaction_start__(
+static void rocksdb_options_set_access_hint_on_compaction_start__(
   rocksdb_options_t* opt,
   AccessHint access_hint
 ) {
