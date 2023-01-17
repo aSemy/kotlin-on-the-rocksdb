@@ -27,6 +27,7 @@ excludeDependentModules = false
 #linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu
 
 #linkerOpts = -L/usr/local/lib -L/usr/lib  -lrocksdb
+linkerOpts = -L/usr/local/lib -L/usr/lib
 #linkerOpts = -lbz2 \
 #             -lrocksdb \
 #             -lzstd \
