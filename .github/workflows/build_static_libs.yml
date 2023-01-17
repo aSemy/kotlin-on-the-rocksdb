@@ -1,13 +1,32 @@
 name: Build static libs
 
+# Utility for building RocksDB static libraries for each platform.
+
 on:
+  # pull_request: # uncomment for convenient testing
   workflow_dispatch:
+    inputs:
+      vcpkgVersion:
+        description: 'vcpkg version'
+        required: false
+        type: string
+      rocksdbVersion:
+        description: 'RocksDB version'
+        required: false
+        type: string
 
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 
 env:
+
+  # use the latest version, so x64-windows-static-release is available
+  VCPKG_VERSION: 9a469723aee0873241d055b1345d8e21b445071c
+  #VCPKG_VERSION: 2023.01.09
+
+  ROCKSDB_VERSION: 7.8.3
+
   VCPKG_DISABLE_METRICS: 1
 
 jobs:
@@ -17,62 +36,93 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            triplet: x64-osx
+            triplet: x64-osx-release
+            vcpkg-cmd: ./vcpkg
           - os: ubuntu-latest
-            triplet: x64-linux
+            triplet: x64-linux-release
+            vcpkg-cmd: ./vcpkg
           - os: windows-latest
             triplet: x64-mingw-static
-          - os: windows-latest
-            triplet: x64-windows-static
+            vcpkg-cmd: vcpkg
+          #- os: windows-latest
+          #  triplet: x64-windows-static-release
+          #  vcpkg-cmd: vcpkg
       fail-fast: false
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash # use bash for both windows and unix, so .sh scripts work
+    env:
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
     steps:
 
-      #- name: install CMake
-      #  uses: lukka/get-cmake@latest
+      - name: setup variables
+        run: |
+          if [[ ! -z '${{ inputs.vcpkgVersion }}' ]]; then
+            echo "VCPKG_VERSION=$(echo ${{ inputs.vcpkgVersion }})" >> $GITHUB_ENV
+          fi
+          
+          if [[ ! -z '${{ inputs.rocksdbVersion }}' ]]; then
+            echo "ROCKSDB_VERSION=$(echo ${{ inputs.rocksdbVersion }})" >> $GITHUB_ENV
+          fi
 
-      #- name: cache vcpkg
-      #  uses: actions/cache@v3
-      #  with:
-      #    path: ~/vcpkg
-      #    key: vcpkg-${{ runner.os }}
+      - name: cache vcpkg
+        uses: actions/cache@v3
+        with:
+          path: |
+            .
+            ~/.cache/vcpkg/archives
+            ~/AppData/Local/vcpkg
+          key: vcpkg-${{ matrix.triplet }}-${{ env.VCPKG_VERSION }}
 
       - name: checkout vcpkg
         uses: actions/checkout@v3
         with:
-          ref: 2023.01.09
-          path: ~/vcpkg
+          repository: microsoft/vcpkg
+          ref: ${{ env.VCPKG_VERSION }}
           fetch-depth: 1
 
       - name: setup vcpkg
-        uses: lukka/run-vcpkg@v10
-        with:
-          vcpkgDirectory: ~/vcpkg
-          # vcpkgJsonGlob: '**/vcpkg.json'
-          # runVcpkgInstall: true
+        run: ./bootstrap-vcpkg.sh
 
-      - name: build & package libs
-        run: >-
-          ./vcpkg export 
-            rocksdb
-            zstd
-            zlib
-            snappy
-            lz4
-            bzip2
-            --zip
-            --triplet=${{ matrix.triplet }}
-            --output=rocksdb-${{ matrix.triplet }}
-            --output-dir=$HOME
+      - name: create vcpkg.json
+        run: |
+          touch vcpkg.json;
+          
+          cat <<EOT >> vcpkg.json
+          {
+            "dependencies": [
+              "rocksdb",
+              "zstd",
+              "zlib",
+              "snappy",
+              "lz4",
+              "bzip2"
+            ],
+            "overrides": [
+              { "name": "rocksdb", "version": "${{ env.ROCKSDB_VERSION }}" }
+            ]
+          }
+          EOT
+
+      - name: prep triplet - x64-mingw-static
+        if: ${{ matrix.triplet == 'x64-mingw-static' }}
+        run: |
+          echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
+          echo "updated triplet:"
+          less -de ./triplets/community/x64-mingw-static.cmake
+
+      - name: update vcpkg.json
+        run: ${{ matrix.vcpkg-cmd }} x-update-baseline --add-initial-baseline
+
+      - name: install libs
+        run: ${{ matrix.vcpkg-cmd }} install
 
       - name: upload packaged libs
         if: success()
         uses: actions/upload-artifact@v3
         with:
-#          name: build-report-${{ runner.os }}${{ github.action }}
-          path: ~/rocksdb-${{ matrix.triplet }}.zip
+          name: rocksdb-${{ env.ROCKSDB_VERSION }}-${{ matrix.triplet }}
           #if-no-files-found: ignore
-
-      - name: invalidate vcpkg cache
-        run: echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
-        if: ${{ failure() || cancelled() }}
+          path: |
+            ./vcpkg_installed/${{ matrix.triplet }}/**
