@@ -1,29 +1,31 @@
 name: Build static libs
 
+# Utility for building RocksDB static libraries for each platform.
+
 on:
   pull_request: # TODO remove, temp added for quicker testing
   workflow_dispatch:
     inputs:
       vcpkgVersion:
         description: 'vcpkg version'
-        required: true
-        # use the latest version, so x64-windows-static-release is available
-        default: 9a469723aee0873241d055b1345d8e21b445071c
-        #default: 2023.01.09
+        required: false
         type: string
       rocksdbVersion:
         description: 'RocksDB version'
-        required: true
+        required: false
         type: string
-        default: 7.8.3
 
 concurrency:
   group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 
 env:
-  VCPKG_VERSION: ${{ inputs.vcpkgVersion }}
-  ROCKSDB_VERSION: ${{ inputs.rocksdbVersion }}
+
+  # use the latest version, so x64-windows-static-release is available
+  VCPKG_VERSION: 9a469723aee0873241d055b1345d8e21b445071c
+  #VCPKG_VERSION: 2023.01.09
+
+  ROCKSDB_VERSION: 7.8.3
 
   VCPKG_DISABLE_METRICS: 1
 
@@ -53,6 +55,16 @@ jobs:
     env:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
     steps:
+
+      - name: setup variables
+        run: |
+          if [[ ! -z ${{ inputs.vcpkgVersion }} ]]; then
+            echo "VCPKG_VERSION=$(echo ${{ inputs.vcpkgVersion }})" >> $GITHUB_ENV
+          fi
+          
+          if [[ ! -z ${{ inputs.rocksdbVersion }} ]]; then
+            echo "ROCKSDB_VERSION=$(echo ${{ inputs.rocksdbVersion }})" >> $GITHUB_ENV
+          fi
 
       - name: cache vcpkg
         uses: actions/cache@v3
