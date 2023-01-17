@@ -3,7 +3,7 @@ name: Build static libs
 # Utility for building RocksDB static libraries for each platform.
 
 on:
-  pull_request: # TODO remove, temp added for quicker testing
+  # pull_request: # uncomment for convenient testing
   workflow_dispatch:
     inputs:
       vcpkgVersion:
