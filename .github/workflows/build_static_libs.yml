@@ -58,11 +58,11 @@ jobs:
 
       - name: setup variables
         run: |
-          if [[ ! -z ${{ inputs.vcpkgVersion }} ]]; then
+          if [[ ! -z '${{ inputs.vcpkgVersion }}' ]]; then
             echo "VCPKG_VERSION=$(echo ${{ inputs.vcpkgVersion }})" >> $GITHUB_ENV
           fi
           
-          if [[ ! -z ${{ inputs.rocksdbVersion }} ]]; then
+          if [[ ! -z '${{ inputs.rocksdbVersion }}' ]]; then
             echo "ROCKSDB_VERSION=$(echo ${{ inputs.rocksdbVersion }})" >> $GITHUB_ENV
           fi
 
