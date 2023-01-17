@@ -38,54 +38,54 @@ jobs:
 
       ### Install requirements ###
 
-      - name: Install Linux dependencies
-        id: setup-linux
-        if: runner.os == 'Linux'
-        run: >-
-          sudo apt-get update 
-          && sudo apt-get install librocksdb-dev libgflags-dev libsnappy-dev libbz2-dev liblz4-dev libzstd-dev
-          && dpkg -L librocksdb-dev
-
-      - name: Install macOS dependencies
-        id: setup-macos
-        if: runner.os == 'macOS'
-        run: >-
-          brew install rocksdb gflags snappy bzip2 lz4 zstd
-          && brew --prefix rocksdb
-
-      - uses: msys2/setup-msys2@v2
-        if: runner.os == 'Windows'
-        with:
-          # msystem: MINGW64
-          location: C:/msys2
-          update: true
-          # https://packages.msys2.org/package/mingw-w64-x86_64-rocksdb?repo=mingw64
-          install: >
-            mingw-w64-x86_64-rocksdb
-            mingw-w64-x86_64-zstd
-            mingw-w64-x86_64-zlib
-            mingw-w64-x86_64-snappy
-            mingw-w64-x86_64-lz4
-            mingw-w64-x86_64-bzip2
-
-      - if: runner.os == 'Windows'
-        shell: msys2 {0}
-        run:
-          cygpath -m /
-          && pacman -Ql mingw-w64-x86_64-rocksdb
-          && pacman -Ql mingw-w64-x86_64-zstd
-          && pacman -Ql mingw-w64-x86_64-zlib
-          && pacman -Ql mingw-w64-x86_64-snappy
-          && pacman -Ql mingw-w64-x86_64-lz4
-          && pacman -Ql mingw-w64-x86_64-bzip2
-
-      - if: runner.os == 'Windows'
-        run: >-
-          ls C:/
-          && ls C:/msys2/msys64/
-          && tree C:/msys2/msys64/ /F
-          && tree C:/msys2/msys64/mingw64/ /F
-          && echo $MSYS2_ROOT
+#      - name: Install Linux dependencies
+#        id: setup-linux
+#        if: runner.os == 'Linux'
+#        run: >-
+#          sudo apt-get update
+#          && sudo apt-get install librocksdb-dev libgflags-dev libsnappy-dev libbz2-dev liblz4-dev libzstd-dev
+#          && dpkg -L librocksdb-dev
+#
+#      - name: Install macOS dependencies
+#        id: setup-macos
+#        if: runner.os == 'macOS'
+#        run: >-
+#          brew install rocksdb gflags snappy bzip2 lz4 zstd
+#          && brew --prefix rocksdb
+#
+#      - uses: msys2/setup-msys2@v2
+#        if: runner.os == 'Windows'
+#        with:
+#          # msystem: MINGW64
+#          location: C:/msys2
+#          update: true
+#          # https://packages.msys2.org/package/mingw-w64-x86_64-rocksdb?repo=mingw64
+#          install: >
+#            mingw-w64-x86_64-rocksdb
+#            mingw-w64-x86_64-zstd
+#            mingw-w64-x86_64-zlib
+#            mingw-w64-x86_64-snappy
+#            mingw-w64-x86_64-lz4
+#            mingw-w64-x86_64-bzip2
+#
+#      - if: runner.os == 'Windows'
+#        shell: msys2 {0}
+#        run:
+#          cygpath -m /
+#          && pacman -Ql mingw-w64-x86_64-rocksdb
+#          && pacman -Ql mingw-w64-x86_64-zstd
+#          && pacman -Ql mingw-w64-x86_64-zlib
+#          && pacman -Ql mingw-w64-x86_64-snappy
+#          && pacman -Ql mingw-w64-x86_64-lz4
+#          && pacman -Ql mingw-w64-x86_64-bzip2
+#
+#      - if: runner.os == 'Windows'
+#        run: >-
+#          ls C:/
+#          && ls C:/msys2/msys64/
+#          && tree C:/msys2/msys64/ /F
+#          && tree C:/msys2/msys64/mingw64/ /F
+#          && echo $MSYS2_ROOT
 
       ### Gradle task ###
 
