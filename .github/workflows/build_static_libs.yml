@@ -36,6 +36,9 @@ jobs:
           #  vcpkg-cmd: vcpkg
       fail-fast: false
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash # use bash for both windows and unix, so .sh scripts work
     env:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
     steps:
@@ -60,10 +63,9 @@ jobs:
         run: ./bootstrap-vcpkg.sh
 
       - name: create vcpkg.json
-        shell: bash
         run: |
           touch vcpkg.json;
-  
+          
           cat <<EOT >> vcpkg.json
           {
             "dependencies": [
@@ -82,18 +84,15 @@ jobs:
 
       - name: prep triplet - x64-mingw-static
         if: ${{ matrix.triplet == 'x64-mingw-static' }}
-        shell: bash
         run: |
           echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
-          
+          echo "updated triplet:"
           less -de ./triplets/community/x64-mingw-static.cmake
 
       - name: update vcpkg.json
-        shell: bash
         run: ${{ matrix.vcpkg-cmd }} x-update-baseline --add-initial-baseline
 
       - name: install libs
-        shell: bash
         run: ${{ matrix.vcpkg-cmd }} install
 
       - name: upload packaged libs
