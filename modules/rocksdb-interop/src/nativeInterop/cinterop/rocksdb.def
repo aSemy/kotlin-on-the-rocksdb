@@ -8,8 +8,11 @@ staticLibraries = libbz2.a \
                   liblz4.a \
                   librocksdb.a \
                   libsnappy.a \
-                  libz.a \
                   libzstd.a
+
+staticLibraries.osx = libz.a
+staticLibraries.linux = libz.a
+staticLibraries.mingw = libzlib.a
 
 #compilerOpts =
 #compilerOpts.osx =
