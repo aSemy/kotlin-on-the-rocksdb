@@ -4,7 +4,12 @@ headers = c.h
 
 headerFilter = *
 
-#staticLibraries = librocksdb.a
+staticLibraries = libbz2.a \
+                  liblz4.a \
+                  librocksdb.a \
+                  libsnappy.a \
+                  libz.a \
+                  libzstd.a
 
 #compilerOpts =
 #compilerOpts.osx =
@@ -18,7 +23,15 @@ excludeDependentModules = false
 #compilerOpts.osx = -I/opt/local/include -L/usr/opt/include -L/usr/local/include -L/usr/local/Cellar/rocksdb/7.8.3/include
 #linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu
 
-linkerOpts = -L/usr/local/lib -L/usr/lib  -lrocksdb
+#linkerOpts = -L/usr/local/lib -L/usr/lib  -lrocksdb
+#linkerOpts = -lbz2 \
+#             -lrocksdb \
+#             -lzstd \
+#             -lz \
+#             -lsnappy \
+#             -llz4
+
+#linkerOpts = -lrocksdb
 
 #linkerOpts.linux = -L/usr/local/lib -L/usr/lib  -lrocksdb
 

@@ -1,6 +1,7 @@
 import buildsrc.kotr.KLibProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
   buildsrc.conventions.`kotlin-multiplatform-native`
@@ -15,25 +16,67 @@ kotlin {
     compilations.getByName("main") {
       cinterops {
         val rocksdb by creating rocksdb@{
-          includeDirs("$projectDir/src/nativeInterop/external/rocksdb/include")
 
-//          if (target?.konanTarget?.family == org.jetbrains.kotlin.konan.target.Family.MINGW) {
-//            //            val msys2root = File(System.getenv("MSYS2_ROOT") ?: "C:/msys2/msys64/mingw64/lib/")
-//            fun lib(lib: String) = "C:/msys2/msys64/mingw64/lib/lib${lib}.a"
-//            linkerOpts(
-//              lib("rocksdb"),
-//              lib("zstd"),
-//              lib("z"),
-//              lib("snappy"),
-//              lib("lz4"),
-//            )
-//            logger.lifecycle("linkerOpts for ${this@rocksdb.name}: $linkerOpts")
-//          }
+          val targetFamily = this@rocksdb.target?.konanTarget?.family!!
+
+          val dirName = when (targetFamily) {
+            Family.LINUX -> "rocksdb-7.8.3-x64-linux-release"
+            Family.MINGW -> "rocksdb-7.8.3-x64-mingw-static"
+            Family.OSX   -> "rocksdb-7.8.3-x64-osx-release"
+            else         -> error("$targetFamily is not supported")
+          }
+
+          logger.lifecycle("dirName for $name is $dirName (targetFamily:$targetFamily)")
+
+          includeDirs("$projectDir/src/nativeInterop/external/$dirName/include")
+          includeDirs("$projectDir/src/nativeInterop/external/$dirName/lib")
+
+          this.extraOpts += listOf(
+            "-libraryPath", "$projectDir/src/nativeInterop/external/$dirName/lib",
+//            "-staticLibrary", "librocksdb.a"
+          )
+
+//          fun extFile(path:String) = "$projectDir/src/nativeInterop/external/$dirName/$path"
+
+//          linkerOpts(
+//            "-L${extFile("lib")}",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/libbz2.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/liblz4.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/librocksdb.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/libsnappy.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/libz.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/libzstd.a",
+//          )
         }
       }
     }
     binaries {
-      binaries.staticLib()
+      binaries.staticLib {
+
+//        val targetFamily = target.konanTarget.family
+//
+//        val dirName = when (targetFamily) {
+//          Family.LINUX -> "rocksdb-7.8.3-x64-linux-release"
+//          Family.MINGW -> "rocksdb-7.8.3-x64-mingw-static"
+//          Family.OSX   -> "rocksdb-7.8.3-x64-osx-release"
+//          else         -> error("$targetFamily is not supported")
+//        }
+//
+//        fun extFile(path:String) = "$projectDir/src/nativeInterop/external/$dirName/$path"
+//
+//        linkerOpts(
+//          "-L${extFile("lib")}",
+//          "$projectDir/src/nativeInterop/external/$dirName/lib/libbz2.a",
+//          "$projectDir/src/nativeInterop/external/$dirName/lib/liblz4.a",
+//          "$projectDir/src/nativeInterop/external/$dirName/lib/librocksdb.a",
+//          "$projectDir/src/nativeInterop/external/$dirName/lib/libsnappy.a",
+//          "$projectDir/src/nativeInterop/external/$dirName/lib/libz.a",
+//          "$projectDir/src/nativeInterop/external/$dirName/lib/libzstd.a",
+//          )
+//
+//
+//        logger.lifecycle("linkerOpts for staticLib:${this@staticLib.name}: $linkerOpts (targetFamily:$targetFamily)")
+      }
     }
   }
 
