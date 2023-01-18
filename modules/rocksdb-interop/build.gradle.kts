@@ -29,9 +29,9 @@ kotlin {
           logger.lifecycle("dirName for $name is $dirName (targetFamily:$targetFamily)")
 
           includeDirs("$projectDir/src/nativeInterop/external/$dirName/include")
-          includeDirs("$projectDir/src/nativeInterop/external/$dirName/lib")
+//          includeDirs("$projectDir/src/nativeInterop/external/$dirName/lib")
 
-          this.extraOpts += listOf(
+          this@rocksdb.extraOpts += listOf(
             "-libraryPath", "$projectDir/src/nativeInterop/external/$dirName/lib",
 //            "-staticLibrary", "librocksdb.a"
           )
@@ -53,28 +53,25 @@ kotlin {
     binaries {
       binaries.staticLib {
 
-//        val targetFamily = target.konanTarget.family
-//
-//        val dirName = when (targetFamily) {
-//          Family.LINUX -> "rocksdb-7.8.3-x64-linux-release"
-//          Family.MINGW -> "rocksdb-7.8.3-x64-mingw-static"
-//          Family.OSX   -> "rocksdb-7.8.3-x64-osx-release"
-//          else         -> error("$targetFamily is not supported")
-//        }
-//
-//        fun extFile(path:String) = "$projectDir/src/nativeInterop/external/$dirName/$path"
-//
-//        linkerOpts(
-//          "-L${extFile("lib")}",
-//          "$projectDir/src/nativeInterop/external/$dirName/lib/libbz2.a",
-//          "$projectDir/src/nativeInterop/external/$dirName/lib/liblz4.a",
-//          "$projectDir/src/nativeInterop/external/$dirName/lib/librocksdb.a",
-//          "$projectDir/src/nativeInterop/external/$dirName/lib/libsnappy.a",
-//          "$projectDir/src/nativeInterop/external/$dirName/lib/libz.a",
-//          "$projectDir/src/nativeInterop/external/$dirName/lib/libzstd.a",
-//          )
-//
-//
+        val dirName = when (target.konanTarget.family) {
+          Family.LINUX -> "rocksdb-7.8.3-x64-linux-release"
+          Family.MINGW -> "rocksdb-7.8.3-x64-mingw-static"
+          Family.OSX   -> "rocksdb-7.8.3-x64-osx-release"
+          else         -> error("${target.konanTarget.family} is not supported")
+        }
+
+        val targetDir = "$projectDir/src/nativeInterop/external/$dirName"
+
+        linkerOpts(
+          "-L$targetDir/lib",
+//          "$targetDir/libbz2.a",
+//          "$targetDir/liblz4.a",
+//          "$targetDir/librocksdb.a",
+//          "$targetDir/libsnappy.a",
+//          "$targetDir/libz.a",
+//          "$targetDir/libzstd.a",
+        )
+
 //        logger.lifecycle("linkerOpts for staticLib:${this@staticLib.name}: $linkerOpts (targetFamily:$targetFamily)")
       }
     }
