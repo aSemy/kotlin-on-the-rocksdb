@@ -80,7 +80,7 @@ jobs:
         with:
           path: |
             .
-            ~/.cache/vcpkg/archives
+            ~/.cache/vcpkg/
             ~/AppData/Local/vcpkg
           key: vcpkg-${{ matrix.triplet }}-${{ env.VCPKG_VERSION }}
 
