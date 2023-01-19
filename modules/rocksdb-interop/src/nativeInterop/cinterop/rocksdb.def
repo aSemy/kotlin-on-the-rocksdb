@@ -39,7 +39,7 @@ excludeDependentModules = false
 
 linkerOpts.osx = -lz
 linkerOpts.linux = -lz
-linkerOpts.mingw = -lzlib
+linkerOpts.mingw = -lzlib -lshlwapi -lrpcrt4
 
 
 #linkerOpts.mingw = -L/usr/lib64 \
