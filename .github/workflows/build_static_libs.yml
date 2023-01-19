@@ -72,15 +72,15 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt update
-          sudo apt install gcc-9 g++-9
-          echo "CC=gcc-9" >> $GITHUB_ENV
-          echo "CXX=g++-9" >> $GITHUB_ENV
+          sudo apt install gcc-9.2 g++-9.2
+          echo "CC=gcc-9.2" >> $GITHUB_ENV
+          echo "CXX=g++-9.2" >> $GITHUB_ENV
 
       - name: setup windows
         if: runner.os == 'Windows'
         run: |
-          echo "CC=gcc-9" >> $GITHUB_ENV
-          echo "CXX=g++-9" >> $GITHUB_ENV
+          echo "CC=gcc-9.2" >> $GITHUB_ENV
+          echo "CXX=g++-9.2" >> $GITHUB_ENV
 
 
       - name: cache vcpkg
