@@ -38,7 +38,8 @@ excludeDependentModules = false
 #             -llz4
 
 linkerOpts.osx = -lz
-linkerOpts.linux = -L/usr/local/lib -L/usr/lib -lz
+#linkerOpts.linux = -L/usr/local/lib -L/usr/lib -lz
+linkerOpts.linux = -lz
 linkerOpts.mingw = -lz -lshlwapi -lrpcrt4
 
 
