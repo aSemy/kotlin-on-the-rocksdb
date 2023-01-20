@@ -86,15 +86,15 @@ jobs:
         run: |
           sudo apt-get update
           
-          apt list -a gcc
-          apt list -a gcc-9
-          apt list -a g++
-          apt list -a g++-9
+          apt-list -a gcc
+          apt-list -a gcc-9
+          apt-list -a g++
+          apt-list -a g++-9
           
-          sudo apt-get install gcc=9.2.0 g++=9.2.0
+          sudo apt-get install gcc=9 g++=9
 
-          echo "CC=gcc-9.2" >> $GITHUB_ENV
-          echo "CXX=g++-9.2" >> $GITHUB_ENV
+          echo "CC=gcc-9" >> $GITHUB_ENV
+          echo "CXX=g++-9" >> $GITHUB_ENV
 
       - name: setup windows
         if: runner.os == 'Windows'
