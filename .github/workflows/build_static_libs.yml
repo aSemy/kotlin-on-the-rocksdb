@@ -46,11 +46,8 @@ jobs:
           - os: ubuntu-latest
             triplet: x64-mingw-static
             vcpkg-cmd: ./vcpkg
-          - os: windows-latest
-            triplet: x64-mingw-static
-            vcpkg-cmd: vcpkg
           #- os: windows-latest
-          #  triplet: x64-windows-static-release
+          #  triplet: x64-mingw-static
           #  vcpkg-cmd: vcpkg
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -81,15 +78,16 @@ jobs:
         #sudo apt-get install gcc-9 g++-9
         #sudo apt-get install gcc-9.2 g++-9.2
         #sudo apt-get install g++-9.2
+        #update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9.2 100
+        #update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9.2 100
+        #update-alternatives --set g++ /usr/bin/g++-9.2
+        #update-alternatives --set gcc /usr/bin/gcc-9.2
         run: |
           sudo apt-get update
           
+          sudo apt-get install gcc-9 g++-9
+          
           update-alternatives --query gcc
-            
-          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9.2 100
-          update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9.2 100
-          update-alternatives --set g++ /usr/bin/g++-9.2
-          update-alternatives --set gcc /usr/bin/gcc-9.2
 
           echo "CC=gcc-9.2" >> $GITHUB_ENV
           echo "CXX=g++-9.2" >> $GITHUB_ENV
