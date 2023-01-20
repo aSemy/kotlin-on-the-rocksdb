@@ -91,7 +91,7 @@ jobs:
           apt list -a g++
           apt list -a g++-9
           
-          sudo apt-get install gcc=9 g++=9
+          sudo apt-get install gcc-9 g++-9
 
           echo "CC=gcc-9" >> $GITHUB_ENV
           echo "CXX=g++-9" >> $GITHUB_ENV
