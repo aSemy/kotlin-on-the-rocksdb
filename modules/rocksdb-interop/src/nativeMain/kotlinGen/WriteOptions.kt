@@ -10,13 +10,13 @@ class WriteOptions(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_writeoptions_t> =
     writeOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_writeoptions_destroy(writeOptions) 
+  fun destroy(): Unit =
+    rocksdb_writeoptions_destroy(writeOptions)
 
   fun disableWal(
-    disable: Int, 
-  ): Unit = 
-    rocksdb_writeoptions_disable_WAL(writeOptions, disable) 
+    disable: Int,
+  ): Unit =
+    rocksdb_writeoptions_disable_WAL(writeOptions, disable)
 
   var sync: Boolean
     get() = rocksdb_writeoptions_get_sync(writeOptions).toBoolean()

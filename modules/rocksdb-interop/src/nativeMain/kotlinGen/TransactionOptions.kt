@@ -10,41 +10,41 @@ class TransactionOptions(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_transaction_options_t> =
     transactionOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_transaction_options_destroy(transactionOptions) 
+  fun destroy(): Unit =
+    rocksdb_transaction_options_destroy(transactionOptions)
 
   fun setSetSnapshot(
-    v: Boolean, 
-  ): Unit = 
-    rocksdb_transaction_options_set_set_snapshot(transactionOptions, v.toUByte()) 
+    v: Boolean,
+  ): Unit =
+    rocksdb_transaction_options_set_set_snapshot(transactionOptions, v.toUByte())
 
   fun setDeadlockDetect(
-    v: Boolean, 
-  ): Unit = 
-    rocksdb_transaction_options_set_deadlock_detect(transactionOptions, v.toUByte()) 
+    v: Boolean,
+  ): Unit =
+    rocksdb_transaction_options_set_deadlock_detect(transactionOptions, v.toUByte())
 
   fun setLockTimeout(
-    lockTimeout: Long, 
-  ): Unit = 
-    rocksdb_transaction_options_set_lock_timeout(transactionOptions, lockTimeout) 
+    lockTimeout: Long,
+  ): Unit =
+    rocksdb_transaction_options_set_lock_timeout(transactionOptions, lockTimeout)
 
   fun setExpiration(
-    expiration: Long, 
-  ): Unit = 
-    rocksdb_transaction_options_set_expiration(transactionOptions, expiration) 
+    expiration: Long,
+  ): Unit =
+    rocksdb_transaction_options_set_expiration(transactionOptions, expiration)
 
   fun setDeadlockDetectDepth(
-    depth: Long, 
-  ): Unit = 
-    rocksdb_transaction_options_set_deadlock_detect_depth(transactionOptions, depth) 
+    depth: Long,
+  ): Unit =
+    rocksdb_transaction_options_set_deadlock_detect_depth(transactionOptions, depth)
 
   fun setMaxWriteBatchSize(
-    size: ULong, 
-  ): Unit = 
-    rocksdb_transaction_options_set_max_write_batch_size(transactionOptions, size) 
+    size: ULong,
+  ): Unit =
+    rocksdb_transaction_options_set_max_write_batch_size(transactionOptions, size)
 
   fun setSkipPrepare(
-    v: Boolean, 
-  ): Unit = 
-    rocksdb_transaction_options_set_skip_prepare(transactionOptions, v.toUByte()) 
+    v: Boolean,
+  ): Unit =
+    rocksdb_transaction_options_set_skip_prepare(transactionOptions, v.toUByte())
 }

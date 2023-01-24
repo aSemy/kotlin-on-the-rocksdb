@@ -10,8 +10,8 @@ class UniversalCompactionOptions(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_universal_compaction_options_t> =
     universalCompactionOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_universal_compaction_options_destroy(universalCompactionOptions) 
+  fun destroy(): Unit =
+    rocksdb_universal_compaction_options_destroy(universalCompactionOptions)
 
   var sizeRatio: Int
     get() = rocksdb_universal_compaction_options_get_size_ratio(universalCompactionOptions)

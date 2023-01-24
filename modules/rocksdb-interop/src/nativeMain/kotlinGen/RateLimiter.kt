@@ -11,11 +11,11 @@ class RateLimiter(
     rateLimiter.getPointer(scope)
 
   constructor(
-    rateBytesPerSec: Long, 
-    refillPeriodUs: Long, 
-    fairness: Int, 
+    rateBytesPerSec: Long,
+    refillPeriodUs: Long,
+    fairness: Int,
   ): this(rocksdb_ratelimiter_create(rateBytesPerSec, refillPeriodUs, fairness) ?: error("could not instantiate new RateLimiter"))
 
-  fun destroy(): Unit = 
-    rocksdb_ratelimiter_destroy(rateLimiter) 
+  fun destroy(): Unit =
+    rocksdb_ratelimiter_destroy(rateLimiter)
 }

@@ -10,8 +10,8 @@ class FlushOptions(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_flushoptions_t> =
     flushOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_flushoptions_destroy(flushOptions) 
+  fun destroy(): Unit =
+    rocksdb_flushoptions_destroy(flushOptions)
 
   var wait: Boolean
     get() = rocksdb_flushoptions_get_wait(flushOptions).toBoolean()

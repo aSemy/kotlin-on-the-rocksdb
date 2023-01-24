@@ -10,11 +10,11 @@ class RestoreOptions(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_restore_options_t> =
     restoreOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_restore_options_destroy(restoreOptions) 
+  fun destroy(): Unit =
+    rocksdb_restore_options_destroy(restoreOptions)
 
   fun setKeepLogFiles(
-    v: Int, 
-  ): Unit = 
-    rocksdb_restore_options_set_keep_log_files(restoreOptions, v) 
+    v: Int,
+  ): Unit =
+    rocksdb_restore_options_set_keep_log_files(restoreOptions, v)
 }

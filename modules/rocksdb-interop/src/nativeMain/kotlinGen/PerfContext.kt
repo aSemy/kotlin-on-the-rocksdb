@@ -10,19 +10,19 @@ class PerfContext(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_perfcontext_t> =
     perfContext.getPointer(scope)
 
-  fun reset(): Unit = 
-    rocksdb_perfcontext_reset(perfContext) 
+  fun reset(): Unit =
+    rocksdb_perfcontext_reset(perfContext)
 
   fun report(
-    excludeZeroCounters: Boolean, 
-  ): CPointer<ByteVar>? = 
-    rocksdb_perfcontext_report(perfContext, excludeZeroCounters.toUByte()) 
+    excludeZeroCounters: Boolean,
+  ): CPointer<ByteVar>? =
+    rocksdb_perfcontext_report(perfContext, excludeZeroCounters.toUByte())
 
   fun metric(
-    metric: Int, 
-  ): ULong = 
-    rocksdb_perfcontext_metric(perfContext, metric) 
+    metric: Int,
+  ): ULong =
+    rocksdb_perfcontext_metric(perfContext, metric)
 
-  fun destroy(): Unit = 
-    rocksdb_perfcontext_destroy(perfContext) 
+  fun destroy(): Unit =
+    rocksdb_perfcontext_destroy(perfContext)
 }

@@ -329,15 +329,15 @@ private fun RdbCreateableElement.Fn.createKotlinFn(): String {
 
   return if (fnArgs.isBlank()) {
     """
-      |fun $prettyName(): ${fn.returnType.kotlinType(nullable = nullable)} = 
-      |  ${fn.name}(${if (!static) owner.propName else ""})${fn.returnType.classifier.getterConverter()} $elvis
+      |fun $prettyName(): ${fn.returnType.kotlinType(nullable = nullable)} =
+      |  ${fn.name}(${if (!static) owner.propName else ""})${fn.returnType.classifier.getterConverter()}$elvis
     """.trimMargin()
   } else {
     """
       |fun $prettyName(
       |${fnArgs.prependIndent("  ")}
-      |): ${fn.returnType.kotlinType(nullable = nullable)} = 
-      |  ${fn.name}(${if (!static) "${owner.propName}, " else ""}$fnArgNames)${fn.returnType.classifier.getterConverter()} $elvis
+      |): ${fn.returnType.kotlinType(nullable = nullable)} =
+      |  ${fn.name}(${if (!static) "${owner.propName}, " else ""}$fnArgNames)${fn.returnType.classifier.getterConverter()}$elvis
     """.trimMargin()
   }
 }
@@ -406,7 +406,7 @@ private sealed interface RdbCreateableElement {
       val prettyName = actual.name.knmNameToPrettyName()
       val kotlinType = actual.type.kotlinType()
       val converter = actual.type.classifier.setterConverter()
-      val paramString = "${prettyName}: ${kotlinType}, "
+      val paramString = "${prettyName}: ${kotlinType},"
     }
   }
 }

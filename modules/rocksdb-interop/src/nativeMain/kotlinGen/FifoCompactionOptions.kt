@@ -10,8 +10,8 @@ class FifoCompactionOptions(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_fifo_compaction_options_t> =
     fifoCompactionOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_fifo_compaction_options_destroy(fifoCompactionOptions) 
+  fun destroy(): Unit =
+    rocksdb_fifo_compaction_options_destroy(fifoCompactionOptions)
 
   var maxTableFilesSize: ULong
     get() = rocksdb_fifo_compaction_options_get_max_table_files_size(fifoCompactionOptions)

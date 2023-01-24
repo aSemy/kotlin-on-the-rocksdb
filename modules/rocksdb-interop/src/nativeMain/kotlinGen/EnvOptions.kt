@@ -10,6 +10,6 @@ class EnvOptions(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_envoptions_t> =
     envOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_envoptions_destroy(envOptions) 
+  fun destroy(): Unit =
+    rocksdb_envoptions_destroy(envOptions)
 }

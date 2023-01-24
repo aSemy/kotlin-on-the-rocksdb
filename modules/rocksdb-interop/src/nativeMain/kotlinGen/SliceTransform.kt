@@ -11,18 +11,18 @@ class SliceTransform(
     sliceTransform.getPointer(scope)
 
   constructor(
-    state: CValuesRef<*>?, 
-    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?, 
-    transform: CPointer<CFunction<Function4<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?, 
-    inDomain: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?, 
-    inRange: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?, 
-    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?, 
+    state: CValuesRef<*>?,
+    destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?,
+    transform: CPointer<CFunction<Function4<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?,
+    inDomain: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?,
+    inRange: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?,
+    name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?,
   ): this(rocksdb_slicetransform_create(state, destructor, transform, inDomain, inRange, name) ?: error("could not instantiate new SliceTransform"))
   
   constructor(
-    arg0: ULong, 
+    arg0: ULong,
   ): this(rocksdb_slicetransform_create_fixed_prefix(arg0) ?: error("could not instantiate new SliceTransform"))
 
-  fun destroy(): Unit = 
-    rocksdb_slicetransform_destroy(sliceTransform) 
+  fun destroy(): Unit =
+    rocksdb_slicetransform_destroy(sliceTransform)
 }

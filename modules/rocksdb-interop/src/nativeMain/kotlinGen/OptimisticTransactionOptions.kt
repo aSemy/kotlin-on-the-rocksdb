@@ -10,11 +10,11 @@ class OptimisticTransactionOptions(
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_optimistictransaction_options_t> =
     optimisticTransactionOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_optimistictransaction_options_destroy(optimisticTransactionOptions) 
+  fun destroy(): Unit =
+    rocksdb_optimistictransaction_options_destroy(optimisticTransactionOptions)
 
   fun setSetSnapshot(
-    v: Boolean, 
-  ): Unit = 
-    rocksdb_optimistictransaction_options_set_set_snapshot(optimisticTransactionOptions, v.toUByte()) 
+    v: Boolean,
+  ): Unit =
+    rocksdb_optimistictransaction_options_set_set_snapshot(optimisticTransactionOptions, v.toUByte())
 }

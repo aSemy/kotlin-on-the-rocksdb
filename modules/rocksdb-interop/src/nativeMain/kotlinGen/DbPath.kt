@@ -11,10 +11,10 @@ class DbPath(
     dbPath.getPointer(scope)
 
   constructor(
-    path: String?, 
-    targetSize: ULong, 
+    path: String?,
+    targetSize: ULong,
   ): this(rocksdb_dbpath_create(path, targetSize) ?: error("could not instantiate new DbPath"))
 
-  fun destroy(): Unit = 
-    rocksdb_dbpath_destroy(dbPath) 
+  fun destroy(): Unit =
+    rocksdb_dbpath_destroy(dbPath)
 }

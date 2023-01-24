@@ -11,15 +11,15 @@ class MemoryConsumers(
     memoryConsumers.getPointer(scope)
 
   fun addDb(
-    db: CValuesRef<rocksdb_t>?, 
-  ): Unit = 
-    rocksdb_memory_consumers_add_db(memoryConsumers, db) 
+    db: CValuesRef<rocksdb_t>?,
+  ): Unit =
+    rocksdb_memory_consumers_add_db(memoryConsumers, db)
 
   fun addCache(
-    cache: CValuesRef<rocksdb_cache_t>?, 
-  ): Unit = 
-    rocksdb_memory_consumers_add_cache(memoryConsumers, cache) 
+    cache: CValuesRef<rocksdb_cache_t>?,
+  ): Unit =
+    rocksdb_memory_consumers_add_cache(memoryConsumers, cache)
 
-  fun destroy(): Unit = 
-    rocksdb_memory_consumers_destroy(memoryConsumers) 
+  fun destroy(): Unit =
+    rocksdb_memory_consumers_destroy(memoryConsumers)
 }
