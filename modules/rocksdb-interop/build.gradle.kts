@@ -10,6 +10,8 @@ plugins {
 // generated wrappers will be written into this dir
 val generatedMainSrcDir = layout.projectDirectory.dir("src/nativeMain/kotlinGen")
 
+val rocksDbVersion = "7.9.2"
+
 kotlin {
 
   targets.withType<KotlinNativeTarget>().configureEach {
@@ -20,21 +22,25 @@ kotlin {
           val targetFamily = this@rocksdb.target?.konanTarget?.family!!
 
           val dirName = when (targetFamily) {
-            Family.LINUX -> "rocksdb-7.8.3-x64-linux-release"
+            Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
             Family.MINGW -> "rocksdb-7.8.3-x64-mingw-static"
-            Family.OSX   -> "rocksdb-7.8.3-x64-osx-release"
+            Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
             else         -> error("$targetFamily is not supported")
           }
 
-          logger.lifecycle("dirName for $name is $dirName (targetFamily:$targetFamily)")
+          val targetDir = "$projectDir/src/nativeInterop/external/$dirName"
 
-          includeDirs("$projectDir/src/nativeInterop/external/$dirName/include")
+          includeDirs("$targetDir/include")
 //          includeDirs("$projectDir/src/nativeInterop/external/$dirName/lib")
 
           this@rocksdb.extraOpts += listOf(
-            "-libraryPath", "$projectDir/src/nativeInterop/external/$dirName/lib",
+            "-libraryPath", "$targetDir/lib",
 //            "-staticLibrary", "librocksdb.a"
           )
+
+//          compilerOpts += listOf(
+//            "-I$targetDir/include",
+//          )
 
 //          fun extFile(path:String) = "$projectDir/src/nativeInterop/external/$dirName/$path"
 
@@ -54,9 +60,9 @@ kotlin {
       binaries.staticLib {
 
         val dirName = when (target.konanTarget.family) {
-          Family.LINUX -> "rocksdb-7.8.3-x64-linux-release"
+          Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
           Family.MINGW -> "rocksdb-7.8.3-x64-mingw-static"
-          Family.OSX   -> "rocksdb-7.8.3-x64-osx-release"
+          Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
           else         -> error("${target.konanTarget.family} is not supported")
         }
 
@@ -64,6 +70,7 @@ kotlin {
 
         linkerOpts(
           "-L$targetDir/lib",
+//          "-I$targetDir/lib",
 //          "$targetDir/libbz2.a",
 //          "$targetDir/liblz4.a",
 //          "$targetDir/librocksdb.a",
@@ -122,6 +129,7 @@ val generateRocksDbWrappers by tasks.registering {
     .flatMap { it.outputFileProvider }
 
   inputs.file(klibFile)
+  dependsOn(tasks.commonizeCInterop)
 
   mustRunAfter(tasks.withType<CInteropProcess>())
 
@@ -144,5 +152,5 @@ val syncRocksDbWrappers by tasks.registering(Sync::class) {
   from(generateRocksDbWrappers.map { it.temporaryDir })
   into(generatedMainSrcDir)
 
-  dependsOn(tasks.matching { it.name == "copyCommonizeCInteropForIde" })
+//  dependsOn(tasks.matching { it.name == "copyCommonizeCInteropForIde" })
 }
