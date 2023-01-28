@@ -43,12 +43,12 @@ jobs:
           - os: ubuntu-latest
             triplet: x64-linux-release
             vcpkg-cmd: ./vcpkg
-          - os: ubuntu-latest
-            triplet: x64-mingw-static
-            vcpkg-cmd: ./vcpkg
-          #- os: windows-latest
+          #- os: ubuntu-latest
           #  triplet: x64-mingw-static
-          #  vcpkg-cmd: vcpkg
+          #  vcpkg-cmd: ./vcpkg
+          - os: windows-latest
+            triplet: x64-mingw-static
+            vcpkg-cmd: vcpkg
       fail-fast: false
     runs-on: ${{ matrix.os }}
     defaults:
