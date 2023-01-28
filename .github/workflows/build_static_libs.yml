@@ -168,5 +168,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-tree-logs-${{ matrix.triplet }}-${{ runner.os }}${{ github.action }}
-          path: "**/buildtrees/**.log"
+          path: |
+            **/buildtrees/
           if-no-files-found: ignore
