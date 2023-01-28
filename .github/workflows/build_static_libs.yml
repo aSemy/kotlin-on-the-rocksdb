@@ -180,5 +180,5 @@ jobs:
           name: build-tree-logs-${{ matrix.triplet }}-${{ runner.os }}${{ github.action }}
           path: |
             **/buildtrees/
-            !**/rocksdb/src/**
+            !**/src/*.clean/**
           if-no-files-found: ignore
