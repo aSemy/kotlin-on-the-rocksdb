@@ -121,8 +121,8 @@ jobs:
           echo "CXX=${CXX}"
           gcc --version
           g++ --version
-          ${CC} --version
-          ${CXX} --version
+          which gcc
+          which g++
 
       - name: setup windows
         if: runner.os == 'Windows'
