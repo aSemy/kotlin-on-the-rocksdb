@@ -184,4 +184,6 @@ jobs:
             **/buildtrees/
             !**/src/*.clean/**
             !**/*.exe
+            !**/*.a
+            !**/*.o
           if-no-files-found: ignore
