@@ -94,6 +94,8 @@ jobs:
           sudo update-alternatives --set gcc /usr/bin/x86_64-w64-mingw32-gcc-win32 --debug
           sudo update-alternatives --set g++ /usr/bin/x86_64-w64-mingw32-g++-win32 --debug
 
+          echo "CC=/usr/bin/x86_64-w64-mingw32-gcc-win32" >> $GITHUB_ENV
+          echo "CXX=/usr/bin/x86_64-w64-mingw32-g++-win32" >> $GITHUB_ENV
 
       - name: list versions
         run: |
