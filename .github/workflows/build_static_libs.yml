@@ -109,10 +109,20 @@ jobs:
           sudo update-alternatives --list x86_64-w64-mingw32-g++ --verbose
           echo "::endgroup::"
           sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-win32 --verbose
-          
+          #sudo update-alternatives --install /usr/local/bin/g++ g++ /usr/bin/x86_64-w64-mingw32-g++-win32 2
+
           echo "::group::ls -la /usr/bin/"
           ls -la /usr/bin/
           echo "::endgroup::"
+
+      - name: list versions
+        run: |
+          echo "CC=${CC}"
+          echo "CXX=${CXX}"
+          gcc --version
+          g++ --version
+          ${CC} --version
+          ${CXX} --version
 
       - name: setup windows
         if: runner.os == 'Windows'
