@@ -37,10 +37,10 @@ excludeDependentModules = false
 #             -lsnappy \
 #             -llz4
 
-linkerOpts.osx = -lz
+#linkerOpts.osx = -lz
 #linkerOpts.linux = -L/usr/local/lib -L/usr/lib -lz
-linkerOpts.linux = -lz
-linkerOpts.mingw = -lz -lshlwapi -lrpcrt4
+#linkerOpts.linux = -lz
+linkerOpts.mingw = -lshlwapi -lrpcrt4
 
 
 #linkerOpts.mingw = -L/usr/lib64 \
@@ -57,6 +57,7 @@ excludedFunctions = \
  rocksdb_options_get_access_hint_on_compaction_start
 
 
+#language=c
 ---
 
 // c.h uses an int to represent AccessHint - so manually define an enum
