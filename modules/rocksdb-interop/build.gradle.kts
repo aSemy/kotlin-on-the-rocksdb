@@ -23,7 +23,7 @@ kotlin {
 
           val dirName = when (targetFamily) {
             Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
-            Family.MINGW -> "rocksdb-7.8.3-x64-mingw-static"
+            Family.MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
             Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
             else         -> error("$targetFamily is not supported")
           }
@@ -61,7 +61,7 @@ kotlin {
 
         val dirName = when (target.konanTarget.family) {
           Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
-          Family.MINGW -> "rocksdb-7.8.3-x64-mingw-static"
+          Family.MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
           Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
           else         -> error("${target.konanTarget.family} is not supported")
         }
