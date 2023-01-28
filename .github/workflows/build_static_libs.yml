@@ -183,4 +183,5 @@ jobs:
           path: |
             **/buildtrees/
             !**/src/*.clean/**
+            !**/*.exe
           if-no-files-found: ignore
