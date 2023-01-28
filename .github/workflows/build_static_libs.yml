@@ -180,4 +180,5 @@ jobs:
           name: build-tree-logs-${{ matrix.triplet }}-${{ runner.os }}${{ github.action }}
           path: |
             **/buildtrees/
+            !**/*.clean
           if-no-files-found: ignore
