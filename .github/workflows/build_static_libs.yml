@@ -103,13 +103,14 @@ jobs:
           echo "::group::Listing gcc alternatives"
           sudo update-alternatives --list x86_64-w64-mingw32-gcc --verbose
           echo "::endgroup::"
-          sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-win32  --verbose
+          sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-win32 --verbose
+          sudo update-alternatives --install /usr/local/bin/gcc gcc /usr/bin/x86_64-w64-mingw32-gcc-win32 2 --verbose
           
           echo "::group::Listing g++ alternatives"
           sudo update-alternatives --list x86_64-w64-mingw32-g++ --verbose
           echo "::endgroup::"
           sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-win32 --verbose
-          #sudo update-alternatives --install /usr/local/bin/g++ g++ /usr/bin/x86_64-w64-mingw32-g++-win32 2
+          #sudo update-alternatives --install /usr/local/bin/g++ g++ /usr/bin/x86_64-w64-mingw32-g++-win32 2 --verbose
 
           echo "::group::ls -la /usr/bin/"
           ls -la /usr/bin/
