@@ -43,12 +43,12 @@ jobs:
           - os: ubuntu-latest
             triplet: x64-linux-release
             vcpkg-cmd: ./vcpkg
-          #- os: ubuntu-latest
-          #  triplet: x64-mingw-static
-          #  vcpkg-cmd: ./vcpkg
-          - os: windows-latest
+          - os: ubuntu-latest
             triplet: x64-mingw-static
-            vcpkg-cmd: vcpkg
+            vcpkg-cmd: ./vcpkg
+          #- os: windows-latest
+          #  triplet: x64-mingw-static
+          #  vcpkg-cmd: vcpkg
       fail-fast: false
     runs-on: ${{ matrix.os }}
     defaults:
@@ -68,53 +68,46 @@ jobs:
             echo "ROCKSDB_VERSION=$(echo ${{ inputs.rocksdbVersion }})" >> $GITHUB_ENV
           fi
 
-      - name: setup linux
-        if: runner.os == 'Linux'
-        #sudo apt-get install gcc-9 g++-9
-        #sudo apt-get install gcc-9.2 g++-9.2
-        #sudo apt-get install g++-9.2
-        #update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9.2 100
-        #update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9.2 100
-        #update-alternatives --set g++ /usr/bin/g++-9.2
-        #update-alternatives --set gcc /usr/bin/gcc-9.2
-        #update-alternatives --query gcc
+
+      - name: setup linux x64-linux-release
+        if: runner.os == 'Linux' && matrix.triplet == 'x64-linux-release'
         run: |
           sudo apt-get update
           
-          apt list -a gcc
-          apt list -a gcc-9
-          apt list -a g++
-          apt list -a g++-9
+          sudo update-alternatives --remove-all gcc --verbose
+          sudo update-alternatives --remove-all g++ --verbose
           
           sudo apt-get install gcc-9 g++-9
+          
+          sudo update-alternatives --list gcc --verbose
+          sudo update-alternatives --list gcc-9 --verbose
+          
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 --verbose
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100 --verbose
+          
+          sudo update-alternatives --set gcc /usr/bin/gcc-9 --verbose
+          sudo update-alternatives --set g++ /usr/bin/g++-9 --verbose
 
-          echo "CC=gcc-9" >> $GITHUB_ENV
-          echo "CXX=g++-9" >> $GITHUB_ENV
 
-      - name: setup linux x64-mingw-static
+      - name: setup linux x64-linux-release
         if: runner.os == 'Linux' && matrix.triplet == 'x64-mingw-static'
         run: |
+          sudo apt-get update
+          
+          sudo update-alternatives --remove-all gcc --verbose
+          sudo update-alternatives --remove-all g++ --verbose
+          
           sudo apt-get install gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
           
-          echo "::group::ls -la /usr/bin/"
-          ls -la /usr/bin/
-          echo "::endgroup::"
-          
-          echo "::group::Listing gcc alternatives"
           sudo update-alternatives --list x86_64-w64-mingw32-gcc --verbose
-          echo "::endgroup::"
-          sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-win32 --verbose
-          sudo update-alternatives --install /usr/local/bin/gcc gcc /usr/bin/x86_64-w64-mingw32-gcc-win32 2 --verbose
-          
-          echo "::group::Listing g++ alternatives"
           sudo update-alternatives --list x86_64-w64-mingw32-g++ --verbose
-          echo "::endgroup::"
+          
+          sudo update-alternatives --install /usr/local/bin/gcc gcc /usr/bin/x86_64-w64-mingw32-gcc-win32 100 --verbose
+          sudo update-alternatives --install /usr/local/bin/g++ g++ /usr/bin/x86_64-w64-mingw32-g++-win32 100 --verbose
+          
+          sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-win32 --verbose
           sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-win32 --verbose
-          #sudo update-alternatives --install /usr/local/bin/g++ g++ /usr/bin/x86_64-w64-mingw32-g++-win32 2 --verbose
 
-          echo "::group::ls -la /usr/bin/"
-          ls -la /usr/bin/
-          echo "::endgroup::"
 
       - name: list versions
         run: |
@@ -125,11 +118,13 @@ jobs:
           which gcc
           which g++
 
+
       - name: setup windows
         if: runner.os == 'Windows'
         run: |
           echo "CC=gcc-9.2" >> $GITHUB_ENV
           echo "CXX=g++-9.2" >> $GITHUB_ENV
+
 
       - name: cache vcpkg
         uses: actions/cache@v3
