@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class IngestExternalFileOptions(
-  private val ingestExternalFileOptions: CPointer<rocksdb_ingestexternalfileoptions_t> = rocksdb_ingestexternalfileoptions_create() ?: error("could not instantiate new IngestExternalFileOptions")
+  private val ingestExternalFileOptions: CPointer<rocksdb_ingestexternalfileoptions_t> = rocksdb_ingestexternalfileoptions_create() 
+     ?: error("could not instantiate new IngestExternalFileOptions")
 ) : CValuesRef<rocksdb_ingestexternalfileoptions_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_ingestexternalfileoptions_t> =

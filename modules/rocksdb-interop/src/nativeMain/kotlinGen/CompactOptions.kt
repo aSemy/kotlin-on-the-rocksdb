@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class CompactOptions(
-  private val compactOptions: CPointer<rocksdb_compactoptions_t> = rocksdb_compactoptions_create() ?: error("could not instantiate new CompactOptions")
+  private val compactOptions: CPointer<rocksdb_compactoptions_t> = rocksdb_compactoptions_create() 
+     ?: error("could not instantiate new CompactOptions")
 ) : CValuesRef<rocksdb_compactoptions_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_compactoptions_t> =

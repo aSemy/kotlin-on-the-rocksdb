@@ -13,12 +13,18 @@ class WriteBatchWi(
   constructor(
     reservedBytes: ULong,
     overwriteKeys: Boolean,
-  ): this(rocksdb_writebatch_wi_create(reservedBytes, overwriteKeys.toUByte()) ?: error("could not instantiate new WriteBatchWi"))
+  ): this(
+    rocksdb_writebatch_wi_create(reservedBytes, overwriteKeys.toUByte()) 
+      ?: error("could not instantiate new WriteBatchWi")
+  )
   
   constructor(
     rep: String?,
     size: ULong,
-  ): this(rocksdb_writebatch_wi_create_from(rep, size) ?: error("could not instantiate new WriteBatchWi"))
+  ): this(
+    rocksdb_writebatch_wi_create_from(rep, size) 
+      ?: error("could not instantiate new WriteBatchWi")
+  )
 
   fun destroy(): Unit =
     rocksdb_writebatch_wi_destroy(writeBatchWi)

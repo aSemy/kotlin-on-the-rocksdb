@@ -15,7 +15,10 @@ class Comparator(
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?,
     compare: CPointer<CFunction<Function5<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, Int>>>?,
     name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?,
-  ): this(rocksdb_comparator_create(state, destructor, compare, name) ?: error("could not instantiate new Comparator"))
+  ): this(
+    rocksdb_comparator_create(state, destructor, compare, name) 
+      ?: error("could not instantiate new Comparator")
+  )
   
   constructor(
     state: CValuesRef<*>?,
@@ -25,7 +28,10 @@ class Comparator(
     compareWithoutTs: CPointer<CFunction<Function7<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte, CPointer<ByteVar>?, ULong, UByte, Int>>>?,
     name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?,
     timestampSize: ULong,
-  ): this(rocksdb_comparator_with_ts_create(state, destructor, compare, compareTs, compareWithoutTs, name, timestampSize) ?: error("could not instantiate new Comparator"))
+  ): this(
+    rocksdb_comparator_with_ts_create(state, destructor, compare, compareTs, compareWithoutTs, name, timestampSize) 
+      ?: error("could not instantiate new Comparator")
+  )
 
   fun destroy(): Unit =
     rocksdb_comparator_destroy(comparator)

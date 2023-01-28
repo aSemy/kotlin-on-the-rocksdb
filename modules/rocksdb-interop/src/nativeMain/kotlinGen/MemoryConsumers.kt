@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class MemoryConsumers(
-  private val memoryConsumers: CPointer<rocksdb_memory_consumers_t> = rocksdb_memory_consumers_create() ?: error("could not instantiate new MemoryConsumers")
+  private val memoryConsumers: CPointer<rocksdb_memory_consumers_t> = rocksdb_memory_consumers_create() 
+     ?: error("could not instantiate new MemoryConsumers")
 ) : CValuesRef<rocksdb_memory_consumers_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_memory_consumers_t> =

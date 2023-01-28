@@ -14,7 +14,10 @@ class RateLimiter(
     rateBytesPerSec: Long,
     refillPeriodUs: Long,
     fairness: Int,
-  ): this(rocksdb_ratelimiter_create(rateBytesPerSec, refillPeriodUs, fairness) ?: error("could not instantiate new RateLimiter"))
+  ): this(
+    rocksdb_ratelimiter_create(rateBytesPerSec, refillPeriodUs, fairness) 
+      ?: error("could not instantiate new RateLimiter")
+  )
 
   fun destroy(): Unit =
     rocksdb_ratelimiter_destroy(rateLimiter)

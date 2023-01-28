@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class PerfContext(
-  private val perfContext: CPointer<rocksdb_perfcontext_t> = rocksdb_perfcontext_create() ?: error("could not instantiate new PerfContext")
+  private val perfContext: CPointer<rocksdb_perfcontext_t> = rocksdb_perfcontext_create() 
+     ?: error("could not instantiate new PerfContext")
 ) : CValuesRef<rocksdb_perfcontext_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_perfcontext_t> =

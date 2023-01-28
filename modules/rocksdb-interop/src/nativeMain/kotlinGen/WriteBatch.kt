@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class WriteBatch(
-  private val writeBatch: CPointer<rocksdb_writebatch_t> = rocksdb_writebatch_create() ?: error("could not instantiate new WriteBatch")
+  private val writeBatch: CPointer<rocksdb_writebatch_t> = rocksdb_writebatch_create() 
+     ?: error("could not instantiate new WriteBatch")
 ) : CValuesRef<rocksdb_writebatch_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_writebatch_t> =
@@ -13,7 +14,10 @@ class WriteBatch(
   constructor(
     rep: String?,
     size: ULong,
-  ): this(rocksdb_writebatch_create_from(rep, size) ?: error("could not instantiate new WriteBatch"))
+  ): this(
+    rocksdb_writebatch_create_from(rep, size) 
+      ?: error("could not instantiate new WriteBatch")
+  )
 
   fun destroy(): Unit =
     rocksdb_writebatch_destroy(writeBatch)

@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class ReadOptions(
-  private val readOptions: CPointer<rocksdb_readoptions_t> = rocksdb_readoptions_create() ?: error("could not instantiate new ReadOptions")
+  private val readOptions: CPointer<rocksdb_readoptions_t> = rocksdb_readoptions_create() 
+     ?: error("could not instantiate new ReadOptions")
 ) : CValuesRef<rocksdb_readoptions_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_readoptions_t> =

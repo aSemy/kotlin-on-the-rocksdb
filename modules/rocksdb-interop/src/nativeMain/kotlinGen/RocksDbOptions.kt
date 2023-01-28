@@ -1,28 +1,11 @@
 package dev.adamko.kotlin.on.the.rocksdb
 
-import cnames.structs.*
-import kotlin.Boolean
-import kotlin.Double
-import kotlin.Int
-import kotlin.Long
-import kotlin.String
-import kotlin.UInt
-import kotlin.ULong
-import kotlin.Unit
-import kotlin.error
-import kotlinx.cinterop.*
-import kotlinx.cinterop.AutofreeScope
-import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.CPointerVarOf
-import kotlinx.cinterop.CValuesRef
-import kotlinx.cinterop.IntVarOf
 import org.rocksdb.*
-import org.rocksdb.AccessHint
+import kotlinx.cinterop.*
 
 class RocksDbOptions(
-  private val rocksDbOptions: CPointer<rocksdb_options_t> = rocksdb_options_create()
-    ?: error("could not instantiate new RocksDbOptions")
+  private val rocksDbOptions: CPointer<rocksdb_options_t> = rocksdb_options_create() 
+     ?: error("could not instantiate new RocksDbOptions")
 ) : CValuesRef<rocksdb_options_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_options_t> =
@@ -129,44 +112,25 @@ class RocksDbOptions(
     arg4: Int,
     arg5: Boolean,
   ): Unit =
-    rocksdb_options_set_bottommost_compression_options(
-      rocksDbOptions,
-      arg1,
-      arg2,
-      arg3,
-      arg4,
-      arg5.toUByte()
-    )
+    rocksdb_options_set_bottommost_compression_options(rocksDbOptions, arg1, arg2, arg3, arg4, arg5.toUByte())
 
   fun setBottommostCompressionOptionsZstdMaxTrainBytes(
     arg1: Int,
     arg2: Boolean,
   ): Unit =
-    rocksdb_options_set_bottommost_compression_options_zstd_max_train_bytes(
-      rocksDbOptions,
-      arg1,
-      arg2.toUByte()
-    )
+    rocksdb_options_set_bottommost_compression_options_zstd_max_train_bytes(rocksDbOptions, arg1, arg2.toUByte())
 
   fun setBottommostCompressionOptionsUseZstdDictTrainer(
     arg1: Boolean,
     arg2: Boolean,
   ): Unit =
-    rocksdb_options_set_bottommost_compression_options_use_zstd_dict_trainer(
-      rocksDbOptions,
-      arg1.toUByte(),
-      arg2.toUByte()
-    )
+    rocksdb_options_set_bottommost_compression_options_use_zstd_dict_trainer(rocksDbOptions, arg1.toUByte(), arg2.toUByte())
 
   fun setBottommostCompressionOptionsMaxDictBufferBytes(
     arg1: ULong,
     arg2: Boolean,
   ): Unit =
-    rocksdb_options_set_bottommost_compression_options_max_dict_buffer_bytes(
-      rocksDbOptions,
-      arg1,
-      arg2.toUByte()
-    )
+    rocksdb_options_set_bottommost_compression_options_max_dict_buffer_bytes(rocksDbOptions, arg1, arg2.toUByte())
 
   fun setPrefixExtractor(
     arg1: CValuesRef<rocksdb_slicetransform_t>?,
@@ -177,11 +141,7 @@ class RocksDbOptions(
     levelValues: CValuesRef<IntVarOf<Int>>?,
     numLevels: ULong,
   ): Unit =
-    rocksdb_options_set_max_bytes_for_level_multiplier_additional(
-      rocksDbOptions,
-      levelValues,
-      numLevels
-    )
+    rocksdb_options_set_max_bytes_for_level_multiplier_additional(rocksDbOptions, levelValues, numLevels)
 
   fun enableStatistics(): Unit =
     rocksdb_options_enable_statistics(rocksDbOptions)
@@ -259,11 +219,7 @@ class RocksDbOptions(
     windowSize: ULong,
     numDelsTrigger: ULong,
   ): Unit =
-    rocksdb_options_add_compact_on_deletion_collector_factory(
-      rocksDbOptions,
-      windowSize,
-      numDelsTrigger
-    )
+    rocksdb_options_add_compact_on_deletion_collector_factory(rocksDbOptions, windowSize, numDelsTrigger)
 
   fun setDumpMallocStats(
     arg1: Boolean,
@@ -328,10 +284,7 @@ class RocksDbOptions(
 
   var compressionOptionsUseZstdDictTrainer: Boolean
     get() = rocksdb_options_get_compression_options_use_zstd_dict_trainer(rocksDbOptions).toBoolean()
-    set(value) = rocksdb_options_set_compression_options_use_zstd_dict_trainer(
-      rocksDbOptions,
-      value.toUByte()
-    )
+    set(value) = rocksdb_options_set_compression_options_use_zstd_dict_trainer(rocksDbOptions, value.toUByte())
 
   var compressionOptionsParallelThreads: Int
     get() = rocksdb_options_get_compression_options_parallel_threads(rocksDbOptions)
@@ -339,10 +292,7 @@ class RocksDbOptions(
 
   var compressionOptionsMaxDictBufferBytes: ULong
     get() = rocksdb_options_get_compression_options_max_dict_buffer_bytes(rocksDbOptions)
-    set(value) = rocksdb_options_set_compression_options_max_dict_buffer_bytes(
-      rocksDbOptions,
-      value
-    )
+    set(value) = rocksdb_options_set_compression_options_max_dict_buffer_bytes(rocksDbOptions, value)
 
   val bottommostCompressionOptionsUseZstdDictTrainer: Boolean
     get() = rocksdb_options_get_bottommost_compression_options_use_zstd_dict_trainer(rocksDbOptions).toBoolean()
@@ -377,10 +327,7 @@ class RocksDbOptions(
 
   var levelCompactionDynamicLevelBytes: Boolean
     get() = rocksdb_options_get_level_compaction_dynamic_level_bytes(rocksDbOptions).toBoolean()
-    set(value) = rocksdb_options_set_level_compaction_dynamic_level_bytes(
-      rocksDbOptions,
-      value.toUByte()
-    )
+    set(value) = rocksdb_options_set_level_compaction_dynamic_level_bytes(rocksDbOptions, value.toUByte())
 
   var maxBytesForLevelMultiplier: Double
     get() = rocksdb_options_get_max_bytes_for_level_multiplier(rocksDbOptions)
@@ -392,10 +339,7 @@ class RocksDbOptions(
 
   var skipCheckingSstFileSizesOnDbOpen: Boolean
     get() = rocksdb_options_get_skip_checking_sst_file_sizes_on_db_open(rocksDbOptions).toBoolean()
-    set(value) = rocksdb_options_set_skip_checking_sst_file_sizes_on_db_open(
-      rocksDbOptions,
-      value.toUByte()
-    )
+    set(value) = rocksdb_options_set_skip_checking_sst_file_sizes_on_db_open(rocksDbOptions, value.toUByte())
 
   var enableBlobFiles: Boolean
     get() = rocksdb_options_get_enable_blob_files(rocksDbOptions).toBoolean()
@@ -543,10 +487,7 @@ class RocksDbOptions(
 
   var useDirectIoForFlushAndCompaction: Boolean
     get() = rocksdb_options_get_use_direct_io_for_flush_and_compaction(rocksDbOptions).toBoolean()
-    set(value) = rocksdb_options_set_use_direct_io_for_flush_and_compaction(
-      rocksDbOptions,
-      value.toUByte()
-    )
+    set(value) = rocksdb_options_set_use_direct_io_for_flush_and_compaction(rocksDbOptions, value.toUByte())
 
   var isFdCloseOnExec: Boolean
     get() = rocksdb_options_get_is_fd_close_on_exec(rocksDbOptions).toBoolean()
@@ -582,17 +523,11 @@ class RocksDbOptions(
 
   var allowConcurrentMemtableWrite: Boolean
     get() = rocksdb_options_get_allow_concurrent_memtable_write(rocksDbOptions).toBoolean()
-    set(value) = rocksdb_options_set_allow_concurrent_memtable_write(
-      rocksDbOptions,
-      value.toUByte()
-    )
+    set(value) = rocksdb_options_set_allow_concurrent_memtable_write(rocksDbOptions, value.toUByte())
 
   var enableWriteThreadAdaptiveYield: Boolean
     get() = rocksdb_options_get_enable_write_thread_adaptive_yield(rocksDbOptions).toBoolean()
-    set(value) = rocksdb_options_set_enable_write_thread_adaptive_yield(
-      rocksDbOptions,
-      value.toUByte()
-    )
+    set(value) = rocksdb_options_set_enable_write_thread_adaptive_yield(rocksDbOptions, value.toUByte())
 
   var maxSequentialSkipInIterations: ULong
     get() = rocksdb_options_get_max_sequential_skip_in_iterations(rocksDbOptions)

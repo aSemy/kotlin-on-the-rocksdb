@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class FlushOptions(
-  private val flushOptions: CPointer<rocksdb_flushoptions_t> = rocksdb_flushoptions_create() ?: error("could not instantiate new FlushOptions")
+  private val flushOptions: CPointer<rocksdb_flushoptions_t> = rocksdb_flushoptions_create() 
+     ?: error("could not instantiate new FlushOptions")
 ) : CValuesRef<rocksdb_flushoptions_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_flushoptions_t> =

@@ -15,7 +15,10 @@ class CompactionFilterFactory(
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?,
     createCompactionFilter: CPointer<CFunction<Function2<COpaquePointer?, CPointer<rocksdb_compactionfiltercontext_t>?, CPointer<rocksdb_compactionfilter_t>?>>>?,
     name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?,
-  ): this(rocksdb_compactionfilterfactory_create(state, destructor, createCompactionFilter, name) ?: error("could not instantiate new CompactionFilterFactory"))
+  ): this(
+    rocksdb_compactionfilterfactory_create(state, destructor, createCompactionFilter, name) 
+      ?: error("could not instantiate new CompactionFilterFactory")
+  )
 
   fun destroy(): Unit =
     rocksdb_compactionfilterfactory_destroy(compactionFilterFactory)

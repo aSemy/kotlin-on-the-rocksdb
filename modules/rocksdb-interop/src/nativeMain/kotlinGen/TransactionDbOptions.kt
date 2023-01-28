@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class TransactionDbOptions(
-  private val transactionDbOptions: CPointer<rocksdb_transactiondb_options_t> = rocksdb_transactiondb_options_create() ?: error("could not instantiate new TransactionDbOptions")
+  private val transactionDbOptions: CPointer<rocksdb_transactiondb_options_t> = rocksdb_transactiondb_options_create() 
+     ?: error("could not instantiate new TransactionDbOptions")
 ) : CValuesRef<rocksdb_transactiondb_options_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_transactiondb_options_t> =

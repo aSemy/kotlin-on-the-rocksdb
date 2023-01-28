@@ -13,7 +13,10 @@ class ApproximateMemoryUsage(
   constructor(
     consumers: CValuesRef<rocksdb_memory_consumers_t>?,
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?,
-  ): this(rocksdb_approximate_memory_usage_create(consumers, errorPointer) ?: error("could not instantiate new ApproximateMemoryUsage"))
+  ): this(
+    rocksdb_approximate_memory_usage_create(consumers, errorPointer) 
+      ?: error("could not instantiate new ApproximateMemoryUsage")
+  )
 
   fun destroy(): Unit =
     rocksdb_approximate_memory_usage_destroy(approximateMemoryUsage)

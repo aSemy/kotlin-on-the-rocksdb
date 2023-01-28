@@ -13,5 +13,8 @@ class TransactionDbCheckpointObject(
   constructor(
     txnDb: CValuesRef<rocksdb_transactiondb_t>?,
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?,
-  ): this(rocksdb_transactiondb_checkpoint_object_create(txnDb, errorPointer) ?: error("could not instantiate new TransactionDbCheckpointObject"))
+  ): this(
+    rocksdb_transactiondb_checkpoint_object_create(txnDb, errorPointer) 
+      ?: error("could not instantiate new TransactionDbCheckpointObject")
+  )
 }

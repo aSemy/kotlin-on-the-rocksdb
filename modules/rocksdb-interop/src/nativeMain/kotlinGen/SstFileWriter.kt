@@ -13,13 +13,19 @@ class SstFileWriter(
   constructor(
     env: CValuesRef<rocksdb_envoptions_t>?,
     ioOptions: CValuesRef<rocksdb_options_t>?,
-  ): this(rocksdb_sstfilewriter_create(env, ioOptions) ?: error("could not instantiate new SstFileWriter"))
+  ): this(
+    rocksdb_sstfilewriter_create(env, ioOptions) 
+      ?: error("could not instantiate new SstFileWriter")
+  )
   
   constructor(
     env: CValuesRef<rocksdb_envoptions_t>?,
     ioOptions: CValuesRef<rocksdb_options_t>?,
     comparator: CValuesRef<rocksdb_comparator_t>?,
-  ): this(rocksdb_sstfilewriter_create_with_comparator(env, ioOptions, comparator) ?: error("could not instantiate new SstFileWriter"))
+  ): this(
+    rocksdb_sstfilewriter_create_with_comparator(env, ioOptions, comparator) 
+      ?: error("could not instantiate new SstFileWriter")
+  )
 
   fun open(
     name: String?,

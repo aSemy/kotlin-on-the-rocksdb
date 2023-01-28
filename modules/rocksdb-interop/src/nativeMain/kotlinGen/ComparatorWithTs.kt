@@ -18,5 +18,8 @@ class ComparatorWithTs(
     compareWithoutTs: CPointer<CFunction<Function7<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte, CPointer<ByteVar>?, ULong, UByte, Int>>>?,
     name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?,
     timestampSize: ULong,
-  ): this(rocksdb_comparator_with_ts_create(state, destructor, compare, compareTs, compareWithoutTs, name, timestampSize) ?: error("could not instantiate new ComparatorWithTs"))
+  ): this(
+    rocksdb_comparator_with_ts_create(state, destructor, compare, compareTs, compareWithoutTs, name, timestampSize) 
+      ?: error("could not instantiate new ComparatorWithTs")
+  )
 }

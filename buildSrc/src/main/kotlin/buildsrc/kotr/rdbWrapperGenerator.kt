@@ -171,9 +171,13 @@ object KLibProcessor {
           }
         }
 
-        val noArgCreateFn =
-          constructorFns.firstOrNull { it.fn.valueParameters.isEmpty() }?.let { fn ->
-            """ = ${fn.fn.name}() ?: error("could not instantiate new ${creatable.prettyName}")"""
+        val noArgCreateFn = constructorFns
+          .firstOrNull { it.fn.valueParameters.isEmpty() }
+          ?.let { fn ->
+            """
+               | = ${fn.fn.name}() 
+               |     ?: error("could not instantiate new ${creatable.prettyName}")
+            """.trimMargin()
           } ?: ""
         val constructors = constructorFns.filter {
           it.fn.valueParameters.isNotEmpty()
@@ -355,7 +359,10 @@ private fun RdbCreateableElement.Fn.createKotlinConstructor(): String {
     "\n${fnArgs.prependIndent("  ")}\n"
 
   return """
-      |constructor($constructorArgs): this(${fn.name}($fnArgNames) ?: error("could not instantiate new ${owner.prettyName}"))
+      |constructor($constructorArgs): this(
+      |  ${fn.name}($fnArgNames) 
+      |    ?: error("could not instantiate new ${owner.prettyName}")
+      |)
     """.trimMargin()
 }
 

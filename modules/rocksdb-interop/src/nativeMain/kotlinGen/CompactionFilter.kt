@@ -15,7 +15,10 @@ class CompactionFilter(
     destructor: CPointer<CFunction<Function1<COpaquePointer?, Unit>>>?,
     filter: CPointer<CFunction<Function9<COpaquePointer?, Int, CPointer<ByteVar>?, ULong, CPointer<ByteVar>?, ULong, CPointer<CPointerVarOf<CPointer<ByteVar>>>?, CPointer<ULongVarOf<ULong>>?, CPointer<UByteVarOf<UByte>>?, UByte>>>?,
     name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?,
-  ): this(rocksdb_compactionfilter_create(state, destructor, filter, name) ?: error("could not instantiate new CompactionFilter"))
+  ): this(
+    rocksdb_compactionfilter_create(state, destructor, filter, name) 
+      ?: error("could not instantiate new CompactionFilter")
+  )
 
   fun setIgnoreSnapshots(
     arg1: Boolean,

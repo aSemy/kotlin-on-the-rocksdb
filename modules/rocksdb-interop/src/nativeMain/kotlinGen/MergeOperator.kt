@@ -17,7 +17,10 @@ class MergeOperator(
     partialMerge: CPointer<CFunction<Function8<COpaquePointer?, CPointer<ByteVar>?, ULong, CPointer<CPointerVarOf<CPointer<ByteVar>>>?, CPointer<ULongVarOf<ULong>>?, Int, CPointer<UByteVarOf<UByte>>?, CPointer<ULongVarOf<ULong>>?, CPointer<ByteVar>?>>>?,
     deleteValue: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, Unit>>>?,
     name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?,
-  ): this(rocksdb_mergeoperator_create(state, destructor, fullMerge, partialMerge, deleteValue, name) ?: error("could not instantiate new MergeOperator"))
+  ): this(
+    rocksdb_mergeoperator_create(state, destructor, fullMerge, partialMerge, deleteValue, name) 
+      ?: error("could not instantiate new MergeOperator")
+  )
 
   fun destroy(): Unit =
     rocksdb_mergeoperator_destroy(mergeOperator)

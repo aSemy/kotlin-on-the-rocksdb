@@ -12,5 +12,8 @@ class JemallocNoDumpAllocator(
 
   constructor(
     errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?,
-  ): this(rocksdb_jemalloc_nodump_allocator_create(errorPointer) ?: error("could not instantiate new JemallocNoDumpAllocator"))
+  ): this(
+    rocksdb_jemalloc_nodump_allocator_create(errorPointer) 
+      ?: error("could not instantiate new JemallocNoDumpAllocator")
+  )
 }

@@ -12,7 +12,10 @@ class BackupEngineOptions(
 
   constructor(
     backupDir: String?,
-  ): this(rocksdb_backup_engine_options_create(backupDir) ?: error("could not instantiate new BackupEngineOptions"))
+  ): this(
+    rocksdb_backup_engine_options_create(backupDir) 
+      ?: error("could not instantiate new BackupEngineOptions")
+  )
 
   fun setBackupDir(
     backupDir: String?,

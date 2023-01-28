@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class SliceTransform(
-  private val sliceTransform: CPointer<rocksdb_slicetransform_t> = rocksdb_slicetransform_create_noop() ?: error("could not instantiate new SliceTransform")
+  private val sliceTransform: CPointer<rocksdb_slicetransform_t> = rocksdb_slicetransform_create_noop() 
+     ?: error("could not instantiate new SliceTransform")
 ) : CValuesRef<rocksdb_slicetransform_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_slicetransform_t> =
@@ -17,11 +18,17 @@ class SliceTransform(
     inDomain: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?,
     inRange: CPointer<CFunction<Function3<COpaquePointer?, CPointer<ByteVar>?, ULong, UByte>>>?,
     name: CPointer<CFunction<Function1<COpaquePointer?, CPointer<ByteVar>?>>>?,
-  ): this(rocksdb_slicetransform_create(state, destructor, transform, inDomain, inRange, name) ?: error("could not instantiate new SliceTransform"))
+  ): this(
+    rocksdb_slicetransform_create(state, destructor, transform, inDomain, inRange, name) 
+      ?: error("could not instantiate new SliceTransform")
+  )
   
   constructor(
     arg0: ULong,
-  ): this(rocksdb_slicetransform_create_fixed_prefix(arg0) ?: error("could not instantiate new SliceTransform"))
+  ): this(
+    rocksdb_slicetransform_create_fixed_prefix(arg0) 
+      ?: error("could not instantiate new SliceTransform")
+  )
 
   fun destroy(): Unit =
     rocksdb_slicetransform_destroy(sliceTransform)

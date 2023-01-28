@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class WriteOptions(
-  private val writeOptions: CPointer<rocksdb_writeoptions_t> = rocksdb_writeoptions_create() ?: error("could not instantiate new WriteOptions")
+  private val writeOptions: CPointer<rocksdb_writeoptions_t> = rocksdb_writeoptions_create() 
+     ?: error("could not instantiate new WriteOptions")
 ) : CValuesRef<rocksdb_writeoptions_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_writeoptions_t> =

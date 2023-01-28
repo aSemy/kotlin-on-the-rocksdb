@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class CuckooOptions(
-  private val cuckooOptions: CPointer<rocksdb_cuckoo_table_options_t> = rocksdb_cuckoo_options_create() ?: error("could not instantiate new CuckooOptions")
+  private val cuckooOptions: CPointer<rocksdb_cuckoo_table_options_t> = rocksdb_cuckoo_options_create() 
+     ?: error("could not instantiate new CuckooOptions")
 ) : CValuesRef<rocksdb_cuckoo_table_options_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_cuckoo_table_options_t> =

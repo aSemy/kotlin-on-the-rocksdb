@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class UniversalCompactionOptions(
-  private val universalCompactionOptions: CPointer<rocksdb_universal_compaction_options_t> = rocksdb_universal_compaction_options_create() ?: error("could not instantiate new UniversalCompactionOptions")
+  private val universalCompactionOptions: CPointer<rocksdb_universal_compaction_options_t> = rocksdb_universal_compaction_options_create() 
+     ?: error("could not instantiate new UniversalCompactionOptions")
 ) : CValuesRef<rocksdb_universal_compaction_options_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_universal_compaction_options_t> =

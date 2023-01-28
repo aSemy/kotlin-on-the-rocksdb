@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class FifoCompactionOptions(
-  private val fifoCompactionOptions: CPointer<rocksdb_fifo_compaction_options_t> = rocksdb_fifo_compaction_options_create() ?: error("could not instantiate new FifoCompactionOptions")
+  private val fifoCompactionOptions: CPointer<rocksdb_fifo_compaction_options_t> = rocksdb_fifo_compaction_options_create() 
+     ?: error("could not instantiate new FifoCompactionOptions")
 ) : CValuesRef<rocksdb_fifo_compaction_options_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_fifo_compaction_options_t> =

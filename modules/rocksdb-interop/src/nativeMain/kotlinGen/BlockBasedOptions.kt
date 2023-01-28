@@ -4,7 +4,8 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class BlockBasedOptions(
-  private val blockBasedOptions: CPointer<rocksdb_block_based_table_options_t> = rocksdb_block_based_options_create() ?: error("could not instantiate new BlockBasedOptions")
+  private val blockBasedOptions: CPointer<rocksdb_block_based_table_options_t> = rocksdb_block_based_options_create() 
+     ?: error("could not instantiate new BlockBasedOptions")
 ) : CValuesRef<rocksdb_block_based_table_options_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_block_based_table_options_t> =
