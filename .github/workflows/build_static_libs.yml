@@ -162,3 +162,11 @@ jobs:
           #if-no-files-found: ignore
           path: |
             ./vcpkg_installed/${{ matrix.triplet }}/**
+
+      - name: upload logs
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-report-${{ runner.os }}${{ github.action }}
+          path: "**/buildtrees/"
+          if-no-files-found: ignore
