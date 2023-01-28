@@ -167,6 +167,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: build-report-${{ runner.os }}${{ github.action }}
+          name: build-tree-logs-${{ matrix.triplet }}-${{ runner.os }}${{ github.action }}
           path: "**/buildtrees/"
           if-no-files-found: ignore
