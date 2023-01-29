@@ -73,17 +73,19 @@ jobs:
       - name: setup linux for x64-linux-release
         if: runner.os == 'Linux' && matrix.triplet == 'x64-linux-release'
         run: |
-          echo  "CC=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-gcc)" >> $GITHUB_ENV
-          echo "CXX=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-g++)" >> $GITHUB_ENV
+          echo                 "CC=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-gcc)" >> $GITHUB_ENV
+          echo   "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-gcc)" >> $GITHUB_ENV
+          echo                "CXX=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-g++)" >> $GITHUB_ENV
+          echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-g++)" >> $GITHUB_ENV
 
           #sudo apt-get update
           #sudo apt-get install gcc-9 g++-9
-          #
-          #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 --debug
-          #sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100 --debug
-          #
-          #sudo update-alternatives --set gcc /usr/bin/gcc-9 --debug
-          #sudo update-alternatives --set g++ /usr/bin/g++-9 --debug
+          
+          sudo update-alternatives --install /usr/bin/gcc gcc $(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-gcc) 100 --debug
+          sudo update-alternatives --install /usr/bin/g++ g++ $(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-g++) 100 --debug
+          
+          sudo update-alternatives --set gcc $(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-gcc) --debug
+          sudo update-alternatives --set g++ $(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-g++) --debug
 
 
       - name: setup linux for x64-mingw-static
@@ -119,8 +121,10 @@ jobs:
       - name: setup windows
         if: runner.os == 'Windows'
         run: |
-          echo  "CC=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
-          echo "CXX=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
+          echo                 "CC=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
+          echo   "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
+          echo                "CXX=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
+          echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
           
           #echo "CC=gcc-9" >> $GITHUB_ENV
           #echo "CXX=g++-9" >> $GITHUB_ENV
