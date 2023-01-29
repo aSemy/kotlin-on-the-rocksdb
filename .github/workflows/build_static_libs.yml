@@ -44,12 +44,12 @@ jobs:
             triplet: x64-linux-release
             vcpkg-cmd: ./vcpkg
           # mingw compilation fails on Linux: error: ‘mutex’ in namespace ‘std’ does not name a type
-          - os: ubuntu-latest
-            triplet: x64-mingw-static
-            vcpkg-cmd: ./vcpkg
-          #- os: windows-latest
+          #- os: ubuntu-latest
           #  triplet: x64-mingw-static
-          #  vcpkg-cmd: vcpkg
+          #  vcpkg-cmd: ./vcpkg
+          - os: windows-latest
+            triplet: x64-mingw-static
+            vcpkg-cmd: vcpkg
       fail-fast: false
     runs-on: ${{ matrix.os }}
     defaults:
@@ -93,7 +93,6 @@ jobs:
           echo "CXX=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
           
           
-          
           #sudo apt-get update
           #sudo apt-get install gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
           #
@@ -105,6 +104,7 @@ jobs:
           #
           #echo "CC=/usr/bin/x86_64-w64-mingw32-gcc-win32" >> $GITHUB_ENV
           #echo "CXX=/usr/bin/x86_64-w64-mingw32-g++-win32" >> $GITHUB_ENV
+
 
       - name: list versions
         run: |
@@ -119,8 +119,11 @@ jobs:
       - name: setup windows
         if: runner.os == 'Windows'
         run: |
-          echo "CC=gcc-9" >> $GITHUB_ENV
-          echo "CXX=g++-9" >> $GITHUB_ENV
+          echo  "CC=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
+          echo "CXX=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
+          
+          #echo "CC=gcc-9" >> $GITHUB_ENV
+          #echo "CXX=g++-9" >> $GITHUB_ENV
 
 
       - name: cache vcpkg
