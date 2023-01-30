@@ -50,14 +50,14 @@ jobs:
           arguments: >
             :externals:lib-rocksdb:commonize --info --stacktrace
 
-      - name: tree konan
+      - name: macOS - install tree
         if: runner.os == 'macOS'
         run: |
           brew install tree
 
       - name: tree konan
         run: |
-          tree ~/.konan
+          tree ~/.konan/dependencies/
 
       - uses: gradle/gradle-build-action@v2
         with:
