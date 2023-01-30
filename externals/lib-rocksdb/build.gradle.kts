@@ -1,5 +1,7 @@
 import buildsrc.ext.asConsumer
 import buildsrc.ext.dropDirectories
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 
@@ -10,6 +12,16 @@ plugins {
 // generated wrappers will be written into this dir
 val generatedMainSrcDir = layout.projectDirectory.dir("src/nativeMain/kotlinGen")
 
+
+kotlin {
+  targets.withType<KotlinNativeTarget>().configureEach {
+    binaries {
+      executable {
+        entryPoint = "dummy.main"
+      }
+    }
+  }
+}
 
 interface Services {
   @get:Inject
@@ -54,17 +66,17 @@ val config = extensions.create<VcpkgConfig>("vcpkg").apply {
   when {
     HostManager.hostIsMingw -> {
       val bin = "dependencies/msys2-mingw-w64-x86_64-2/bin"
-      konanGcc.set(konanDir.file("$bin/gcc.exe").map { it.asFile.canonicalPath })
-      konanGpp.set(konanDir.file("$bin/g++.exe").map { it.asFile.canonicalPath })
+      konanGcc.set(konanDir.file("$bin/gcc.exe").map { it.asFile.invariantSeparatorsPath })
+      konanGpp.set(konanDir.file("$bin/g++.exe").map { it.asFile.invariantSeparatorsPath })
     }
 
     HostManager.hostIsLinux -> {
       val bin = "dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin"
       konanGcc.set(
-        konanDir.file("$bin/x86_64-unknown-linux-gnu-gcc").map { it.asFile.canonicalPath }
+        konanDir.file("$bin/x86_64-unknown-linux-gnu-gcc").map { it.asFile.invariantSeparatorsPath }
       )
       konanGpp.set(
-        konanDir.file("$bin/x86_64-unknown-linux-gnu-g++").map { it.asFile.canonicalPath }
+        konanDir.file("$bin/x86_64-unknown-linux-gnu-g++").map { it.asFile.invariantSeparatorsPath }
       )
     }
 
@@ -142,7 +154,7 @@ val rocksDbMakeStaticLib: TaskProvider<Exec> by tasks.registering(Exec::class) {
 
   workingDir(temporaryDir)
 
-  dependsOn(tasks.commonize)
+  dependsOn(tasks.withType<KotlinCompile>())
   dependsOn(rocksDbPrepareMakeStaticLib)
 
   inputs.dir(rocksDbPrepareSource.map { it.destinationDir })
@@ -212,7 +224,6 @@ val rocksDbZip by tasks.registering(Zip::class) {
   archiveBaseName.set("rocksdb")
   archiveVersion.set(rocksDbVersion)
   archiveClassifier.set(hostName)
-
 
   destinationDirectory.set(layout.buildDirectory.dir("distributions"))
 }
