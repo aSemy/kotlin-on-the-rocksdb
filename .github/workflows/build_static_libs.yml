@@ -59,6 +59,8 @@ jobs:
 
       - name: tree konan
         run: |
+          ls ~
+          ls ~/.konan
           tree ~/.konan/dependencies/
 
       - uses: gradle/gradle-build-action@v2
