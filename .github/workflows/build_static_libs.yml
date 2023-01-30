@@ -73,6 +73,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v3
         with:
+          name: rocksdb-${{ runner.os }}-${{ github.sha }}
           path: |
             ./externals/lib-rocksdb/build/distributions/*.zip
 
