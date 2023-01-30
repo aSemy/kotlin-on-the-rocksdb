@@ -44,6 +44,17 @@ jobs:
             ~/.konan/**/*
           key: kotlin-konan-${{ runner.os }}
 
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
+          arguments: >
+            :externals:lib-rocksdb:commonize --info --stacktrace
+
+      - name: tree konan
+        if: runner.os == 'macOS'
+        run: |
+          brew install tree
+
       - name: tree konan
         run: |
           tree ~/.konan
