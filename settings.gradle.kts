@@ -3,7 +3,8 @@ rootProject.name = "kotlin-on-the-rocksdb"
 include(
   ":modules:rocksdb",
   ":modules:rocksdb-interop",
-//  ":modules:rocksdb-interop-2",
+
+  ":externals:lib-rocksdb",
 )
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

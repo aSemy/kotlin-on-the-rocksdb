@@ -1,26 +1,15 @@
-name: Gradle Task
-run-name: "Gradle Task ${{ inputs.gradle-task }} @ ${{ inputs.runs-on }}"
+name: Build static libs
 
-# Reusable Workflow for running a Gradle task
+# Utility for building RocksDB static libraries for each platform
 
 on:
+  pull_request:
+    paths:
+      - ./.github/workflows/build_static_libs_2.yml
   workflow_dispatch:
 
-  workflow_call:
-    inputs:
-      gradle-task:
-        description: "The Gradle task to run, including any flags"
-        required: true
-        type: string
-      runs-on:
-        description: "OSes to run the task on"
-        required: true
-        type: string
-
-
 concurrency:
-  # note: the Workflow inputs are also included in the concurrency group
-  group: "${{ github.workflow }} ${{ join(inputs.*) }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 
 
@@ -30,14 +19,14 @@ permissions:
 
 jobs:
 
-  run-task:
-    runs-on: ${{ inputs.runs-on }}
-    name: "./gradlew ${{ inputs.gradle-task}} @ ${{ inputs.runs-on }}"
+  export-rocksdb:
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
-
-      ### Gradle task ###
-
       - name: Checkout the repo
         uses: actions/checkout@v3
 
@@ -58,7 +47,15 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-home-cache-cleanup: true
-          arguments: ${{ inputs.gradle-task }}
+          arguments: >
+            :externals:lib-rocksdb:rocksDbZip --info --stacktrace
+
+      - name: upload packaged libs
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            ./externals/lib-rocksdb/build/distributions/*.zip
 
       - name: Upload build reports
         if: failure()
