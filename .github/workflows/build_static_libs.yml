@@ -4,8 +4,8 @@ name: Build static libs
 
 on:
   pull_request:
-    paths:
-      - ./.github/workflows/build_static_libs.yml
+#    paths:
+#      - ./.github/workflows/build_static_libs.yml
   workflow_dispatch:
 
 concurrency:
