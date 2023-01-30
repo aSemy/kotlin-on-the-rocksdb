@@ -15,11 +15,7 @@ val generatedMainSrcDir = layout.projectDirectory.dir("src/nativeMain/kotlinGen"
 
 kotlin {
   targets.withType<KotlinNativeTarget>().configureEach {
-    binaries {
-      executable {
-        entryPoint = "dummy.main"
-      }
-    }
+    binaries.staticLib()
   }
 }
 
