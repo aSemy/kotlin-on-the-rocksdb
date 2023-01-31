@@ -1,7 +1,6 @@
 import buildsrc.ext.asConsumer
 import buildsrc.ext.dropDirectories
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 
@@ -21,7 +20,7 @@ interface Services {
   val files: FileSystemOperations
 }
 
-interface VcpkgConfig {
+interface RocksdbBuildSettings {
   val vcpkgDir: DirectoryProperty
   val vcpkgVersion: Property<String>
   val rocksDbVersion: Property<String>
@@ -40,7 +39,7 @@ interface VcpkgConfig {
   val hostFamily: Property<Family>
 }
 
-val config = extensions.create<VcpkgConfig>("vcpkg").apply {
+val config = extensions.create<RocksdbBuildSettings>("rdbBuild").apply {
 
   userHome.set(providers.systemProperty("user.home").flatMap {
     layout.dir(provider { file(it) })
@@ -113,7 +112,22 @@ val rocksDbPrepareSource by tasks.registering(Sync::class) {
       .map { artifacts -> artifacts.map { zipTree(it.file) } }
   ) {
     // drop the first dir (rocksdb-$version)
-    eachFile { relativePath = relativePath.dropDirectories(1) }
+    eachFile {
+      relativePath = relativePath.dropDirectories(1)
+      if (this.name == "Makefile") {
+        filter { line ->
+          when (line) {
+            // -g adds debug symbols, which make the library HUGE. Use -s instead, which strips them.
+            "CFLAGS += -g", "CXXFLAGS += -g" -> {
+              logger.lifecycle("Disabling -g flag '$line' in $path")
+              "# $line"
+            }
+
+            else                             -> line
+          }
+        }
+      }
+    }
     includeEmptyDirs = false
     exclude("**/java/**", "**/.github/", "**/.circleci/", "**/buckifier/", "**/docs/")
   }
@@ -135,7 +149,7 @@ val rocksDbSyncHeaders by tasks.registering(Sync::class) {
 
 val rocksDbPrepareMakeStaticLib: TaskProvider<Sync> by tasks.registering(Sync::class) {
   group = project.name
-  description = "Prepare source code for Make"
+  description = "Prepare source code for building the RocksDB static library"
 
   from(rocksDbPrepareSource.map { it.destinationDir })
   into(rocksDbMakeStaticLib.map { it.temporaryDir })
@@ -143,7 +157,7 @@ val rocksDbPrepareMakeStaticLib: TaskProvider<Sync> by tasks.registering(Sync::c
 
 val rocksDbMakeStaticLib: TaskProvider<Exec> by tasks.registering(Exec::class) {
   group = project.name
-  description = "Use Make to build the RocksDB library from source"
+  description = "Uses Make to build the RocksDB static library from source"
 
   workingDir(temporaryDir)
 
@@ -158,14 +172,16 @@ val rocksDbMakeStaticLib: TaskProvider<Exec> by tasks.registering(Exec::class) {
     // build the static version
     "static_lib",
     // and all dependencies...
-    "libzstd.a",
-    "libz.a",
-    "libbz2.a",
-    "libsnappy.a",
-    "liblz4.a",
+//    "libzstd.a",
+//    "libz.a",
+//    "libbz2.a",
+//    "libsnappy.a",
+//    "liblz4.a",
+    "rocksdbjavastatic_deps",
   )
 
-  environment("MAKECMDGOALS", "release")
+//  environment("MAKECMDGOALS", "release")
+//  environment("EXTRA_CFLAGS", "-O3 -s")
 
   when {
     HostManager.hostIsMac -> environment("MACOSX_DEPLOYMENT_TARGET", "10.13")
