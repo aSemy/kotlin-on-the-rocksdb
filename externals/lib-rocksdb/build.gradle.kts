@@ -147,7 +147,7 @@ val rocksDbMakeStaticLib: TaskProvider<Exec> by tasks.registering(Exec::class) {
 
   workingDir(temporaryDir)
 
-  dependsOn(tasks.withType<KotlinCompile>())
+  dependsOn(tasks.linkNative)
   dependsOn(rocksDbPrepareMakeStaticLib)
 
   inputs.dir(rocksDbPrepareSource.map { it.destinationDir })
