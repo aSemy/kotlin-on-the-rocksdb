@@ -50,7 +50,7 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
           arguments: >
-            :externals:lib-rocksdb:linkNative --info --stacktrace
+            :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
 
       - name: macOS - install tree
         if: runner.os == 'macOS'
