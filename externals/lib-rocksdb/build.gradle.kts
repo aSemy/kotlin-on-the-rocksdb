@@ -9,9 +9,6 @@ plugins {
   buildsrc.conventions.`kotlin-multiplatform-native-host`
 }
 
-// generated wrappers will be written into this dir
-val generatedMainSrcDir = layout.projectDirectory.dir("src/nativeMain/kotlinGen")
-
 
 kotlin {
   targets.withType<KotlinNativeTarget>().configureEach {
