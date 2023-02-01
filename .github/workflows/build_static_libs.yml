@@ -29,9 +29,10 @@ jobs:
   makefile-build:
     strategy:
       matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
+        os: []
+      # temp disabled - I'm working on fixing the Windows build
+#          - macos-latest
+#          - ubuntu-latest
 #          - windows-latest
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -189,8 +190,10 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-home-cache-cleanup: true
-      - run: |
-            ./project/gradlew :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
+
+      - working-directory: ./vcpkg
+        run: |
+            ./gradlew :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
 
 
       #- name: list versions
