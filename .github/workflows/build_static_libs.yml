@@ -27,12 +27,12 @@ env:
 jobs:
 
   makefile-build:
+    if: false # temp disabled - I'm working on fixing the Windows build
     strategy:
       matrix:
-        os: []
-      # temp disabled - I'm working on fixing the Windows build
-#          - macos-latest
-#          - ubuntu-latest
+        os:
+          - macos-latest
+          - ubuntu-latest
 #          - windows-latest
       fail-fast: false
     runs-on: ${{ matrix.os }}
