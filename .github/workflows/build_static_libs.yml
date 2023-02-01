@@ -193,7 +193,7 @@ jobs:
 
       - working-directory: ./vcpkg
         run: |
-            ./gradlew :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
+            gradlew :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
 
 
       #- name: list versions
