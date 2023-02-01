@@ -185,6 +185,7 @@ jobs:
         with:
           path: |
             ~/.konan/**/*
+            C:/Users/runneradmin/.konan/**/*
           key: kotlin-konan-${{ runner.os }}-${{ github.workflow }}
 
       - uses: gradle/gradle-build-action@v2
