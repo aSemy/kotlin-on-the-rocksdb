@@ -191,9 +191,9 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
-      - working-directory: ./vcpkg
+      - working-directory: ./project
         run: |
-            gradlew :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
+            ./gradlew :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
 
 
       #- name: list versions
