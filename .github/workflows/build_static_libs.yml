@@ -217,8 +217,8 @@ jobs:
           #echo "CC=gcc-9" >> $GITHUB_ENV
           #echo "CXX=g++-9" >> $GITHUB_ENV
           
-          CMAKE_C_COMPILER
-          CMAKE_CXX_COMPILER
+          #CMAKE_C_COMPILER
+          #CMAKE_CXX_COMPILER
 
 
 #      - name: cache vcpkg
