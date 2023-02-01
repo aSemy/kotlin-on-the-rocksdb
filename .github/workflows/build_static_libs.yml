@@ -215,14 +215,12 @@ jobs:
           echo                "CXX=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
           echo "CMAKE_CXX_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
 
-#      - name: cache vcpkg
-#        uses: actions/cache@v3
-#        with:
-#          path: |
-#            .
-#            ~/.cache/vcpkg/
-#            ~/AppData/Local/vcpkg
-#          key: vcpkg-${{ matrix.triplet }}-${{ env.VCPKG_VERSION }}
+      - name: cache vcpkg
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/AppData/Local/vcpkg
+          key: vcpkg-${{ matrix.triplet }}-${{ env.VCPKG_VERSION }}
 
       - name: checkout vcpkg
         uses: actions/checkout@v3
