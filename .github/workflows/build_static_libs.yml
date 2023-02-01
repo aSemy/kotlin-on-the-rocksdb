@@ -16,15 +16,23 @@ concurrency:
 permissions:
   contents: read
 
-#env:
-#  KONAN_DATA_DIR: "/home/runner/.konan/"
+env:
+  # use the latest version, so x64-windows-static-release is available
+  VCPKG_VERSION: 91dd61bd441a68b4017b61011d0350b2e6aeeccf
+  #VCPKG_VERSION: 2023.01.09
+  VCPKG_DISABLE_METRICS: 1
+
+  ROCKSDB_VERSION: 7.9.2
 
 jobs:
 
-  export-rocksdb:
+  makefile-build:
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os:
+          - macos-latest
+          - ubuntu-latest
+#          - windows-latest
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -85,78 +93,44 @@ jobs:
           path: "**/build/reports/"
           if-no-files-found: ignore
 
-#name: Build static libs
-#
-## Utility for building RocksDB static libraries for each platform.
-#
-#on:
-##  pull_request:
-##    paths:
-##      - .github/workflows/build_static_libs.yml
-#  workflow_dispatch:
-#    inputs:
-#      vcpkgVersion:
-#        description: 'vcpkg version'
-#        required: false
-#        type: string
-#      rocksdbVersion:
-#        description: 'RocksDB version'
-#        required: false
-#        type: string
-#
-#concurrency:
-#  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
-#  cancel-in-progress: true
-#
-#env:
-#
-#  # use the latest version, so x64-windows-static-release is available
-#  VCPKG_VERSION: 91dd61bd441a68b4017b61011d0350b2e6aeeccf
-#  #VCPKG_VERSION: 2023.01.09
-#
-#  ROCKSDB_VERSION: 7.9.2
-#
-#  VCPKG_DISABLE_METRICS: 1
-#
-#jobs:
-#  export-rocksdb:
-#
-#    strategy:
-#      matrix:
-#        include:
-#          - os: macos-latest
-#            triplet: x64-osx-release
-#            vcpkg-cmd: ./vcpkg
-#          - os: ubuntu-latest
-#            triplet: x64-linux-release
-#            vcpkg-cmd: ./vcpkg
-#          # mingw compilation fails on Linux: error: ‘mutex’ in namespace ‘std’ does not name a type
-#          #- os: ubuntu-latest
-#          #  triplet: x64-mingw-static
-#          #  vcpkg-cmd: ./vcpkg
-#          - os: windows-latest
-#            triplet: x64-mingw-static
-#            vcpkg-cmd: vcpkg
-#      fail-fast: false
-#    runs-on: ${{ matrix.os }}
-#    defaults:
-#      run:
-#        shell: bash # use bash for both windows and unix, so .sh scripts work
-#    env:
-#      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
-#    steps:
-#
-#      - name: setup variables
-#        run: |
-#          if [[ ! -z '${{ inputs.vcpkgVersion }}' ]]; then
-#            echo "VCPKG_VERSION=$(echo ${{ inputs.vcpkgVersion }})" >> $GITHUB_ENV
-#          fi
-#
-#          if [[ ! -z '${{ inputs.rocksdbVersion }}' ]]; then
-#            echo "ROCKSDB_VERSION=$(echo ${{ inputs.rocksdbVersion }})" >> $GITHUB_ENV
-#          fi
-#
-#
+  vcpkg-build:
+
+    strategy:
+      matrix:
+        include:
+          #- os: macos-latest
+          #  triplet: x64-osx-release
+          #  vcpkg-cmd: ./vcpkg
+          #- os: ubuntu-latest
+          #  triplet: x64-linux-release
+          #  vcpkg-cmd: ./vcpkg
+          # mingw compilation fails on Linux: error: ‘mutex’ in namespace ‘std’ does not name a type
+          #- os: ubuntu-latest
+          #  triplet: x64-mingw-static
+          #  vcpkg-cmd: ./vcpkg
+          - os: windows-latest
+            triplet: x64-mingw-static
+            vcpkg-cmd: vcpkg
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash # use bash for both windows and unix, so .sh scripts work
+    env:
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
+    steps:
+
+      - name: setup variables
+        run: |
+          if [[ ! -z '${{ inputs.vcpkgVersion }}' ]]; then
+            echo "VCPKG_VERSION=$(echo ${{ inputs.vcpkgVersion }})" >> $GITHUB_ENV
+          fi
+
+          if [[ ! -z '${{ inputs.rocksdbVersion }}' ]]; then
+            echo "ROCKSDB_VERSION=$(echo ${{ inputs.rocksdbVersion }})" >> $GITHUB_ENV
+          fi
+
+
 #      - name: setup linux for x64-linux-release
 #        if: runner.os == 'Linux' && matrix.triplet == 'x64-linux-release'
 #        run: |
@@ -173,8 +147,8 @@ jobs:
 #
 #          sudo update-alternatives --set gcc $(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-gcc) --debug
 #          sudo update-alternatives --set g++ $(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-g++) --debug
-#
-#
+
+
 #      - name: setup linux for x64-mingw-static
 #        if: runner.os == 'Linux' && matrix.triplet == 'x64-mingw-static'
 #        run: |
@@ -192,30 +166,58 @@ jobs:
 #          #
 #          #echo "CC=/usr/bin/x86_64-w64-mingw32-gcc-win32" >> $GITHUB_ENV
 #          #echo "CXX=/usr/bin/x86_64-w64-mingw32-g++-win32" >> $GITHUB_ENV
-#
-#
-#      - name: list versions
-#        run: |
-#          echo "CC=${CC}"
-#          echo "CXX=${CXX}"
-#          gcc --version
-#          g++ --version
-#          which gcc
-#          which g++
-#
-#
-#      - name: setup windows
-#        if: runner.os == 'Windows'
-#        run: |
-#          echo                 "CC=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
-#          echo   "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
-#          echo                "CXX=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
-#          echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
-#
-#          #echo "CC=gcc-9" >> $GITHUB_ENV
-#          #echo "CXX=g++-9" >> $GITHUB_ENV
-#
-#
+
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+        with:
+          path: project
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Cache Kotlin Konan
+        id: cache-kotlin-konan
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.konan/**/*
+          key: kotlin-konan-${{ runner.os }}-${{ github.workflow }}
+
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
+      - run: |
+            ./project/gradlew :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
+
+
+      #- name: list versions
+      #  run: |
+      #    echo "CC=${CC}"
+      #    echo "CXX=${CXX}"
+      #    gcc --version
+      #    g++ --version
+      #    which gcc
+      #    which g++
+
+
+      - name: setup windows
+        if: runner.os == 'Windows'
+        run: |
+          echo                 "CC=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
+          echo   "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
+          echo                "CXX=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
+          echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
+
+          #echo "CC=gcc-9" >> $GITHUB_ENV
+          #echo "CXX=g++-9" >> $GITHUB_ENV
+          
+          CMAKE_C_COMPILER
+          CMAKE_CXX_COMPILER
+
+
 #      - name: cache vcpkg
 #        uses: actions/cache@v3
 #        with:
@@ -224,78 +226,84 @@ jobs:
 #            ~/.cache/vcpkg/
 #            ~/AppData/Local/vcpkg
 #          key: vcpkg-${{ matrix.triplet }}-${{ env.VCPKG_VERSION }}
-#
-#      - name: checkout vcpkg
-#        uses: actions/checkout@v3
-#        with:
-#          repository: microsoft/vcpkg
-#          ref: ${{ env.VCPKG_VERSION }}
-#          fetch-depth: 1
-#
-#      - name: setup vcpkg
-#        run: ./bootstrap-vcpkg.sh
-#
-#      - name: create vcpkg.json
-#        run: |
-#          touch vcpkg.json;
-#
-#          cat <<EOT >> vcpkg.json
-#          {
-#            "dependencies": [
-#              "rocksdb",
-#              "zstd",
-#              "zlib",
-#              "snappy",
-#              "lz4",
-#              "bzip2"
-#            ],
-#            "overrides": [
-#              { "name": "rocksdb", "version": "${{ env.ROCKSDB_VERSION }}" }
-#            ]
-#          }
-#          EOT
-#
-#      - name: prep triplet - x64-mingw-static
-#        if: matrix.triplet == 'x64-mingw-static'
-#        run: |
-#          echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
-#          echo "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> ./triplets/community/x64-mingw-static.cmake
-#          echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> ./triplets/community/x64-mingw-static.cmake
-#          echo "updated triplet:"
-#          less -de ./triplets/community/x64-mingw-static.cmake
-#
-#      - name: prep triplet - x64-linux-release
-#        if: matrix.triplet == 'x64-linux-release'
-#        run: |
-#          echo "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-gcc)" >> ./triplets/community/x64-linux-release.cmake
-#          echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-g++)" >> ./triplets/community/x64-linux-release.cmake
-#          echo "updated triplet:"
-#          less -de ./triplets/community/x64-mingw-static.cmake
-#
-#      - name: update vcpkg.json
-#        run: ${{ matrix.vcpkg-cmd }} x-update-baseline --add-initial-baseline
-#
-#      - name: install libs
-#        run: ${{ matrix.vcpkg-cmd }} install
-#
-#      - name: upload packaged libs
-#        if: success()
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: rocksdb-${{ env.ROCKSDB_VERSION }}-${{ matrix.triplet }}
-#          #if-no-files-found: ignore
-#          path: |
-#            ./vcpkg_installed/${{ matrix.triplet }}/**
-#
-#      - name: upload logs
-#        if: failure()
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: build-tree-logs-${{ matrix.triplet }}-${{ runner.os }}${{ github.action }}
-#          path: |
-#            **/buildtrees/
-#            !**/src/*.clean/**
-#            !**/*.exe
-#            !**/*.a
-#            !**/*.o
-#          if-no-files-found: ignore
+
+      - name: checkout vcpkg
+        uses: actions/checkout@v3
+        with:
+          path: vcpkg
+          repository: microsoft/vcpkg
+          ref: ${{ env.VCPKG_VERSION }}
+          fetch-depth: 1
+
+      - name: setup vcpkg
+        working-directory: ./vcpkg
+        run: ./bootstrap-vcpkg.sh
+
+      - name: create vcpkg.json
+        working-directory: ./vcpkg
+        run: |
+          touch vcpkg.json;
+
+          cat <<EOT >> vcpkg.json
+          {
+            "dependencies": [
+              "rocksdb",
+              "zstd",
+              "zlib",
+              "snappy",
+              "lz4",
+              "bzip2"
+            ],
+            "overrides": [
+              { "name": "rocksdb", "version": "${{ env.ROCKSDB_VERSION }}" }
+            ]
+          }
+          EOT
+
+      - name: prep triplet - x64-mingw-static
+        if: matrix.triplet == 'x64-mingw-static'
+        working-directory: ./vcpkg
+        run: |
+          echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
+          echo "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> ./triplets/community/x64-mingw-static.cmake
+          echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> ./triplets/community/x64-mingw-static.cmake
+          echo "updated triplet:"
+          less -de ./triplets/community/x64-mingw-static.cmake
+
+      #- name: prep triplet - x64-linux-release
+      #  if: matrix.triplet == 'x64-linux-release'
+      #  run: |
+      #    echo "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-gcc)" >> ./triplets/community/x64-linux-release.cmake
+      #    echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/bin/x86_64-unknown-linux-gnu-g++)" >> ./triplets/community/x64-linux-release.cmake
+      #    echo "updated triplet:"
+      #    less -de ./triplets/community/x64-mingw-static.cmake
+
+      - name: update vcpkg.json
+        working-directory: ./vcpkg
+        run: ${{ matrix.vcpkg-cmd }} x-update-baseline --add-initial-baseline
+
+      - name: install libs
+        working-directory: ./vcpkg
+        run: ${{ matrix.vcpkg-cmd }} install
+
+      - name: upload packaged libs
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: rocksdb-${{ env.ROCKSDB_VERSION }}-${{ matrix.triplet }}
+          #if-no-files-found: ignore
+          path: |
+            ./vcpkg/vcpkg_installed/${{ matrix.triplet }}/**
+
+      - name: upload logs
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-tree-logs-${{ matrix.triplet }}-${{ runner.os }}${{ github.action }}
+          path: |
+            **/vcpkg/buildtrees/
+            !**/src/*.clean/**
+            !**/*.exe
+            !**/*.a
+            !**/*.o
+          if-no-files-found: ignore
