@@ -209,17 +209,10 @@ jobs:
       - name: setup windows
         if: runner.os == 'Windows'
         run: |
-          echo                 "CC=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
-          echo   "CMAKE_C_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)" >> $GITHUB_ENV
-          echo                "CXX=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
-          echo "CMAKE_CXX_COMPILER=$(realpath ~/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)" >> $GITHUB_ENV
-
-          #echo "CC=gcc-9" >> $GITHUB_ENV
-          #echo "CXX=g++-9" >> $GITHUB_ENV
-          
-          #CMAKE_C_COMPILER
-          #CMAKE_CXX_COMPILER
-
+          echo                 "CC=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
+          echo   "CMAKE_C_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
+          echo                "CXX=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
+          echo "CMAKE_CXX_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
 
 #      - name: cache vcpkg
 #        uses: actions/cache@v3
