@@ -230,11 +230,11 @@ jobs:
           echo "updated triplet:"
           less -de ./triplets/community/x64-mingw-static.cmake
 
-          cat <<EOT >> ${{ github.workspace }}/konan-toolchain.cmake
+          cat <<EOT >> D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake
           set(CMAKE_C_COMPILER   C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)
           set(CMAKE_CXX_COMPILER C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)
           EOT
-          echo "CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\konan-toolchain.cmake" >> $GITHUB_ENV
+          echo "CMAKE_TOOLCHAIN_FILE=D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake" >> $GITHUB_ENV
           
           echo "created konan-toolchain file:"
           less -de ${{ github.workspace }}/konan-toolchain.cmake
