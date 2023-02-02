@@ -210,11 +210,6 @@ jobs:
           repository: microsoft/vcpkg
           ref: ${{ env.VCPKG_VERSION }}
 
-      - name: setup vcpkg
-        working-directory: ./vcpkg
-        run: ./bootstrap-vcpkg.sh
-
-
       - name: setup windows - x64-mingw-static
         if: runner.os == 'Windows' && matrix.triplet == 'x64-mingw-static'
         working-directory: ./vcpkg
@@ -239,6 +234,9 @@ jobs:
           echo "created konan-toolchain file:"
           less -de D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake
 
+      - name: bootstrap vcpkg
+        working-directory: ./vcpkg
+        run: ./bootstrap-vcpkg.sh
 
       - name: create vcpkg.json
         working-directory: ./vcpkg
