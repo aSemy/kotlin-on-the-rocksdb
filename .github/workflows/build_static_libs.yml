@@ -237,7 +237,7 @@ jobs:
           echo "CMAKE_TOOLCHAIN_FILE=D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake" >> $GITHUB_ENV
           
           echo "created konan-toolchain file:"
-          less -de ${{ github.workspace }}/konan-toolchain.cmake
+          less -de D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake
 
 
       - name: create vcpkg.json
