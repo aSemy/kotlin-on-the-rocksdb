@@ -230,7 +230,7 @@ jobs:
           echo "updated triplet:"
           less -de ./triplets/community/x64-mingw-static.cmake
 
-          cat <<EOT >> ~/konan-toolchain.cmake
+          cat <<EOT >> C:/Users/runneradmin/konan-toolchain.cmake
           set(CMAKE_C_COMPILER   C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)
           set(CMAKE_CXX_COMPILER C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)
           EOT
