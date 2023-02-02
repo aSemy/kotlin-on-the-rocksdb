@@ -196,25 +196,6 @@ jobs:
         run: |
             ./gradlew :externals:lib-rocksdb:compileKotlinNative --info --stacktrace
 
-
-      #- name: list versions
-      #  run: |
-      #    echo "CC=${CC}"
-      #    echo "CXX=${CXX}"
-      #    gcc --version
-      #    g++ --version
-      #    which gcc
-      #    which g++
-
-
-      - name: setup windows
-        if: runner.os == 'Windows'
-        run: |
-          echo                 "CC=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
-          echo   "CMAKE_C_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
-          echo                "CXX=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
-          echo "CMAKE_CXX_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
-
       - name: cache vcpkg
         uses: actions/cache@v3
         with:
@@ -232,6 +213,31 @@ jobs:
       - name: setup vcpkg
         working-directory: ./vcpkg
         run: ./bootstrap-vcpkg.sh
+
+
+      - name: setup windows - x64-mingw-static
+        if: runner.os == 'Windows' && matrix.triplet == 'x64-mingw-static'
+        working-directory: ./vcpkg
+        run: |
+          echo                 "CC=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
+          echo   "CMAKE_C_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
+          echo                "CXX=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
+          echo "CMAKE_CXX_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
+          
+          echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
+          #echo   "set(CMAKE_C_COMPILER \"C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe\")" >> ./triplets/community/x64-mingw-static.cmake
+          #echo "set(CMAKE_CXX_COMPILER \"C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe\")" >> ./triplets/community/x64-mingw-static.cmake
+          echo "updated triplet:"
+          less -de ./triplets/community/x64-mingw-static.cmake
+
+          cat <<EOT >> ~/konan-toolchain.cmake
+          set(CMAKE_C_COMPILER   C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)
+          set(CMAKE_CXX_COMPILER C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)
+          EOT
+          less -de C:/Users/runneradmin/konan-toolchain.cmake
+          
+          echo "CMAKE_TOOLCHAIN_FILE=C:\Users\runneradmin\konan-toolchain.cmake" >> $GITHUB_ENV
+      
 
       - name: create vcpkg.json
         working-directory: ./vcpkg
@@ -253,16 +259,8 @@ jobs:
             ]
           }
           EOT
-
-      - name: prep triplet - x64-mingw-static
-        if: matrix.triplet == 'x64-mingw-static'
-        working-directory: ./vcpkg
-        run: |
-          echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
-          echo   "set(CMAKE_C_COMPILER \"C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe\")" >> ./triplets/community/x64-mingw-static.cmake
-          echo "set(CMAKE_CXX_COMPILER \"C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe\")" >> ./triplets/community/x64-mingw-static.cmake
-          echo "updated triplet:"
-          less -de ./triplets/community/x64-mingw-static.cmake
+          
+          less -de vcpkg.json
 
       #- name: prep triplet - x64-linux-release
       #  if: matrix.triplet == 'x64-linux-release'
