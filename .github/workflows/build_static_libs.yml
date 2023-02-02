@@ -270,7 +270,7 @@ jobs:
       #    echo "updated triplet:"
       #    less -de ./triplets/community/x64-mingw-static.cmake
 
-      - name: update vcpkg.json
+      - name: update vcpkg baseline
         working-directory: ./vcpkg
         run: ${{ matrix.vcpkg-cmd }} x-update-baseline --add-initial-baseline
 
