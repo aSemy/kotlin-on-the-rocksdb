@@ -24,6 +24,9 @@ env:
 
   ROCKSDB_VERSION: 7.9.2
 
+  # enable cmake verbose
+  VERBOSE: 1
+
 jobs:
 
   makefile-build:
