@@ -214,6 +214,9 @@ jobs:
         if: runner.os == 'Windows' && matrix.triplet == 'x64-mingw-static'
         working-directory: ./vcpkg
         run: |
+          C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe --version
+          C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe --version
+          
           echo                 "CC=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
           echo   "CMAKE_C_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
           echo                "CXX=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
