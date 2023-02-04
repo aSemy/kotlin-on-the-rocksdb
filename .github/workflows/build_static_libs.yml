@@ -214,19 +214,13 @@ jobs:
         if: runner.os == 'Windows' && matrix.triplet == 'x64-mingw-static'
         working-directory: ./vcpkg
         run: |
-          C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe --version
-          C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe --version
+          C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe --version
+          C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe --version
           
           echo                 "CC=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
           echo   "CMAKE_C_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
           echo                "CXX=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
           echo "CMAKE_CXX_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
-          
-          echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
-          #echo   "set(CMAKE_C_COMPILER \"C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe\")" >> ./triplets/community/x64-mingw-static.cmake
-          #echo "set(CMAKE_CXX_COMPILER \"C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe\")" >> ./triplets/community/x64-mingw-static.cmake
-          echo "updated triplet:"
-          less -de ./triplets/community/x64-mingw-static.cmake
 
           cat <<EOT >> D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake
           set(CMAKE_C_COMPILER   C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)
@@ -236,6 +230,12 @@ jobs:
           
           echo "created konan-toolchain file:"
           less -de D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake
+          
+          echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
+          echo "set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE \"D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake\")" >> ./triplets/community/x64-mingw-static.cmake
+          echo "updated triplet:"
+          less -de ./triplets/community/x64-mingw-static.cmake
+
 
       - name: bootstrap vcpkg
         working-directory: ./vcpkg
