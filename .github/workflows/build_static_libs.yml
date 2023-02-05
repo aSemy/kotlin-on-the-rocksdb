@@ -24,9 +24,6 @@ env:
 
   ROCKSDB_VERSION: 7.9.2
 
-  # enable cmake verbose
-  VERBOSE: 1
-
 jobs:
 
   makefile-build:
@@ -228,6 +225,7 @@ jobs:
           cat <<EOT >> D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake
           set(CMAKE_C_COMPILER   C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)
           set(CMAKE_CXX_COMPILER C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)
+          set(CMAKE_VERBOSE_MAKEFILE ON)
           EOT
           echo "CMAKE_TOOLCHAIN_FILE=D:\a\kotlin-on-the-rocksdb\kotlin-on-the-rocksdb\konan-toolchain.cmake" >> $GITHUB_ENV
           
