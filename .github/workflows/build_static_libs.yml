@@ -263,7 +263,7 @@ jobs:
           }
           EOT
           
-          less -de vcpkg.json
+          cat vcpkg.json
 
       #- name: prep triplet - x64-linux-release
       #  if: matrix.triplet == 'x64-linux-release'
