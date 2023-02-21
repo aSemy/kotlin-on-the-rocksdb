@@ -11,12 +11,15 @@ class ApproximateMemoryUsage(
     approximateMemoryUsage.getPointer(scope)
 
   constructor(
-    consumers: CValuesRef<rocksdb_memory_consumers_t>?, 
-    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-  ): this(rocksdb_approximate_memory_usage_create(consumers, errorPointer) ?: error("could not instantiate new ApproximateMemoryUsage"))
+    consumers: CValuesRef<rocksdb_memory_consumers_t>?,
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?,
+  ): this(
+    rocksdb_approximate_memory_usage_create(consumers, errorPointer) 
+      ?: error("could not instantiate new ApproximateMemoryUsage")
+  )
 
-  fun destroy(): Unit = 
-    rocksdb_approximate_memory_usage_destroy(approximateMemoryUsage) 
+  fun destroy(): Unit =
+    rocksdb_approximate_memory_usage_destroy(approximateMemoryUsage)
 
   val memTableTotal: ULong
     get() = rocksdb_approximate_memory_usage_get_mem_table_total(approximateMemoryUsage)

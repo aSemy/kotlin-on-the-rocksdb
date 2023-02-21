@@ -11,21 +11,24 @@ class BackupEngineOptions(
     backupEngineOptions.getPointer(scope)
 
   constructor(
-    backupDir: String?, 
-  ): this(rocksdb_backup_engine_options_create(backupDir) ?: error("could not instantiate new BackupEngineOptions"))
+    backupDir: String?,
+  ): this(
+    rocksdb_backup_engine_options_create(backupDir) 
+      ?: error("could not instantiate new BackupEngineOptions")
+  )
 
   fun setBackupDir(
-    backupDir: String?, 
-  ): Unit = 
-    rocksdb_backup_engine_options_set_backup_dir(backupEngineOptions, backupDir) 
+    backupDir: String?,
+  ): Unit =
+    rocksdb_backup_engine_options_set_backup_dir(backupEngineOptions, backupDir)
 
   fun setEnv(
-    env: CValuesRef<rocksdb_env_t>?, 
-  ): Unit = 
-    rocksdb_backup_engine_options_set_env(backupEngineOptions, env) 
+    env: CValuesRef<rocksdb_env_t>?,
+  ): Unit =
+    rocksdb_backup_engine_options_set_env(backupEngineOptions, env)
 
-  fun destroy(): Unit = 
-    rocksdb_backup_engine_options_destroy(backupEngineOptions) 
+  fun destroy(): Unit =
+    rocksdb_backup_engine_options_destroy(backupEngineOptions)
 
   var shareTableFiles: Boolean
     get() = rocksdb_backup_engine_options_get_share_table_files(backupEngineOptions).toBoolean()

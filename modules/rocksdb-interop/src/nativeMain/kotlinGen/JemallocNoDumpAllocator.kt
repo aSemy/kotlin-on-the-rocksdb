@@ -11,6 +11,9 @@ class JemallocNoDumpAllocator(
     jemallocNoDumpAllocator.getPointer(scope)
 
   constructor(
-    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-  ): this(rocksdb_jemalloc_nodump_allocator_create(errorPointer) ?: error("could not instantiate new JemallocNoDumpAllocator"))
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?,
+  ): this(
+    rocksdb_jemalloc_nodump_allocator_create(errorPointer) 
+      ?: error("could not instantiate new JemallocNoDumpAllocator")
+  )
 }

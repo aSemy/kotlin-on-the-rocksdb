@@ -1,6 +1,7 @@
 import buildsrc.kotr.KLibProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
   buildsrc.conventions.`kotlin-multiplatform-native`
@@ -9,31 +10,77 @@ plugins {
 // generated wrappers will be written into this dir
 val generatedMainSrcDir = layout.projectDirectory.dir("src/nativeMain/kotlinGen")
 
+val rocksDbVersion = "7.9.2"
+
 kotlin {
 
   targets.withType<KotlinNativeTarget>().configureEach {
     compilations.getByName("main") {
       cinterops {
         val rocksdb by creating rocksdb@{
-          includeDirs("$projectDir/src/nativeInterop/external/rocksdb/include")
 
-//          if (target?.konanTarget?.family == org.jetbrains.kotlin.konan.target.Family.MINGW) {
-//            //            val msys2root = File(System.getenv("MSYS2_ROOT") ?: "C:/msys2/msys64/mingw64/lib/")
-//            fun lib(lib: String) = "C:/msys2/msys64/mingw64/lib/lib${lib}.a"
-//            linkerOpts(
-//              lib("rocksdb"),
-//              lib("zstd"),
-//              lib("z"),
-//              lib("snappy"),
-//              lib("lz4"),
-//            )
-//            logger.lifecycle("linkerOpts for ${this@rocksdb.name}: $linkerOpts")
-//          }
+          val targetFamily = this@rocksdb.target?.konanTarget?.family!!
+
+          val dirName = when (targetFamily) {
+            Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
+            Family.MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
+            Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
+            else         -> error("$targetFamily is not supported")
+          }
+
+          val targetDir = "$projectDir/src/nativeInterop/external/$dirName"
+
+          includeDirs("$targetDir/include")
+//          includeDirs("$projectDir/src/nativeInterop/external/$dirName/lib")
+
+          this@rocksdb.extraOpts += listOf(
+            "-libraryPath", "$targetDir/lib",
+//            "-staticLibrary", "librocksdb.a"
+          )
+
+//          compilerOpts += listOf(
+//            "-I$targetDir/include",
+//          )
+
+//          fun extFile(path:String) = "$projectDir/src/nativeInterop/external/$dirName/$path"
+
+//          linkerOpts(
+//            "-L${extFile("lib")}",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/libbz2.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/liblz4.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/librocksdb.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/libsnappy.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/libz.a",
+//            "$projectDir/src/nativeInterop/external/$dirName/lib/libzstd.a",
+//          )
         }
       }
     }
     binaries {
-      binaries.staticLib()
+      binaries.staticLib {
+
+        val dirName = when (target.konanTarget.family) {
+          Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
+          Family.MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
+          Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
+          else         -> error("${target.konanTarget.family} is not supported")
+        }
+
+        val targetDir = "$projectDir/src/nativeInterop/external/$dirName"
+
+        linkerOpts(
+          "-L$targetDir/lib",
+//          "-I$targetDir/lib",
+//          "$targetDir/libbz2.a",
+//          "$targetDir/liblz4.a",
+//          "$targetDir/librocksdb.a",
+//          "$targetDir/libsnappy.a",
+//          "$targetDir/libz.a",
+//          "$targetDir/libzstd.a",
+        )
+
+//        logger.lifecycle("linkerOpts for staticLib:${this@staticLib.name}: $linkerOpts (targetFamily:$targetFamily)")
+      }
     }
   }
 
@@ -82,6 +129,7 @@ val generateRocksDbWrappers by tasks.registering {
     .flatMap { it.outputFileProvider }
 
   inputs.file(klibFile)
+  dependsOn(tasks.commonizeCInterop)
 
   mustRunAfter(tasks.withType<CInteropProcess>())
 
@@ -104,5 +152,5 @@ val syncRocksDbWrappers by tasks.registering(Sync::class) {
   from(generateRocksDbWrappers.map { it.temporaryDir })
   into(generatedMainSrcDir)
 
-  dependsOn(tasks.matching { it.name == "copyCommonizeCInteropForIde" })
+//  dependsOn(tasks.matching { it.name == "copyCommonizeCInteropForIde" })
 }

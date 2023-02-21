@@ -1,7 +1,6 @@
 package buildsrc.conventions
 
 import buildsrc.ext.uppercaseFirstChar
-import java.util.Locale
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun

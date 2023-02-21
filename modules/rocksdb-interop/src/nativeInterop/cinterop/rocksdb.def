@@ -4,7 +4,15 @@ headers = c.h
 
 headerFilter = *
 
-#staticLibraries = librocksdb.a
+staticLibraries = libbz2.a \
+                  liblz4.a \
+                  librocksdb.a \
+                  libsnappy.a \
+                  libzstd.a
+
+staticLibraries.osx = libz.a
+staticLibraries.linux = libz.a
+staticLibraries.mingw = libzlib.a
 
 #compilerOpts =
 #compilerOpts.osx =
@@ -18,11 +26,29 @@ excludeDependentModules = false
 #compilerOpts.osx = -I/opt/local/include -L/usr/opt/include -L/usr/local/include -L/usr/local/Cellar/rocksdb/7.8.3/include
 #linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu
 
-linkerOpts = -L/usr/local/lib -L/usr/lib  -lrocksdb
-
+#linkerOpts = -L/usr/local/lib -L/usr/lib -L/opt/local/lib -L/usr/lib64
+#linkerOpts = -L/usr/local/lib -L/usr/lib  -lrocksdb
 #linkerOpts.linux = -L/usr/local/lib -L/usr/lib  -lrocksdb
-
 #linkerOpts.osx = -L/usr/local/lib -L/usr/lib  -lrocksdb
+
+#linkerOpts = -lbz2 \
+#             -lrocksdb \
+#             -lzstd \
+#             -lsnappy \
+#             -llz4
+
+#linkerOpts.osx = -lz
+#linkerOpts.linux = -L/usr/local/lib -L/usr/lib -lz
+#linkerOpts.linux = -lz
+linkerOpts.mingw = -lshlwapi -lrpcrt4
+
+
+#linkerOpts.mingw = -L/usr/lib64 \
+#                   -L/usr/lib/x86_64-linux-gnu \
+#                   -LC:/msys64/mingw64/lib \
+#                   -LC:/Tools/msys64/mingw64/lib \
+#                   -LC:/Tools/msys2/mingw64/lib
+
 
 strictEnums = AccessHint
 
@@ -31,6 +57,7 @@ excludedFunctions = \
  rocksdb_options_get_access_hint_on_compaction_start
 
 
+#language=c
 ---
 
 // c.h uses an int to represent AccessHint - so manually define an enum
@@ -42,13 +69,13 @@ typedef enum {
   WILL_NEED = 3
 } AccessHint;
 
-AccessHint rocksdb_options_get_access_hint_on_compaction_start__(
+static AccessHint rocksdb_options_get_access_hint_on_compaction_start__(
   rocksdb_options_t* opt
 ) {
   return rocksdb_options_get_access_hint_on_compaction_start(opt);
 };
 
-void rocksdb_options_set_access_hint_on_compaction_start__(
+static void rocksdb_options_set_access_hint_on_compaction_start__(
   rocksdb_options_t* opt,
   AccessHint access_hint
 ) {

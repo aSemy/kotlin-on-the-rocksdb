@@ -171,9 +171,13 @@ object KLibProcessor {
           }
         }
 
-        val noArgCreateFn =
-          constructorFns.firstOrNull { it.fn.valueParameters.isEmpty() }?.let { fn ->
-            """ = ${fn.fn.name}() ?: error("could not instantiate new ${creatable.prettyName}")"""
+        val noArgCreateFn = constructorFns
+          .firstOrNull { it.fn.valueParameters.isEmpty() }
+          ?.let { fn ->
+            """
+               | = ${fn.fn.name}() 
+               |     ?: error("could not instantiate new ${creatable.prettyName}")
+            """.trimMargin()
           } ?: ""
         val constructors = constructorFns.filter {
           it.fn.valueParameters.isNotEmpty()
@@ -329,15 +333,15 @@ private fun RdbCreateableElement.Fn.createKotlinFn(): String {
 
   return if (fnArgs.isBlank()) {
     """
-      |fun $prettyName(): ${fn.returnType.kotlinType(nullable = nullable)} = 
-      |  ${fn.name}(${if (!static) owner.propName else ""})${fn.returnType.classifier.getterConverter()} $elvis
+      |fun $prettyName(): ${fn.returnType.kotlinType(nullable = nullable)} =
+      |  ${fn.name}(${if (!static) owner.propName else ""})${fn.returnType.classifier.getterConverter()}$elvis
     """.trimMargin()
   } else {
     """
       |fun $prettyName(
       |${fnArgs.prependIndent("  ")}
-      |): ${fn.returnType.kotlinType(nullable = nullable)} = 
-      |  ${fn.name}(${if (!static) "${owner.propName}, " else ""}$fnArgNames)${fn.returnType.classifier.getterConverter()} $elvis
+      |): ${fn.returnType.kotlinType(nullable = nullable)} =
+      |  ${fn.name}(${if (!static) "${owner.propName}, " else ""}$fnArgNames)${fn.returnType.classifier.getterConverter()}$elvis
     """.trimMargin()
   }
 }
@@ -355,7 +359,10 @@ private fun RdbCreateableElement.Fn.createKotlinConstructor(): String {
     "\n${fnArgs.prependIndent("  ")}\n"
 
   return """
-      |constructor($constructorArgs): this(${fn.name}($fnArgNames) ?: error("could not instantiate new ${owner.prettyName}"))
+      |constructor($constructorArgs): this(
+      |  ${fn.name}($fnArgNames) 
+      |    ?: error("could not instantiate new ${owner.prettyName}")
+      |)
     """.trimMargin()
 }
 
@@ -406,7 +413,7 @@ private sealed interface RdbCreateableElement {
       val prettyName = actual.name.knmNameToPrettyName()
       val kotlinType = actual.type.kotlinType()
       val converter = actual.type.classifier.setterConverter()
-      val paramString = "${prettyName}: ${kotlinType}, "
+      val paramString = "${prettyName}: ${kotlinType},"
     }
   }
 }
