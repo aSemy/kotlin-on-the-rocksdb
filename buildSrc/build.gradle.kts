@@ -15,10 +15,6 @@ dependencies {
 }
 
 
-val buildSrcJvmTarget = "11"
-
 kotlin {
-  jvmToolchain {
-    languageVersion.set(JavaLanguageVersion.of(buildSrcJvmTarget))
-  }
+  jvmToolchain(8)
 }
