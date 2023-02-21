@@ -230,12 +230,12 @@ jobs:
           echo "CMAKE_TOOLCHAIN_FILE=D:\a\kotlin-on-the-rocksdb\kotlin-on-the-rocksdb\konan-toolchain.cmake" >> $GITHUB_ENV
           
           echo "created konan-toolchain file:"
-          less -de D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake
+          type D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake
           
           echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
           echo "set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE \"D:/a/kotlin-on-the-rocksdb/kotlin-on-the-rocksdb/konan-toolchain.cmake\")" >> ./triplets/community/x64-mingw-static.cmake
           echo "updated triplet:"
-          less -de ./triplets/community/x64-mingw-static.cmake
+          type ./triplets/community/x64-mingw-static.cmake
 
 
       - name: bootstrap vcpkg
