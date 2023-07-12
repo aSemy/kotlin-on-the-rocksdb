@@ -236,7 +236,7 @@ jobs:
           echo   "CMAKE_C_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\gcc.exe" >> $GITHUB_ENV
           echo                "CXX=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
           echo "CMAKE_CXX_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
-
+          
           cat <<EOT >> ~/konan-toolchain.cmake
           set(CMAKE_C_COMPILER   C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe)
           set(CMAKE_CXX_COMPILER C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe)
@@ -246,11 +246,13 @@ jobs:
           
           echo "created konan-toolchain file:"
           cat ~/konan-toolchain.cmake
+          echo "-----------------------------"
           
           echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
-          echo "set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE \"$(~/konan-toolchain.cmake)\")" >> ./triplets/community/x64-mingw-static.cmake
+          echo "set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${~/konan-toolchain.cmake})" >> ./triplets/community/x64-mingw-static.cmake
           echo "updated triplet:"
           cat ./triplets/community/x64-mingw-static.cmake
+          echo "-----------------------------"
 
 
       - name: bootstrap vcpkg
