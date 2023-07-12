@@ -2,15 +2,18 @@ package buildsrc.kotr
 
 import buildsrc.ext.lowercaseFirstChar
 import buildsrc.ext.uppercaseFirstChar
-import java.io.File
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.util.DummyLogger
+import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 
+/**
+ * Generate nicer RocksDB Kotlin interop functions based on the klib that Kotlin/Native generates.
+ */
 object KLibProcessor {
 
   fun generateRdbInterop(library: File): List<Pair<String, String>> {
@@ -29,6 +32,10 @@ object KLibProcessor {
           fn,
         )
       }
+      // de-duplicate constructors for the same type
+      .groupingBy { it.prettyName }
+      .reduce { _, acc, candidate -> if (acc.name.length < candidate.name.length) acc else candidate }
+      .values
 
     return creatables
       .associateWith { creatable ->
@@ -42,7 +49,6 @@ object KLibProcessor {
         }
       }.map { (creatable, fns) ->
         // each creatable has properties that are equivalent to `val`, `var`, or a get/set function
-
 
         /**
          * If the [KMFunction] is a setter, return it along with its name (the function name
@@ -114,28 +120,32 @@ object KLibProcessor {
           }
         }
 
-        val (staticFns, memberFns) = fns.filter { fn ->
-          // filter all functions that were not converted into vals/vars
-          fn.name !in valsAndVars.filterIsInstance<RdbCreateableElement.Prop>()
-            .flatMap { it.fnNames }
-        }.map { otherFn ->
-          val baseName = "rocksdb_${creatable.name}_"
-          RdbCreateableElement.Fn(
-            name = otherFn.name.substringAfter(baseName),
-            fn = otherFn,
-            owner = creatable,
-          )
-        }.partition {
-          // some functions might not have creatable as a parameter - they are either
-          // static functions, or constructors
-          it.static
-        }
+        // get the names of all functions that were converted into member vals/vars
+        val valsAndVarsNames = valsAndVars.filterIsInstance<RdbCreateableElement.Prop>().flatMap { it.fnNames }
+
+        val (staticFns, memberFns) = fns
+          // find all functions that are not member properties
+          .filter { fn -> fn.name !in valsAndVarsNames }
+          .map { otherFn ->
+            val baseName = "rocksdb_${creatable.name}_"
+            RdbCreateableElement.Fn(
+              name = otherFn.name.substringAfter(baseName),
+              fn = otherFn,
+              owner = creatable,
+            )
+          }.partition {
+            // some functions might not have creatable as a parameter,
+            // they are either static functions, or constructors
+            it.static
+          }
 
         val (constructorFns, staticUtilFns) = staticFns.partition { fn ->
-          // constructor functions do not have the creatable as a parameter, and will return
-          // the creatable
-          fn.fn.valueParameters.none { it.sameTypeAs(creatable.type) }
-              && fn.fn.returnType.kotlinType(nullable = false) == creatable.type.kotlinType(nullable = false)
+          // constructor functions do not have the creatable as a parameter
+          val creatableNotInFnParams = fn.fn.valueParameters.none { it.sameTypeAs(creatable.type) }
+          // and will return the creatable
+          val fnReturnsCreatable =
+            fn.fn.returnType.kotlinType(nullable = false) == creatable.type.kotlinType(nullable = false)
+          creatableNotInFnParams && fnReturnsCreatable
         }
 
         // convert vals, vars, and functions to Kotlin source code
@@ -179,11 +189,10 @@ object KLibProcessor {
                |     ?: error("could not instantiate new ${creatable.prettyName}")
             """.trimMargin()
           } ?: ""
-        val constructors = constructorFns.filter {
-          it.fn.valueParameters.isNotEmpty()
-        }.joinToString("\n\n") {
-          it.createKotlinConstructor()
-        }.prependIndent("  ")
+        val constructors = constructorFns
+          .filter { it.fn.valueParameters.isNotEmpty() }
+          .joinToString("\n\n") { it.createKotlinConstructor() }
+          .prependIndent("  ")
 
         val companionObject = if (staticUtilFns.isEmpty()) {
           ""
@@ -246,13 +255,15 @@ private fun KmClassifier.kotlinType(): String {
   }
 }
 
+/**
+ * @param[nullable] Can the type be marked as nullable? Set to `false` to always return non-nullable types.
+ */
 private fun KmType.kotlinType(nullable: Boolean? = null, convertable: Boolean = true): String {
 
-  val typeParams = this.arguments.map { typeParam ->
-    typeParam.type?.kotlinType(convertable = false) ?: "*"
-  }.joinToString(", ").let {
-    if (it.isBlank()) it else "<$it>"
-  }
+  val typeParams = this.arguments
+    .map { typeParam -> typeParam.type?.kotlinType(convertable = false) ?: "*" }
+    .joinToString(", ")
+    .let { if (it.isBlank()) it else "<$it>" }
 
   val nullableMarker = when {
     nullable == false                                -> ""
@@ -298,17 +309,10 @@ private class RdbCreateable(
   val name: String,
   createFn: KmFunction,
 ) {
-  val createFnName: String = createFn.name
   val prettyName: String = createableNameMap[name] ?: error("missing pretty name for $name")
   val type: KmType = createFn.returnType
   val coreKotlinType: String = type.arguments.first().type!!.kotlinType(nullable = false)
   val propName: String = prettyName.lowercaseFirstChar()
-
-  val createFn = RdbCreateableElement.Fn(
-    fn = createFn,
-    name = createFnName,
-    owner = this,
-  )
 }
 
 /** Create Kotlin source code for a function */
@@ -476,7 +480,11 @@ private fun String.knmNameToPrettyName() =
 //  val prettyName: String = createableNameMap[name] ?: error("missing pretty name for $name")
 //}
 
-/** A map of all known [RdbCreateable] names, along with a pretty name */
+/**
+ * A map of all known [RdbCreateable] names, along with a pretty name.
+ *
+ * It's easier to manually define the pretty names than try and determine them programatically.
+ */
 private val createableNameMap = mapOf(
   "approximate_memory_usage" to "ApproximateMemoryUsage",
   "backup_engine_options" to "BackupEngineOptions",
@@ -487,7 +495,7 @@ private val createableNameMap = mapOf(
   "compactionfilterfactory" to "CompactionFilterFactory",
   "compactoptions" to "CompactOptions",
   "comparator" to "Comparator",
-  "comparator_with_ts" to "ComparatorWithTs",
+  "comparator_with_ts" to "Comparator", // comparator_with_ts is an alternate constructor for Comparator, not a separate type
   "cuckoo_options" to "CuckooOptions",
   "dbpath" to "DbPath",
   "envoptions" to "EnvOptions",
