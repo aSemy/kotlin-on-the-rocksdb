@@ -3,8 +3,8 @@ name: Build static libs
 # Utility for building RocksDB static libraries for each platform
 
 on:
-  pull_request:
-  #    paths:
+  pull_request: {}
+  #paths:
   #      - ./.github/workflows/build_static_libs.yml
   workflow_dispatch:
 
@@ -24,8 +24,9 @@ env:
 
 jobs:
 
+  # makefile-build is disabled - I'm working on fixing the Windows build
   makefile-build:
-    if: false # temp disabled - I'm working on fixing the Windows build
+    if: false
     strategy:
       matrix:
         os:
