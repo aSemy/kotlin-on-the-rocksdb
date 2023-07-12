@@ -210,6 +210,12 @@ jobs:
           repository: microsoft/vcpkg
           ref: ${{ env.VCPKG_VERSION }}
 
+      - name: tree konan
+        run: |
+          ls ~
+          ls ~/.konan
+          tree ~/.konan/dependencies/
+
       - name: setup windows - x64-mingw-static
         if: runner.os == 'Windows' && matrix.triplet == 'x64-mingw-static'
         working-directory: ./vcpkg
