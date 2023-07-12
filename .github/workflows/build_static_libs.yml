@@ -17,9 +17,7 @@ permissions:
   contents: read
 
 env:
-  # use the latest version, so x64-windows-static-release is available
-  VCPKG_VERSION: 91dd61bd441a68b4017b61011d0350b2e6aeeccf
-  #VCPKG_VERSION: 2023.01.09
+  VCPKG_VERSION: 2023.06.20
   VCPKG_DISABLE_METRICS: 1
 
   ROCKSDB_VERSION: 7.9.2
