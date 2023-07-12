@@ -17,6 +17,7 @@ kotlin {
     configureEach {
       languageSettings.optIn("kotlin.ExperimentalStdlibApi")
       languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+      languageSettings.optIn("kotlin.experimental.ExperimentalNativeApi")
       languageSettings.optIn("dev.adamko.kotlin.on.the.rocksdb.KotlinOnTheRocksDbInternalApi")
     }
 
@@ -34,8 +35,8 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.modules.rocksdbInterop)
         implementation(kotlin("test"))
+        implementation(libs.kotlinx.coroutines.test)
       }
     }
   }

@@ -1,15 +1,21 @@
 package dev.adamko.kotlin.on.the.rocksdb
 
 import dev.adamko.kotlin.on.the.rocksdb.util.tempDir
-import kotlin.system.getTimeMillis
-import kotlin.test.Ignore
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.currentTime
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
-import kotlinx.coroutines.*
+import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
 
 class RocksDbTest {
 
   @Test
-  fun openCloseDbTest() = runBlocking {
+  fun openCloseDbTest(): TestResult = runTest {
 
     val tempDir = tempDir()
 
@@ -31,10 +37,9 @@ class RocksDbTest {
     db.close()
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  @Ignore
-  fun test() = runBlocking {
-
+  fun test(): TestResult = runTest {
     val tempDir = tempDir()
 
     println("testing rdb with file $tempDir")
@@ -56,34 +61,45 @@ class RocksDbTest {
 
     coroutineScope {
       println("launched Coroutine scope")
+      db["first value"] = "an initial value"
 
       launch {
-        repeat(50) {
-          db["test-key-$it"] = "cool value $it ${getTimeMillis()}"
-          println("emitted $it")
-          delay(500)
+        repeat(50) { i ->
+          val key = "test-key-$i"
+          val value = "cool value $i @time:${currentTime}"
+          db[key] = value
+          assertEquals(
+            message = "expect correct value in DB for i:$i @time:${currentTime}",
+            expected = value,
+            actual = db[key],
+          )
+          println("emit[$i] k:$key, value:$value @time:${currentTime}")
+          delay(500.milliseconds)
         }
-        cancel("finished emitting")
+        println("finished emitting @time:$currentTime")
       }
+      delay(1500.milliseconds)
 
       val iterator = db.iterator()
 
       launch {
-
-        var i = 0
+        var readValues = 0
 
         iterator.seekToFirst()
 
-//        while (isActive) {
         while (iterator.hasNext()) {
           val v = iterator.next()
-          println("[${i++}] got next value: $v")
-          delay(250)
+          println("read[${++readValues}] got next value of '$v' @time:${currentTime}")
+          delay(250.milliseconds)
         }
-//          yield()
-//        }
-        println("finished iterator")
 
+        println("finished iterator @time:${currentTime}")
+
+        assertEquals(
+          message = "expect iterator reads 4 values",
+          expected = 4,
+          actual = readValues,
+        )
 //        repeat(50) {
 //          val value = db["test-key"]
 //          println("[$it] got value from DB: $value")
