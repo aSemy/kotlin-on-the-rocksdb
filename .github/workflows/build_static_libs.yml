@@ -249,7 +249,7 @@ jobs:
           echo "-----------------------------"
           
           echo "set(VCPKG_BUILD_TYPE release)" >> ./triplets/community/x64-mingw-static.cmake
-          echo "set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${~/konan-toolchain.cmake})" >> ./triplets/community/x64-mingw-static.cmake
+          echo "set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE $HOME/konan-toolchain.cmake)" >> ./triplets/community/x64-mingw-static.cmake
           echo "updated triplet:"
           cat ./triplets/community/x64-mingw-static.cmake
           echo "-----------------------------"
