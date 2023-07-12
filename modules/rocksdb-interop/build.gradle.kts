@@ -97,9 +97,9 @@ kotlin {
         implementation(kotlin("test"))
 
         // Kotlinx Coroutines
-        implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.6.4"))
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+        implementation(project.dependencies.platform(libs.kotlinx.coroutines.bom))
+        implementation(libs.kotlinx.coroutines.core)
+        implementation(libs.kotlinx.coroutines.test)
       }
     }
 

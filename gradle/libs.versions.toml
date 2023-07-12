@@ -13,6 +13,7 @@ kotlinx-metadataKlib = { module = "org.jetbrains.kotlinx:kotlinx-metadata-klib",
 
 kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 
 kotlinx-serialization-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
