@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
 /**
  * Generate nicer RocksDB Kotlin interop functions based on the klib that Kotlin/Native generates.
  */
-object KLibProcessor {
+object RdbWrapperGenerator {
 
   fun generateRdbInterop(library: File): List<Pair<String, String>> {
     // parse the generated klib

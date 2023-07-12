@@ -1,4 +1,4 @@
-import buildsrc.kotr.KLibProcessor
+import buildsrc.kotr.RdbWrapperGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.Family
@@ -133,7 +133,7 @@ val generateRocksDbWrappers by tasks.registering {
     fs.delete { delete(temporaryDir) }
     temporaryDir.mkdirs()
 
-    val files = KLibProcessor.generateRdbInterop(klibFile.get())
+    val files = RdbWrapperGenerator.generateRdbInterop(klibFile.get())
 
     files.forEach { (name, content) ->
       temporaryDir.resolve("$name.kt").writeText(content)
