@@ -219,6 +219,7 @@ jobs:
       - name: setup windows - x64-mingw-static
         if: runner.os == 'Windows' && matrix.triplet == 'x64-mingw-static'
         working-directory: ./vcpkg
+          #set(CMAKE_C_COMPILER   "C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe")
         run: |
           C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe --version
           C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe --version
@@ -229,7 +230,6 @@ jobs:
           echo "CMAKE_CXX_COMPILER=C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-2\bin\g++.exe" >> $GITHUB_ENV
 
           cat <<EOT >> ~/konan-toolchain.cmake
-          set(CMAKE_C_COMPILER   "C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/gcc.exe")
           set(CMAKE_CXX_COMPILER "C:/Users/runneradmin/.konan/dependencies/msys2-mingw-w64-x86_64-2/bin/g++.exe")
           set(CMAKE_VERBOSE_MAKEFILE ON)
           EOT
