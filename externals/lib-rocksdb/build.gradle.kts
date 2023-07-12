@@ -1,5 +1,6 @@
 import buildsrc.ext.asConsumer
 import buildsrc.ext.dropDirectories
+import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -7,7 +8,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 plugins {
   buildsrc.conventions.`kotlin-multiplatform-native-host`
 }
-
 
 kotlin {
   targets.withType<KotlinNativeTarget>().configureEach {
@@ -36,9 +36,11 @@ interface RocksdbBuildSettings {
 
 val config = extensions.create<RocksdbBuildSettings>("rdbBuild").apply {
 
-  userHome.set(providers.systemProperty("user.home").flatMap {
-    layout.dir(provider { file(it) })
-  })
+  userHome.set(
+    providers
+      .systemProperty("user.home")
+      .flatMap { layout.dir(provider { file(it) }) }
+  )
 
   hostFamily.set(HostManager.host.family)
 
@@ -82,7 +84,7 @@ val config = extensions.create<RocksdbBuildSettings>("rdbBuild").apply {
 val rocksDbSource by configurations.creating<Configuration> {
   asConsumer()
   attributes {
-    attribute(Usage.USAGE_ATTRIBUTE, objects.named("rocksdb-src"))
+    attribute(USAGE_ATTRIBUTE, objects.named("rocksdb-src"))
   }
 }
 
@@ -140,7 +142,7 @@ val rocksDbSyncHeaders by tasks.registering(Sync::class) {
   into(layout.projectDirectory.dir("include"))
 }
 
-val rocksDbPrepareMakeStaticLib: TaskProvider<Sync> by tasks.registering(Sync::class) {
+val rocksDbPrepareMakeStaticLib by tasks.registering(Sync::class) {
   group = project.name
   description = "Prepare source code for building the RocksDB static library"
 

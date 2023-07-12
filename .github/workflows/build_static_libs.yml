@@ -24,15 +24,13 @@ env:
 
 jobs:
 
-  # makefile-build is disabled - I'm working on fixing the Windows build
   makefile-build:
-    if: false
     strategy:
       matrix:
         os:
           - macos-latest
           - ubuntu-latest
-      #          - windows-latest
+          - windows-latest
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -94,7 +92,10 @@ jobs:
           if-no-files-found: ignore
 
   vcpkg-build:
-
+    if: false
+    # vcpkg seems like it just won't work with the version of GCC that Kotlin Native requires:
+    # cc1plus.exe: error: unrecognized command-line option '-auxbase-strip'
+    # cc1plus.exe: error: too many filenames given; type 'cc1plus.exe --help' for usage
     strategy:
       matrix:
         include:
