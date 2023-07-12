@@ -220,6 +220,7 @@ jobs:
           echo "---------------"
           echo "ls ~/.konan/dependencies/"
           ls ~/.konan/dependencies/
+          echo "---------------"
           echo "ls ~/.konan/dependencies/msys2-mingw-w64-x86_64-2"
           ls ~/.konan/dependencies/msys2-mingw-w64-x86_64-2
           echo "---------------"
