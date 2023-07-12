@@ -1,36 +1,25 @@
 package buildsrc.ext
 
-import java.lang.System.getProperty
-import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
-
+/**
+ * Create a Kotlin/Native target based on the current OS.
+ *
+ * The target is named [name], and its source sets, `nativeMain` and `nativeTest`, should be
+ * configured to extend the `commonMain` and `commonTest` source sets.
+ */
 fun KotlinMultiplatformExtension.nativeTarget(
-  targetOs: HostOs = HostOs.current,
+  name: String = "native",
+  currentHost: KonanTarget = HostManager.host,
   configure: KotlinNativeTargetWithHostTests.() -> Unit = { },
-) {
-  when (targetOs) {
-    HostOs.WINDOWS -> mingwX64("native", configure)
-    HostOs.MAC     -> macosX64("native", configure)
-    HostOs.LINUX   -> linuxX64("native", configure)
-  }
-}
-
-enum class HostOs {
-  WINDOWS, MAC, LINUX;
-
-  companion object {
-    val current: HostOs
-      get() {
-        val hostOs = getProperty("os.name")
-
-        return when {
-          "Mac OS X" in hostOs -> MAC
-          "Linux" in hostOs    -> LINUX
-          "Windows" in hostOs  -> WINDOWS
-          else                 -> throw GradleException("unknown host OS '$hostOs'")
-        }
-      }
+): KotlinNativeTargetWithHostTests {
+  return when (currentHost) {
+    KonanTarget.LINUX_X64 -> linuxX64(name, configure)
+    KonanTarget.MACOS_X64 -> macosX64(name, configure)
+    KonanTarget.MINGW_X64 -> mingwX64(name, configure)
+    else -> error("unsupported host '${currentHost.name}'")
   }
 }

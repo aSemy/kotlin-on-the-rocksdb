@@ -10,7 +10,6 @@ plugins {
   kotlin("multiplatform")
 }
 
-
 kotlin {
 
   // Native targets all extend commonMain and commonTest.
@@ -25,12 +24,10 @@ kotlin {
   //         ├── macosX64
   //         └── macosArm64
 
-  targets {
-    linuxX64()
-    mingwX64()
-    macosX64()
-//    macosArm64() // missing kafka-kotlin-native
-  }
+  linuxX64()
+  mingwX64()
+  macosX64()
+  //macosArm64() // missing kafka-kotlin-native
 
   @Suppress("UNUSED_VARIABLE")
   sourceSets {

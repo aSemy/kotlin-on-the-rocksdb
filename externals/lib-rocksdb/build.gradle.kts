@@ -15,11 +15,6 @@ kotlin {
   }
 }
 
-interface Services {
-  @get:Inject
-  val files: FileSystemOperations
-}
-
 interface RocksdbBuildSettings {
   val vcpkgDir: DirectoryProperty
   val vcpkgVersion: Property<String>
@@ -48,11 +43,9 @@ val config = extensions.create<RocksdbBuildSettings>("rdbBuild").apply {
   hostFamily.set(HostManager.host.family)
 
   konanDir.set(
-    providers.environmentVariable("KONAN_DATA_DIR").flatMap { konanDir ->
-      layout.dir(provider { file(konanDir) })
-    }.orElse(
-      userHome.dir(".konan")
-    )
+    providers.environmentVariable("KONAN_DATA_DIR")
+      .flatMap { konanDir -> layout.dir(provider { file(konanDir) }) }
+      .orElse(userHome.dir(".konan"))
   )
 
   when {
@@ -94,7 +87,7 @@ val rocksDbSource by configurations.creating<Configuration> {
 }
 
 // https://github.com/facebook/rocksdb/archive/refs/tags/v7.9.2.zip
-val rocksDbVersion = "7.9.2"
+val rocksDbVersion: String = libs.versions.rocksDb.get()
 dependencies {
   rocksDbSource("facebook:rocksdb:$rocksDbVersion@zip")
 }

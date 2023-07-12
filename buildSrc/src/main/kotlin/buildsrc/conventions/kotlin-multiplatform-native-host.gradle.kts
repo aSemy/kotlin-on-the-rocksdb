@@ -11,7 +11,6 @@ plugins {
 // only enable the Kotlin Native target compatible with the current host OS
 
 kotlin {
-
   nativeTarget()
 
   @Suppress("UNUSED_VARIABLE")

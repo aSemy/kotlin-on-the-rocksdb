@@ -23,13 +23,11 @@ kotlin {
       dependencies {
         implementation(projects.modules.rocksdbInterop)
 
-        // Kotlinx Coroutines
-        implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.6.4"))
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+        implementation(project.dependencies.platform(libs.kotlinx.coroutines.bom))
+        implementation(libs.kotlinx.coroutines.core)
 
-        // Serialization
-        implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.4.1"))
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+        implementation(project.dependencies.platform(libs.kotlinx.serialization.bom))
+        implementation(libs.kotlinx.serialization.json)
       }
     }
 

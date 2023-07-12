@@ -3,18 +3,12 @@ plugins {
 }
 
 dependencies {
-  val kotlinVer = "1.8.0"
-  implementation(platform(kotlin("bom", kotlinVer)))
+  val kotlinVer = libs.versions.kotlin.get()
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVer")
   implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlinVer")
 
   implementation("org.jetbrains.kotlin:kotlin-tooling-metadata:$kotlinVer")
   implementation("org.jetbrains.kotlin:kotlin-util-klib-metadata:$kotlinVer")
 
-  implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:0.0.3")
-}
-
-
-kotlin {
-  jvmToolchain(11)
+  implementation(libs.kotlinx.metadataKlib)
 }

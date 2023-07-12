@@ -2,26 +2,27 @@ import buildsrc.kotr.KLibProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.Family
+import org.gradle.kotlin.dsl.support.*
 
 plugins {
   buildsrc.conventions.`kotlin-multiplatform-native`
 }
 
 // generated wrappers will be written into this dir
-val generatedMainSrcDir = layout.projectDirectory.dir("src/nativeMain/kotlinGen")
+val generatedMainSrcDir: Directory = layout.projectDirectory.dir("src/nativeMain/kotlinGen")
 
-val rocksDbVersion = "7.9.2"
+val rocksDbVersion: String = libs.versions.rocksDb.get()
 
 kotlin {
 
   targets.withType<KotlinNativeTarget>().configureEach {
-    compilations.getByName("main") {
+    compilations.getByName("main") mainCompilation@{
       cinterops {
-        val rocksdb by creating rocksdb@{
+        val rocksdb by creating {
 
-          val targetFamily = this@rocksdb.target?.konanTarget?.family!!
-
-          val dirName = when (targetFamily) {
+          val dirName = when (
+            val targetFamily = this@mainCompilation.target.konanTarget.family
+          ) {
             Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
             Family.MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
             Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
@@ -33,7 +34,7 @@ kotlin {
           includeDirs("$targetDir/include")
 //          includeDirs("$projectDir/src/nativeInterop/external/$dirName/lib")
 
-          this@rocksdb.extraOpts += listOf(
+          extraOpts += listOf(
             "-libraryPath", "$targetDir/lib",
 //            "-staticLibrary", "librocksdb.a"
           )
@@ -109,19 +110,13 @@ kotlin {
   }
 }
 
-
-interface Services {
-  @get:Inject
-  val files: FileSystemOperations
-}
-
 val generateRocksDbWrappers by tasks.registering {
   group = project.name
   description = "generate idiomatic-Kotlin wrappers for RocksDB cinterop code"
 
   outputs.dir(temporaryDir)
 
-  val services = objects.newInstance<Services>()
+  val fs = serviceOf<FileSystemOperations>()
 
   val klibFile: Provider<File> = tasks
     .withType<CInteropProcess>()
@@ -134,7 +129,7 @@ val generateRocksDbWrappers by tasks.registering {
   mustRunAfter(tasks.withType<CInteropProcess>())
 
   doFirst {
-    services.files.delete { delete(temporaryDir) }
+    fs.delete { delete(temporaryDir) }
     temporaryDir.mkdirs()
 
     val files = KLibProcessor.generateRdbInterop(klibFile.get())
