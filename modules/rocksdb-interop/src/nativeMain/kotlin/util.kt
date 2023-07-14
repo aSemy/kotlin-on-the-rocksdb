@@ -1,10 +1,14 @@
 package dev.adamko.kotlin.on.the.rocksdb
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.ByteVar
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.readBytes
+import kotlinx.cinterop.toKString
 
 
 @PublishedApi
 internal const val UBYTE_FALSE: UByte = 0u
+
 @PublishedApi
 internal const val INT_FALSE: Int = 0
 
@@ -25,12 +29,7 @@ inline fun Boolean.toInt(): Int = if (this) 1 else INT_FALSE
 //internal inline fun Boolean.convert(): Int = if (this) 1 else 0
 
 
-fun CPointer<ByteVar>.toKString(
-  length: Int
-): String = readBytes(length).toKString()
-
-
-@RequiresOptIn(message = "Internal Kotlin on the RocksDb API. It may be changed in the future without notice.")
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-annotation class KotlinOnTheRocksDbInternalApi
+/** Create a Kotlin String from the first [length] bytes of ths `CPointer<ByteVar>` */
+@KotlinOnTheRocksDbInternalApi
+inline fun CPointer<ByteVar>.toKString(length: Int): String =
+  readBytes(length).toKString()
