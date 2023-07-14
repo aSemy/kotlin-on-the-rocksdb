@@ -29,8 +29,8 @@ jobs:
             task: linuxX64Test
           # currently unable to figure out what options Windows needs, so it's disabled
           # https://github.com/aSemy/kotlin-on-the-rocksdb/issues/2
-          - os: windows-latest
-            task: mingwX64Test
+          #- os: windows-latest
+          #  task: mingwX64Test
       fail-fast: false
     uses: ./.github/workflows/gradle_task.yml
     with:
