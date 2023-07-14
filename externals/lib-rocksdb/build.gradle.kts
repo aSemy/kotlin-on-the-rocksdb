@@ -93,7 +93,6 @@ dependencies {
   rocksDbSource("facebook:rocksdb:$rocksDbVersion@zip")
 }
 
-
 val rocksDbPrepareSource by tasks.registering(Sync::class) {
   group = project.name
   description = "Download & unpack the RocksDB source code"
