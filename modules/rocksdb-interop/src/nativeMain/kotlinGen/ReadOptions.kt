@@ -99,4 +99,8 @@ class ReadOptions(
   var ioTimeout: ULong
     get() = rocksdb_readoptions_get_io_timeout(readOptions)
     set(value) = rocksdb_readoptions_set_io_timeout(readOptions, value)
+
+  var asyncIo: Boolean
+    get() = rocksdb_readoptions_get_async_io(readOptions).toBoolean()
+    set(value) = rocksdb_readoptions_set_async_io(readOptions, value.toUByte())
 }

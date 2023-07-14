@@ -2,7 +2,7 @@ package = org.rocksdb
 
 headers = c.h
 
-headerFilter = *
+#headerFilter = *
 
 staticLibraries = libbz2.a \
                   liblz4.a \

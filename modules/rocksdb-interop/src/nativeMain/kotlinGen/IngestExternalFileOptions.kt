@@ -36,6 +36,11 @@ class IngestExternalFileOptions(
   ): Unit =
     rocksdb_ingestexternalfileoptions_set_ingest_behind(ingestExternalFileOptions, ingestBehind.toUByte())
 
+  fun setFailIfNotBottommostLevel(
+    failIfNotBottommostLevel: Boolean,
+  ): Unit =
+    rocksdb_ingestexternalfileoptions_set_fail_if_not_bottommost_level(ingestExternalFileOptions, failIfNotBottommostLevel.toUByte())
+
   fun destroy(): Unit =
     rocksdb_ingestexternalfileoptions_destroy(ingestExternalFileOptions)
 }

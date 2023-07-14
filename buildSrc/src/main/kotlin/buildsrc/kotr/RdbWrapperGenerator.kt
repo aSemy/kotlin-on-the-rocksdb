@@ -472,13 +472,6 @@ private fun String.knmNameToPrettyName() =
       }
     }.lowercaseFirstChar()
 
-//data class RdbOptions(
-//  val name: String,
-//  val fn: KmFunction,
-//) {
-//  val fnName: String = fn.name
-//  val prettyName: String = createableNameMap[name] ?: error("missing pretty name for $name")
-//}
 
 /**
  * A map of all known [RdbCreateable] names, along with a pretty name.
@@ -501,6 +494,7 @@ private val createableNameMap = mapOf(
   "envoptions" to "EnvOptions",
   "fifo_compaction_options" to "FifoCompactionOptions",
   "flushoptions" to "FlushOptions",
+  "hyper_clock_cache_options" to "HyperClockCacheOptions",
   "ingestexternalfileoptions" to "IngestExternalFileOptions",
   "jemalloc_nodump_allocator" to "JemallocNoDumpAllocator",
   "lru_cache_options" to "LruCacheOptions",
@@ -513,6 +507,7 @@ private val createableNameMap = mapOf(
   "ratelimiter" to "RateLimiter",
   "readoptions" to "ReadOptions",
   "restore_options" to "RestoreOptions",
+  "seqno" to "SeqNo",
   "slicetransform" to "SliceTransform",
   "sstfilewriter" to "SstFileWriter",
   "transaction_options" to "TransactionOptions",
@@ -522,7 +517,6 @@ private val createableNameMap = mapOf(
   "writebatch" to "WriteBatch",
   "writebatch_wi" to "WriteBatchWi",
   "writeoptions" to "WriteOptions",
-  "seqno" to "SeqNo",
 )
 
 private fun readLibraryMetadata(libraryPath: File): KlibModuleMetadata {

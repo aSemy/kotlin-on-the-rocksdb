@@ -14,6 +14,10 @@ class FifoCompactionOptions(
   fun destroy(): Unit =
     rocksdb_fifo_compaction_options_destroy(fifoCompactionOptions)
 
+  var allowCompaction: Boolean
+    get() = rocksdb_fifo_compaction_options_get_allow_compaction(fifoCompactionOptions).toBoolean()
+    set(value) = rocksdb_fifo_compaction_options_set_allow_compaction(fifoCompactionOptions, value.toUByte())
+
   var maxTableFilesSize: ULong
     get() = rocksdb_fifo_compaction_options_get_max_table_files_size(fifoCompactionOptions)
     set(value) = rocksdb_fifo_compaction_options_set_max_table_files_size(fifoCompactionOptions, value)

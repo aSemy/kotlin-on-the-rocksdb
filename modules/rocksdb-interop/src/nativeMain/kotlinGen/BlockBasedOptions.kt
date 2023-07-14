@@ -49,6 +49,11 @@ class BlockBasedOptions(
   ): Unit =
     rocksdb_block_based_options_set_partition_filters(blockBasedOptions, partitionFilters.toUByte())
 
+  fun setOptimizeFiltersForMemory(
+    optimizeFiltersForMemory: Boolean,
+  ): Unit =
+    rocksdb_block_based_options_set_optimize_filters_for_memory(blockBasedOptions, optimizeFiltersForMemory.toUByte())
+
   fun setUseDeltaEncoding(
     useDeltaEncoding: Boolean,
   ): Unit =
@@ -68,11 +73,6 @@ class BlockBasedOptions(
     blockCache: CValuesRef<rocksdb_cache_t>?,
   ): Unit =
     rocksdb_block_based_options_set_block_cache(blockBasedOptions, blockCache)
-
-  fun setBlockCacheCompressed(
-    blockCacheCompressed: CValuesRef<rocksdb_cache_t>?,
-  ): Unit =
-    rocksdb_block_based_options_set_block_cache_compressed(blockBasedOptions, blockCacheCompressed)
 
   fun setWholeKeyFiltering(
     arg1: Boolean,

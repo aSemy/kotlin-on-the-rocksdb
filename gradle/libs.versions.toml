@@ -1,7 +1,7 @@
 [versions]
 
 kotlin = "1.9.0"
-rocksDb = "7.9.2"
+rocksDb = "8.3.2"
 
 kotlinx-metadataKlib = "0.0.4"
 kotlinx-coroutines = "1.7.2"
