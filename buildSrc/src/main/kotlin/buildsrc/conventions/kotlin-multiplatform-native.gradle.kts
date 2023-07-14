@@ -25,7 +25,7 @@ kotlin {
   //         └── macosArm64
 
   linuxX64()
-  mingwX64()
+  //mingwX64() // I'm not able to figure out how to compile RocksDB with the gcc v9.2.0 required by Kotlin Native
   macosX64()
   //macosArm64() // missing kafka-kotlin-native
 
@@ -45,11 +45,11 @@ kotlin {
     val linuxX64Test by getting { dependsOn(linuxTest) }
 
     // Windows
-    val windowsMain by creating { dependsOn(nativeMain) }
-    val windowsTest by creating { dependsOn(nativeTest) }
+    //val windowsMain by creating { dependsOn(nativeMain) }
+    //val windowsTest by creating { dependsOn(nativeTest) }
 
-    val mingwX64Main by getting { dependsOn(windowsMain) }
-    val mingwX64Test by getting { dependsOn(windowsTest) }
+    //val mingwX64Main by getting { dependsOn(windowsMain) }
+    //val mingwX64Test by getting { dependsOn(windowsTest) }
 
     // macOS
     val macosMain by creating { dependsOn(nativeMain) }
@@ -58,8 +58,8 @@ kotlin {
     val macosX64Main by getting { dependsOn(macosMain) }
     val macosX64Test by getting { dependsOn(macosTest) }
 
-//    val macosArm64Main by getting { dependsOn(macosMain) }
-//    val macosArm64Test by getting { dependsOn(macosTest) }
+    //val macosArm64Main by getting { dependsOn(macosMain) }
+    //val macosArm64Test by getting { dependsOn(macosTest) }
   }
 }
 
@@ -73,13 +73,13 @@ KotlinPlatformType.values().forEach { kotlinPlatform ->
     description = "Run all Kotlin/${kotlinPlatformName} tests"
   }
 
-  kotlin.testableTargets.matching {
-    it.platformType == kotlinPlatform
-  }.configureEach {
-    testRuns.configureEach {
-      if (this is KotlinTaskTestRun<*, *>) {
-        testKotlinTargetLifecycleTask.dependsOn(executionTask)
+  kotlin.testableTargets
+    .matching { it.platformType == kotlinPlatform }
+    .configureEach {
+      testRuns.configureEach {
+        if (this is KotlinTaskTestRun<*, *>) {
+          testKotlinTargetLifecycleTask.dependsOn(executionTask)
+        }
       }
     }
-  }
 }
