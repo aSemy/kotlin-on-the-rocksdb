@@ -88,9 +88,8 @@ val rocksDbSource by configurations.creating<Configuration> {
   }
 }
 
-// https://github.com/facebook/rocksdb/archive/refs/tags/v7.9.2.zip
-val rocksDbVersion: String = libs.versions.rocksDb.get()
 dependencies {
+  val rocksDbVersion: String = libs.versions.rocksDb.get()
   rocksDbSource("facebook:rocksdb:$rocksDbVersion@zip")
 }
 
@@ -109,7 +108,7 @@ val rocksDbPrepareSource by tasks.registering(Sync::class) {
     // drop the first dir (rocksdb-$version)
     eachFile {
       relativePath = relativePath.dropDirectories(1)
-      if (this.name == "Makefile") {
+      if (file.name == "Makefile") {
         filter { line ->
           when (line) {
             // -g adds debug symbols, which make the library HUGE. Use -s instead, which strips them.
@@ -226,7 +225,7 @@ val rocksDbZip by tasks.registering(Zip::class) {
   into(archiveFileName.map { it.substringBeforeLast(".") })
 
   archiveBaseName.set("rocksdb")
-  archiveVersion.set(rocksDbVersion)
+  archiveVersion.set(libs.versions.rocksDb)
   archiveClassifier.set(hostName)
 
   destinationDirectory.set(layout.buildDirectory.dir("distributions"))

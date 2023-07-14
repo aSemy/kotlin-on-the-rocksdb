@@ -17,65 +17,33 @@ kotlin {
 
   targets.withType<KotlinNativeTarget>().configureEach {
 
-    val rocksDbVersion: String = libs.versions.rocksDb.get()
-
-    fun rdbTargetDir(targetFamily: Family): String {
-      val familyDirName = when (targetFamily) {
-        LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
-        MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
-        OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
+    val rdbBasePath = "$projectDir/src/nativeInterop/external/rocksdb/"
+    val rdbHeaderDir = "$rdbBasePath/include/"
+    fun rdbLibDir(targetFamily: Family): String {
+      val libDir = when (targetFamily) {
+        LINUX -> "lib-x64-linux-release"
+        MINGW -> "lib-x64-mingw-static"
+        OSX   -> "lib-x64-osx-release"
         else  -> error("$targetFamily is not supported")
       }
-      return "$projectDir/src/nativeInterop/external/$familyDirName"
+      return "$rdbBasePath/$libDir"
     }
 
     compilations.getByName("main") mainCompilation@{
-
-      val rdbTargetDir = rdbTargetDir(target.konanTarget.family)
-
+      val rdbLibDir = rdbLibDir(target.konanTarget.family)
       cinterops.create("rocksdb") {
-
-        includeDirs("$rdbTargetDir/include")
-
+        includeDirs(rdbHeaderDir)
         extraOpts += listOf(
-          "-libraryPath", "$rdbTargetDir/lib",
-//            "-staticLibrary", "librocksdb.a"
+          "-libraryPath", rdbLibDir,
         )
-
-//        compilerOpts += listOf(
-//          "-I$targetDir/include",
-//        )
-
-//          fun extFile(path:String) = "$projectDir/src/nativeInterop/external/$dirName/$path"
-
-//          linkerOpts(
-//            "-L${extFile("lib")}",
-//            "$projectDir/src/nativeInterop/external/$dirName/lib/libbz2.a",
-//            "$projectDir/src/nativeInterop/external/$dirName/lib/liblz4.a",
-//            "$projectDir/src/nativeInterop/external/$dirName/lib/librocksdb.a",
-//            "$projectDir/src/nativeInterop/external/$dirName/lib/libsnappy.a",
-//            "$projectDir/src/nativeInterop/external/$dirName/lib/libz.a",
-//            "$projectDir/src/nativeInterop/external/$dirName/lib/libzstd.a",
-//          )
       }
     }
     binaries {
       binaries.staticLib {
-
-        val rdbTargetDir = rdbTargetDir(target.konanTarget.family)
-
+        val rdbLibDir = rdbLibDir(target.konanTarget.family)
         linkerOpts(
-          "-L$rdbTargetDir/lib",
-//          "-I$targetDir/lib",
-//          "$targetDir/libbz2.a",
-//          "$targetDir/liblz4.a",
-//          "$targetDir/librocksdb.a",
-//          "$targetDir/libsnappy.a",
-//          "$targetDir/libz.a",
-//          "$targetDir/libzstd.a",
+          "-L$rdbLibDir",
         )
-
-//        logger.lifecycle("linkerOpts for staticLib:${this@staticLib.name}: $linkerOpts (targetFamily:$targetFamily)")
       }
     }
   }
