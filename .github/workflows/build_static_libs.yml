@@ -3,9 +3,9 @@ name: Build static libs
 # Utility for building RocksDB static libraries for each platform
 
 on:
-  pull_request: { }
-  #paths:
-  #      - ./.github/workflows/build_static_libs.yml
+  pull_request:
+    paths:
+      - "./.github/workflows/build_static_libs.yml"
   workflow_dispatch:
 
 concurrency:
