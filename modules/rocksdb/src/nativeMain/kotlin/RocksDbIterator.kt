@@ -7,7 +7,7 @@ import platform.posix.size_tVar
 
 class RocksDbIterator(
   private val iterator: CPointer<rocksdb_iterator_t>,
-) : Iterator<Pair<String, String>> {
+) : Iterator<Pair<String, String>>, AutoCloseable {
 
   fun seek(key: String): Unit = rocksdb_iter_seek(iterator, key, key.length.convert())
   fun seekForPrev(key: String): Unit = rocksdb_iter_seek_for_prev(iterator, key, key.length.convert())
@@ -17,7 +17,7 @@ class RocksDbIterator(
 
   override fun hasNext(): Boolean = rocksdb_iter_valid(iterator).toBoolean()
 
-  fun destroy(): Unit = rocksdb_iter_destroy(iterator)
+  override fun close(): Unit = rocksdb_iter_destroy(iterator)
 
   override fun next(): Pair<String, String> {
     rocksdb_iter_next(iterator)
