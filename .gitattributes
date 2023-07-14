@@ -48,4 +48,4 @@ gradlew         text eol=lf
 
 # Exclude external libs from GitHub language stats
 # https://github.com/github/linguist/blob/v7.24.1/docs/overrides.md
-nativeinterop/external/** linguist-vendored
+**/nativeinterop/external/** linguist-vendored
