@@ -1,8 +1,9 @@
 import buildsrc.kotr.RdbWrapperGenerator
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.Family
-import org.gradle.kotlin.dsl.support.*
+import org.jetbrains.kotlin.konan.target.Family.*
 
 plugins {
   buildsrc.conventions.`kotlin-multiplatform-native`
@@ -11,37 +12,39 @@ plugins {
 // generated wrappers will be written into this dir
 val generatedMainSrcDir: Directory = layout.projectDirectory.dir("src/nativeMain/kotlinGen")
 
-val rocksDbVersion: String = libs.versions.rocksDb.get()
 
 kotlin {
 
   targets.withType<KotlinNativeTarget>().configureEach {
+
+    val rocksDbVersion: String = libs.versions.rocksDb.get()
+
+    fun rdbTargetDir(targetFamily: Family): String {
+      val familyDirName = when (targetFamily) {
+        LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
+        MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
+        OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
+        else  -> error("$targetFamily is not supported")
+      }
+      return "$projectDir/src/nativeInterop/external/$familyDirName"
+    }
+
     compilations.getByName("main") mainCompilation@{
-      cinterops {
-        val rocksdb by creating {
 
-          val dirName = when (
-            val targetFamily = this@mainCompilation.target.konanTarget.family
-          ) {
-            Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
-            Family.MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
-            Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
-            else         -> error("$targetFamily is not supported")
-          }
+      val rdbTargetDir = rdbTargetDir(target.konanTarget.family)
 
-          val targetDir = "$projectDir/src/nativeInterop/external/$dirName"
+      cinterops.create("rocksdb") {
 
-          includeDirs("$targetDir/include")
-//          includeDirs("$projectDir/src/nativeInterop/external/$dirName/lib")
+        includeDirs("$rdbTargetDir/include")
 
-          extraOpts += listOf(
-            "-libraryPath", "$targetDir/lib",
+        extraOpts += listOf(
+          "-libraryPath", "$rdbTargetDir/lib",
 //            "-staticLibrary", "librocksdb.a"
-          )
+        )
 
-//          compilerOpts += listOf(
-//            "-I$targetDir/include",
-//          )
+//        compilerOpts += listOf(
+//          "-I$targetDir/include",
+//        )
 
 //          fun extFile(path:String) = "$projectDir/src/nativeInterop/external/$dirName/$path"
 
@@ -54,23 +57,15 @@ kotlin {
 //            "$projectDir/src/nativeInterop/external/$dirName/lib/libz.a",
 //            "$projectDir/src/nativeInterop/external/$dirName/lib/libzstd.a",
 //          )
-        }
       }
     }
     binaries {
       binaries.staticLib {
 
-        val dirName = when (target.konanTarget.family) {
-          Family.LINUX -> "rocksdb-${rocksDbVersion}-x64-linux-release"
-          Family.MINGW -> "rocksdb-${rocksDbVersion}-x64-mingw-static"
-          Family.OSX   -> "rocksdb-${rocksDbVersion}-x64-osx-release"
-          else         -> error("${target.konanTarget.family} is not supported")
-        }
-
-        val targetDir = "$projectDir/src/nativeInterop/external/$dirName"
+        val rdbTargetDir = rdbTargetDir(target.konanTarget.family)
 
         linkerOpts(
-          "-L$targetDir/lib",
+          "-L$rdbTargetDir/lib",
 //          "-I$targetDir/lib",
 //          "$targetDir/libbz2.a",
 //          "$targetDir/liblz4.a",
@@ -115,38 +110,40 @@ val generateRocksDbWrappers by tasks.registering {
   group = project.name
   description = "generate idiomatic-Kotlin wrappers for RocksDB cinterop code"
 
-  outputs.dir(temporaryDir)
+  val generatedMainSrcDir = generatedMainSrcDir
+  outputs.dir(generatedMainSrcDir).withPropertyName("generatedMainSrcDir")
 
   val fs = serviceOf<FileSystemOperations>()
 
   val klibFile: Provider<File> = tasks
     .withType<CInteropProcess>()
-    .named("cinteropRocksdbLinuxX64")
+    .named("cinteropRocksdbMacosX64")
     .flatMap { it.outputFileProvider }
 
-  inputs.file(klibFile)
-  dependsOn(tasks.commonizeCInterop)
+  inputs.file(klibFile).withPropertyName("klibFile")
 
+  dependsOn(tasks.commonizeCInterop)
   mustRunAfter(tasks.withType<CInteropProcess>())
 
-  doFirst {
+  doLast {
     fs.delete { delete(temporaryDir) }
     temporaryDir.mkdirs()
 
-    val files = RdbWrapperGenerator.generateRdbInterop(klibFile.get())
+    val klibFileValue = klibFile.get()
+
+    println("klibFileValue: $klibFileValue")
+
+    val files = RdbWrapperGenerator.generateRdbInterop(klibFileValue)
 
     files.forEach { (name, content) ->
       temporaryDir.resolve("$name.kt").writeText(content)
     }
   }
-}
 
-
-val syncRocksDbWrappers by tasks.registering(Sync::class) {
-  group = project.name
-
-  from(generateRocksDbWrappers.map { it.temporaryDir })
-  into(generatedMainSrcDir)
-
-//  dependsOn(tasks.matching { it.name == "copyCommonizeCInteropForIde" })
+  doLast {
+    fs.sync {
+      into(generatedMainSrcDir)
+      from(temporaryDir)
+    }
+  }
 }
