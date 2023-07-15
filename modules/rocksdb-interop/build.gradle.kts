@@ -1,6 +1,7 @@
 import buildsrc.kotr.RdbWrapperGenerator
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.Family.*
@@ -17,16 +18,17 @@ kotlin {
 
   targets.withType<KotlinNativeTarget>().configureEach {
 
-    val rdbBasePath = "$projectDir/src/nativeInterop/external/rocksdb/"
-    val rdbHeaderDir = "$rdbBasePath/include/"
-    fun rdbLibDir(targetFamily: Family): String {
+    val externalBasePath = projectDir.resolve("src/nativeInterop/external")
+    val rdbBasePath = externalBasePath.resolve("rocksdb")
+    val rdbHeaderDir = rdbBasePath.resolve("include")
+    fun rdbLibDir(targetFamily: Family): File {
       val libDir = when (targetFamily) {
         LINUX -> "lib-x64-linux-release"
         MINGW -> "lib-x64-mingw-static"
         OSX   -> "lib-x64-osx-release"
         else  -> error("$targetFamily is not supported")
       }
-      return "$rdbBasePath/$libDir"
+      return rdbBasePath.resolve(libDir)
     }
 
     compilations.getByName("main") mainCompilation@{
@@ -34,7 +36,7 @@ kotlin {
       cinterops.create("rocksdb") {
         includeDirs(rdbHeaderDir)
         extraOpts += listOf(
-          "-libraryPath", rdbLibDir,
+          "-libraryPath", rdbLibDir.invariantSeparatorsPath,
         )
       }
     }
@@ -42,7 +44,29 @@ kotlin {
       binaries.staticLib {
         val rdbLibDir = rdbLibDir(target.konanTarget.family)
         linkerOpts(
-          "-L$rdbLibDir",
+          "-I${rdbHeaderDir.invariantSeparatorsPath}",
+          "-L${rdbLibDir.invariantSeparatorsPath}",
+
+        "-lrocksdb",
+        if (target.konanTarget.family == MINGW) "-lzlib" else "-lz",
+        "-lbz2",
+        "-llz4",
+        "-lsnappy",
+        "-lzstd",
+        )
+      }
+      binaries.withType<TestExecutable>().configureEach {
+        val rdbLibDir = rdbLibDir(target.konanTarget.family)
+        linkerOpts(
+          //"-I${rdbHeaderDir.invariantSeparatorsPath}",
+          "-L${rdbLibDir.invariantSeparatorsPath}",
+
+        "-lrocksdb",
+        if (target.konanTarget.family == MINGW) "-lzlib" else "-lz",
+        "-lbz2",
+        "-llz4",
+        "-lsnappy",
+        "-lzstd",
         )
       }
     }

@@ -2,24 +2,48 @@ package = org.rocksdb
 
 headers = c.h
 
-staticLibraries = libbz2.a \
-                  liblz4.a \
-                  librocksdb.a \
-                  libsnappy.a \
-                  libzstd.a
-staticLibraries.osx = libz.a
-staticLibraries.linux = libz.a
-staticLibraries.mingw = libzlib.a
+#staticLibraries = libbz2.a \
+#                  liblz4.a \
+#                  librocksdb.a \
+#                  libsnappy.a \
+#                  libzstd.a
+#staticLibraries.osx = libz.a
+#staticLibraries.linux = libz.a
+#staticLibraries.mingw = libzlib.a
 
-compilerOpts = \
-             -lbz2 \
-             -llz4 \
-             -lrocksdb \
-             -lsnappy \
-             -lzstd
-compilerOpts.osx = -lz
-compilerOpts.linux = -lz
-compilerOpts.mingw = -lzlib -lshlwapi -lrpcrt4
+#linkerOpts = -lrocksdb \
+#             -lbz2 \
+#             -llz4 \
+#             -lsnappy \
+#             -lzstd
+#linkerOpts.osx = -lz
+#linkerOpts.linux = -lz
+#linkerOpts.mingw = -lzlib -lshlwapi -lrpcrt4
+
+##compilerOpts =
+#compilerOpts.osx =   -lrocksdb \
+#                     -lz \
+#                     -lbz2 \
+#                     -llz4 \
+#                     -lsnappy \
+#                     -lzstd
+
+#compilerOpts.linux = -lrocksdb \
+#                     -lz \
+#                     -lbz2 \
+#                     -llz4 \
+#                     -lsnappy \
+#                     -lzstd
+
+#compilerOpts.mingw = -lrocksdb \
+#                     -lzlib \
+#                     -lbz2 \
+#                     -llz4 \
+#                     -lsnappy \
+#                     -lzstd \
+#                     -lshlwapi \
+#                     -lrpcrt4
+
 
 strictEnums = AccessHint
 
