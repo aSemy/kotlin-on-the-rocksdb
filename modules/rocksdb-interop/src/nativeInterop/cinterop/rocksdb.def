@@ -2,35 +2,59 @@ package = org.rocksdb
 
 headers = c.h
 
-headerFilter = *
+#staticLibraries = libbz2.a \
+#                  liblz4.a \
+#                  librocksdb.a \
+#                  libsnappy.a \
+#                  libzstd.a
+#staticLibraries.osx = libz.a
+#staticLibraries.linux = libz.a
+#staticLibraries.mingw = libzlib.a
 
-#staticLibraries = librocksdb.a
+#linkerOpts = -lrocksdb \
+#             -lbz2 \
+#             -llz4 \
+#             -lsnappy \
+#             -lzstd
+#linkerOpts.osx = -lz
+#linkerOpts.linux = -lz
+#linkerOpts.mingw = -lzlib -lshlwapi -lrpcrt4
 
-#compilerOpts =
-#compilerOpts.osx =
+##compilerOpts =
+#compilerOpts.osx =   -lrocksdb \
+#                     -lz \
+#                     -lbz2 \
+#                     -llz4 \
+#                     -lsnappy \
+#                     -lzstd
 
-#excludeDependentModules = true
-excludeDependentModules = false
-#compilerOpts = -I/path
-#linkerOpts = -lpng
+#compilerOpts.linux = -lrocksdb \
+#                     -lz \
+#                     -lbz2 \
+#                     -llz4 \
+#                     -lsnappy \
+#                     -lzstd
 
-#compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu
-#compilerOpts.osx = -I/opt/local/include -L/usr/opt/include -L/usr/local/include -L/usr/local/Cellar/rocksdb/7.8.3/include
-#linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu
+#compilerOpts.mingw = -lrocksdb \
+#                     -lzlib \
+#                     -lbz2 \
+#                     -llz4 \
+#                     -lsnappy \
+#                     -lzstd \
+#                     -lshlwapi \
+#                     -lrpcrt4
 
-linkerOpts = -L/usr/local/lib -L/usr/lib  -lrocksdb
-
-#linkerOpts.linux = -L/usr/local/lib -L/usr/lib  -lrocksdb
-
-#linkerOpts.osx = -L/usr/local/lib -L/usr/lib  -lrocksdb
 
 strictEnums = AccessHint
 
+# Don't generate cinterop for the default access_hint functions,
+# because they don't use the custom AccessHint enum (defined below)
 excludedFunctions = \
  rocksdb_options_set_access_hint_on_compaction_start \
  rocksdb_options_get_access_hint_on_compaction_start
 
 
+#language=c
 ---
 
 // c.h uses an int to represent AccessHint - so manually define an enum
@@ -42,13 +66,13 @@ typedef enum {
   WILL_NEED = 3
 } AccessHint;
 
-AccessHint rocksdb_options_get_access_hint_on_compaction_start__(
+static AccessHint rocksdb_options_get_access_hint_on_compaction_start__(
   rocksdb_options_t* opt
 ) {
   return rocksdb_options_get_access_hint_on_compaction_start(opt);
 };
 
-void rocksdb_options_set_access_hint_on_compaction_start__(
+static void rocksdb_options_set_access_hint_on_compaction_start__(
   rocksdb_options_t* opt,
   AccessHint access_hint
 ) {

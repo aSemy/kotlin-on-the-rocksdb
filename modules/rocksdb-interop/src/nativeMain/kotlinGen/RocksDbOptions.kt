@@ -4,231 +4,232 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class RocksDbOptions(
-  private val rocksDbOptions: CPointer<rocksdb_options_t> = rocksdb_options_create() ?: error("could not instantiate new RocksDbOptions")
+  private val rocksDbOptions: CPointer<rocksdb_options_t> = rocksdb_options_create() 
+     ?: error("could not instantiate new RocksDbOptions")
 ) : CValuesRef<rocksdb_options_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_options_t> =
     rocksDbOptions.getPointer(scope)
 
   fun setBlockBasedTableFactory(
-    tableOptions: CValuesRef<rocksdb_block_based_table_options_t>?, 
-  ): Unit = 
-    rocksdb_options_set_block_based_table_factory(rocksDbOptions, tableOptions) 
+    tableOptions: CValuesRef<rocksdb_block_based_table_options_t>?,
+  ): Unit =
+    rocksdb_options_set_block_based_table_factory(rocksDbOptions, tableOptions)
 
   fun setCuckooTableFactory(
-    tableOptions: CValuesRef<rocksdb_cuckoo_table_options_t>?, 
-  ): Unit = 
-    rocksdb_options_set_cuckoo_table_factory(rocksDbOptions, tableOptions) 
+    tableOptions: CValuesRef<rocksdb_cuckoo_table_options_t>?,
+  ): Unit =
+    rocksdb_options_set_cuckoo_table_factory(rocksDbOptions, tableOptions)
 
-  fun destroy(): Unit = 
-    rocksdb_options_destroy(rocksDbOptions) 
+  fun destroy(): Unit =
+    rocksdb_options_destroy(rocksDbOptions)
 
-  fun createCopy(): CPointer<rocksdb_options_t>? = 
-    rocksdb_options_create_copy(rocksDbOptions) 
+  fun createCopy(): CPointer<rocksdb_options_t>? =
+    rocksdb_options_create_copy(rocksDbOptions)
 
   fun increaseParallelism(
-    totalThreads: Int, 
-  ): Unit = 
-    rocksdb_options_increase_parallelism(rocksDbOptions, totalThreads) 
+    totalThreads: Int,
+  ): Unit =
+    rocksdb_options_increase_parallelism(rocksDbOptions, totalThreads)
 
   fun optimizeForPointLookup(
-    blockCacheSizemb: ULong, 
-  ): Unit = 
-    rocksdb_options_optimize_for_point_lookup(rocksDbOptions, blockCacheSizemb) 
+    blockCacheSizemb: ULong,
+  ): Unit =
+    rocksdb_options_optimize_for_point_lookup(rocksDbOptions, blockCacheSizemb)
 
   fun optimizeLevelStyleCompaction(
-    memtableMemoryBudget: ULong, 
-  ): Unit = 
-    rocksdb_options_optimize_level_style_compaction(rocksDbOptions, memtableMemoryBudget) 
+    memtableMemoryBudget: ULong,
+  ): Unit =
+    rocksdb_options_optimize_level_style_compaction(rocksDbOptions, memtableMemoryBudget)
 
   fun optimizeUniversalStyleCompaction(
-    memtableMemoryBudget: ULong, 
-  ): Unit = 
-    rocksdb_options_optimize_universal_style_compaction(rocksDbOptions, memtableMemoryBudget) 
+    memtableMemoryBudget: ULong,
+  ): Unit =
+    rocksdb_options_optimize_universal_style_compaction(rocksDbOptions, memtableMemoryBudget)
 
   fun setCompactionFilter(
-    arg1: CValuesRef<rocksdb_compactionfilter_t>?, 
-  ): Unit = 
-    rocksdb_options_set_compaction_filter(rocksDbOptions, arg1) 
+    arg1: CValuesRef<rocksdb_compactionfilter_t>?,
+  ): Unit =
+    rocksdb_options_set_compaction_filter(rocksDbOptions, arg1)
 
   fun setCompactionFilterFactory(
-    arg1: CValuesRef<rocksdb_compactionfilterfactory_t>?, 
-  ): Unit = 
-    rocksdb_options_set_compaction_filter_factory(rocksDbOptions, arg1) 
+    arg1: CValuesRef<rocksdb_compactionfilterfactory_t>?,
+  ): Unit =
+    rocksdb_options_set_compaction_filter_factory(rocksDbOptions, arg1)
 
   fun compactionReadAheadSize(
-    arg1: ULong, 
-  ): Unit = 
-    rocksdb_options_compaction_readahead_size(rocksDbOptions, arg1) 
+    arg1: ULong,
+  ): Unit =
+    rocksdb_options_compaction_readahead_size(rocksDbOptions, arg1)
 
   fun setComparator(
-    arg1: CValuesRef<rocksdb_comparator_t>?, 
-  ): Unit = 
-    rocksdb_options_set_comparator(rocksDbOptions, arg1) 
+    arg1: CValuesRef<rocksdb_comparator_t>?,
+  ): Unit =
+    rocksdb_options_set_comparator(rocksDbOptions, arg1)
 
   fun setMergeOperator(
-    arg1: CValuesRef<rocksdb_mergeoperator_t>?, 
-  ): Unit = 
-    rocksdb_options_set_merge_operator(rocksDbOptions, arg1) 
+    arg1: CValuesRef<rocksdb_mergeoperator_t>?,
+  ): Unit =
+    rocksdb_options_set_merge_operator(rocksDbOptions, arg1)
 
-  fun setUint64addMergeOperator(): Unit = 
-    rocksdb_options_set_uint64add_merge_operator(rocksDbOptions) 
+  fun setUint64addMergeOperator(): Unit =
+    rocksdb_options_set_uint64add_merge_operator(rocksDbOptions)
 
   fun setCompressionPerLevel(
-    levelValues: CValuesRef<IntVarOf<Int>>?, 
-    numLevels: ULong, 
-  ): Unit = 
-    rocksdb_options_set_compression_per_level(rocksDbOptions, levelValues, numLevels) 
+    levelValues: CValuesRef<IntVarOf<Int>>?,
+    numLevels: ULong,
+  ): Unit =
+    rocksdb_options_set_compression_per_level(rocksDbOptions, levelValues, numLevels)
 
   fun setDbPaths(
-    pathValues: CValuesRef<CPointerVarOf<CPointer<rocksdb_dbpath_t>>>?, 
-    numPaths: ULong, 
-  ): Unit = 
-    rocksdb_options_set_db_paths(rocksDbOptions, pathValues, numPaths) 
+    pathValues: CValuesRef<CPointerVarOf<CPointer<rocksdb_dbpath_t>>>?,
+    numPaths: ULong,
+  ): Unit =
+    rocksdb_options_set_db_paths(rocksDbOptions, pathValues, numPaths)
 
   fun setEnv(
-    arg1: CValuesRef<rocksdb_env_t>?, 
-  ): Unit = 
-    rocksdb_options_set_env(rocksDbOptions, arg1) 
+    arg1: CValuesRef<rocksdb_env_t>?,
+  ): Unit =
+    rocksdb_options_set_env(rocksDbOptions, arg1)
 
   fun setInfoLog(
-    arg1: CValuesRef<rocksdb_logger_t>?, 
-  ): Unit = 
-    rocksdb_options_set_info_log(rocksDbOptions, arg1) 
+    arg1: CValuesRef<rocksdb_logger_t>?,
+  ): Unit =
+    rocksdb_options_set_info_log(rocksDbOptions, arg1)
 
   fun setCompressionOptions(
-    arg1: Int, 
-    arg2: Int, 
-    arg3: Int, 
-    arg4: Int, 
-  ): Unit = 
-    rocksdb_options_set_compression_options(rocksDbOptions, arg1, arg2, arg3, arg4) 
+    arg1: Int,
+    arg2: Int,
+    arg3: Int,
+    arg4: Int,
+  ): Unit =
+    rocksdb_options_set_compression_options(rocksDbOptions, arg1, arg2, arg3, arg4)
 
   fun setBottommostCompressionOptions(
-    arg1: Int, 
-    arg2: Int, 
-    arg3: Int, 
-    arg4: Int, 
-    arg5: Boolean, 
-  ): Unit = 
-    rocksdb_options_set_bottommost_compression_options(rocksDbOptions, arg1, arg2, arg3, arg4, arg5.toUByte()) 
+    arg1: Int,
+    arg2: Int,
+    arg3: Int,
+    arg4: Int,
+    arg5: Boolean,
+  ): Unit =
+    rocksdb_options_set_bottommost_compression_options(rocksDbOptions, arg1, arg2, arg3, arg4, arg5.toUByte())
 
   fun setBottommostCompressionOptionsZstdMaxTrainBytes(
-    arg1: Int, 
-    arg2: Boolean, 
-  ): Unit = 
-    rocksdb_options_set_bottommost_compression_options_zstd_max_train_bytes(rocksDbOptions, arg1, arg2.toUByte()) 
+    arg1: Int,
+    arg2: Boolean,
+  ): Unit =
+    rocksdb_options_set_bottommost_compression_options_zstd_max_train_bytes(rocksDbOptions, arg1, arg2.toUByte())
 
   fun setBottommostCompressionOptionsUseZstdDictTrainer(
-    arg1: Boolean, 
-    arg2: Boolean, 
-  ): Unit = 
-    rocksdb_options_set_bottommost_compression_options_use_zstd_dict_trainer(rocksDbOptions, arg1.toUByte(), arg2.toUByte()) 
+    arg1: Boolean,
+    arg2: Boolean,
+  ): Unit =
+    rocksdb_options_set_bottommost_compression_options_use_zstd_dict_trainer(rocksDbOptions, arg1.toUByte(), arg2.toUByte())
 
   fun setBottommostCompressionOptionsMaxDictBufferBytes(
-    arg1: ULong, 
-    arg2: Boolean, 
-  ): Unit = 
-    rocksdb_options_set_bottommost_compression_options_max_dict_buffer_bytes(rocksDbOptions, arg1, arg2.toUByte()) 
+    arg1: ULong,
+    arg2: Boolean,
+  ): Unit =
+    rocksdb_options_set_bottommost_compression_options_max_dict_buffer_bytes(rocksDbOptions, arg1, arg2.toUByte())
 
   fun setPrefixExtractor(
-    arg1: CValuesRef<rocksdb_slicetransform_t>?, 
-  ): Unit = 
-    rocksdb_options_set_prefix_extractor(rocksDbOptions, arg1) 
+    arg1: CValuesRef<rocksdb_slicetransform_t>?,
+  ): Unit =
+    rocksdb_options_set_prefix_extractor(rocksDbOptions, arg1)
 
   fun setMaxBytesForLevelMultiplierAdditional(
-    levelValues: CValuesRef<IntVarOf<Int>>?, 
-    numLevels: ULong, 
-  ): Unit = 
-    rocksdb_options_set_max_bytes_for_level_multiplier_additional(rocksDbOptions, levelValues, numLevels) 
+    levelValues: CValuesRef<IntVarOf<Int>>?,
+    numLevels: ULong,
+  ): Unit =
+    rocksdb_options_set_max_bytes_for_level_multiplier_additional(rocksDbOptions, levelValues, numLevels)
 
-  fun enableStatistics(): Unit = 
-    rocksdb_options_enable_statistics(rocksDbOptions) 
+  fun enableStatistics(): Unit =
+    rocksdb_options_enable_statistics(rocksDbOptions)
 
   fun setBlobCache(
-    blobCache: CValuesRef<rocksdb_cache_t>?, 
-  ): Unit = 
-    rocksdb_options_set_blob_cache(rocksDbOptions, blobCache) 
+    blobCache: CValuesRef<rocksdb_cache_t>?,
+  ): Unit =
+    rocksdb_options_set_blob_cache(rocksDbOptions, blobCache)
 
-  fun statisticsGetString(): CPointer<ByteVar>? = 
-    rocksdb_options_statistics_get_string(rocksDbOptions) 
+  fun statisticsGetString(): CPointer<ByteVar>? =
+    rocksdb_options_statistics_get_string(rocksDbOptions)
 
   fun setDbLogDir(
-    arg1: String?, 
-  ): Unit = 
-    rocksdb_options_set_db_log_dir(rocksDbOptions, arg1) 
+    arg1: String?,
+  ): Unit =
+    rocksdb_options_set_db_log_dir(rocksDbOptions, arg1)
 
   fun setWalDir(
-    arg1: String?, 
-  ): Unit = 
-    rocksdb_options_set_wal_dir(rocksDbOptions, arg1) 
+    arg1: String?,
+  ): Unit =
+    rocksdb_options_set_wal_dir(rocksDbOptions, arg1)
 
-  fun prepareForBulkLoad(): Unit = 
-    rocksdb_options_prepare_for_bulk_load(rocksDbOptions) 
+  fun prepareForBulkLoad(): Unit =
+    rocksdb_options_prepare_for_bulk_load(rocksDbOptions)
 
-  fun setMemtableVectorRep(): Unit = 
-    rocksdb_options_set_memtable_vector_rep(rocksDbOptions) 
+  fun setMemtableVectorRep(): Unit =
+    rocksdb_options_set_memtable_vector_rep(rocksDbOptions)
 
   fun setHashSkipListRep(
-    arg1: ULong, 
-    arg2: Int, 
-    arg3: Int, 
-  ): Unit = 
-    rocksdb_options_set_hash_skip_list_rep(rocksDbOptions, arg1, arg2, arg3) 
+    arg1: ULong,
+    arg2: Int,
+    arg3: Int,
+  ): Unit =
+    rocksdb_options_set_hash_skip_list_rep(rocksDbOptions, arg1, arg2, arg3)
 
   fun setHashLinkListRep(
-    arg1: ULong, 
-  ): Unit = 
-    rocksdb_options_set_hash_link_list_rep(rocksDbOptions, arg1) 
+    arg1: ULong,
+  ): Unit =
+    rocksdb_options_set_hash_link_list_rep(rocksDbOptions, arg1)
 
   fun setPlainTableFactory(
-    arg1: UInt, 
-    arg2: Int, 
-    arg3: Double, 
-    arg4: ULong, 
-  ): Unit = 
-    rocksdb_options_set_plain_table_factory(rocksDbOptions, arg1, arg2, arg3, arg4) 
+    arg1: UInt,
+    arg2: Int,
+    arg3: Double,
+    arg4: ULong,
+  ): Unit =
+    rocksdb_options_set_plain_table_factory(rocksDbOptions, arg1, arg2, arg3, arg4)
 
   fun setMinLevelToCompress(
-    level: Int, 
-  ): Unit = 
-    rocksdb_options_set_min_level_to_compress(rocksDbOptions, level) 
+    level: Int,
+  ): Unit =
+    rocksdb_options_set_min_level_to_compress(rocksDbOptions, level)
 
   fun setUniversalCompactionOptions(
-    arg1: CValuesRef<rocksdb_universal_compaction_options_t>?, 
-  ): Unit = 
-    rocksdb_options_set_universal_compaction_options(rocksDbOptions, arg1) 
+    arg1: CValuesRef<rocksdb_universal_compaction_options_t>?,
+  ): Unit =
+    rocksdb_options_set_universal_compaction_options(rocksDbOptions, arg1)
 
   fun setFifoCompactionOptions(
-    fifo: CValuesRef<rocksdb_fifo_compaction_options_t>?, 
-  ): Unit = 
-    rocksdb_options_set_fifo_compaction_options(rocksDbOptions, fifo) 
+    fifo: CValuesRef<rocksdb_fifo_compaction_options_t>?,
+  ): Unit =
+    rocksdb_options_set_fifo_compaction_options(rocksDbOptions, fifo)
 
   fun setRatelimiter(
-    limiter: CValuesRef<rocksdb_ratelimiter_t>?, 
-  ): Unit = 
-    rocksdb_options_set_ratelimiter(rocksDbOptions, limiter) 
+    limiter: CValuesRef<rocksdb_ratelimiter_t>?,
+  ): Unit =
+    rocksdb_options_set_ratelimiter(rocksDbOptions, limiter)
 
   fun setRowCache(
-    cache: CValuesRef<rocksdb_cache_t>?, 
-  ): Unit = 
-    rocksdb_options_set_row_cache(rocksDbOptions, cache) 
+    cache: CValuesRef<rocksdb_cache_t>?,
+  ): Unit =
+    rocksdb_options_set_row_cache(rocksDbOptions, cache)
 
   fun addCompactOnDeletionCollectorFactory(
-    windowSize: ULong, 
-    numDelsTrigger: ULong, 
-  ): Unit = 
-    rocksdb_options_add_compact_on_deletion_collector_factory(rocksDbOptions, windowSize, numDelsTrigger) 
+    windowSize: ULong,
+    numDelsTrigger: ULong,
+  ): Unit =
+    rocksdb_options_add_compact_on_deletion_collector_factory(rocksDbOptions, windowSize, numDelsTrigger)
 
   fun setDumpMallocStats(
-    arg1: Boolean, 
-  ): Unit = 
-    rocksdb_options_set_dump_malloc_stats(rocksDbOptions, arg1.toUByte()) 
+    arg1: Boolean,
+  ): Unit =
+    rocksdb_options_set_dump_malloc_stats(rocksDbOptions, arg1.toUByte())
 
   fun setMemtableWholeKeyFiltering(
-    arg1: Boolean, 
-  ): Unit = 
-    rocksdb_options_set_memtable_whole_key_filtering(rocksDbOptions, arg1.toUByte()) 
+    arg1: Boolean,
+  ): Unit =
+    rocksdb_options_set_memtable_whole_key_filtering(rocksDbOptions, arg1.toUByte())
 
   var allowIngestBehind: Boolean
     get() = rocksdb_options_get_allow_ingest_behind(rocksDbOptions).toBoolean()

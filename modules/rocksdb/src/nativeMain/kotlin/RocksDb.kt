@@ -15,7 +15,7 @@ class RocksDb(
   private val readOptions: ReadOptions,
   private val writeOptions: WriteOptions,
   private val db: CPointer<rocksdb_t> = create(dbOptions, directory),
-) : CValuesRef<rocksdb_t>() {
+) : CValuesRef<rocksdb_t>(), AutoCloseable {
 
   operator fun get(key: String): String? {
     memScoped {
@@ -58,7 +58,7 @@ class RocksDb(
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_t> = db.getPointer(scope)
 
-  fun close() = rocksdb_close(db)
+  override fun close(): Unit = rocksdb_close(db)
 
   companion object {
     fun create(

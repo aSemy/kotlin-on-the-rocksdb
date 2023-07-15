@@ -11,10 +11,13 @@ class CheckpointObject(
     checkpointObject.getPointer(scope)
 
   constructor(
-    db: CValuesRef<rocksdb_t>?, 
-    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-  ): this(rocksdb_checkpoint_object_create(db, errorPointer) ?: error("could not instantiate new CheckpointObject"))
+    db: CValuesRef<rocksdb_t>?,
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?,
+  ): this(
+    rocksdb_checkpoint_object_create(db, errorPointer) 
+      ?: error("could not instantiate new CheckpointObject")
+  )
 
-  fun destroy(): Unit = 
-    rocksdb_checkpoint_object_destroy(checkpointObject) 
+  fun destroy(): Unit =
+    rocksdb_checkpoint_object_destroy(checkpointObject)
 }

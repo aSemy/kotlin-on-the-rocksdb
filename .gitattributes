@@ -1,13 +1,51 @@
-#
 # https://help.github.com/articles/dealing-with-line-endings/
-#
+# https://github.com/alexkaratarakis/gitattributes
+
+* text=auto
+
+# The above will handle all files NOT found below
+
+*.json            text
+*.toml            text
+*.xml             text
+*.yaml            text
+*.yml             text
+.editorconfig     text
+.env              text
+
+# Documentation
+*.md              text diff=markdown
+*.txt             text
+LICENSE           text
+
+# JVM
+*.java          text diff=java
+*.properties    text
+*.jar           binary
+
+# Kotlin
+*.kt            text diff=kotlin
+*.kts           text diff=kotlin
+
+# Kotlin/Native
+*.def           text
+*.h             text diff=cpp
+*.h             text diff=cpp
+*.a             binary
+
 # Linux start script should use lf
-/gradlew        text eol=lf
+gradlew         text eol=lf
+*.bash          text eol=lf
+*.sh            text eol=lf
 
 # These are Windows script files and should use crlf
-*.bat           text eol=crlf
+*.bat             text eol=crlf
+*.cmd             text eol=crlf
+
+# SVG treated as an asset (binary) by default.
+*.svg             text
 
 
 # Exclude external libs from GitHub language stats
 # https://github.com/github/linguist/blob/v7.24.1/docs/overrides.md
-nativeinterop/external/** linguist-vendored
+**/nativeinterop/external/** linguist-vendored

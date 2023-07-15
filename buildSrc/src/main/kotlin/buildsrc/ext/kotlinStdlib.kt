@@ -1,19 +1,14 @@
 package buildsrc.ext
 
-import java.util.Locale
+
+/** Title case the first char of a string */
+internal fun String.uppercaseFirstChar(): String = mapFirstChar(Character::toTitleCase)
 
 
-fun String.uppercaseFirstChar(): String = replaceFirstChar {
-  when {
-    it.isLowerCase() -> it.titlecase(Locale.getDefault())
-    else             -> it.toString()
-  }
-}
+/** Lowercase the first char of a string */
+internal fun String.lowercaseFirstChar(): String = mapFirstChar(Character::toLowerCase)
 
 
-fun String.lowercaseFirstChar(): String = replaceFirstChar {
-  when {
-    it.isUpperCase() -> it.lowercaseChar()
-    else             -> it
-  }
-}
+private inline fun String.mapFirstChar(
+  transform: (Char) -> Char
+): String = if (isNotEmpty()) transform(this[0]) + substring(1) else this

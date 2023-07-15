@@ -4,48 +4,49 @@ import org.rocksdb.*
 import kotlinx.cinterop.*
 
 class ReadOptions(
-  private val readOptions: CPointer<rocksdb_readoptions_t> = rocksdb_readoptions_create() ?: error("could not instantiate new ReadOptions")
+  private val readOptions: CPointer<rocksdb_readoptions_t> = rocksdb_readoptions_create() 
+     ?: error("could not instantiate new ReadOptions")
 ) : CValuesRef<rocksdb_readoptions_t>() {
 
   override fun getPointer(scope: AutofreeScope): CPointer<rocksdb_readoptions_t> =
     readOptions.getPointer(scope)
 
-  fun destroy(): Unit = 
-    rocksdb_readoptions_destroy(readOptions) 
+  fun destroy(): Unit =
+    rocksdb_readoptions_destroy(readOptions)
 
   fun setSnapshot(
-    arg1: CValuesRef<rocksdb_snapshot_t>?, 
-  ): Unit = 
-    rocksdb_readoptions_set_snapshot(readOptions, arg1) 
+    arg1: CValuesRef<rocksdb_snapshot_t>?,
+  ): Unit =
+    rocksdb_readoptions_set_snapshot(readOptions, arg1)
 
   fun setIterateUpperBound(
-    key: String?, 
-    keyLength: ULong, 
-  ): Unit = 
-    rocksdb_readoptions_set_iterate_upper_bound(readOptions, key, keyLength) 
+    key: String?,
+    keyLength: ULong,
+  ): Unit =
+    rocksdb_readoptions_set_iterate_upper_bound(readOptions, key, keyLength)
 
   fun setIterateLowerBound(
-    key: String?, 
-    keyLength: ULong, 
-  ): Unit = 
-    rocksdb_readoptions_set_iterate_lower_bound(readOptions, key, keyLength) 
+    key: String?,
+    keyLength: ULong,
+  ): Unit =
+    rocksdb_readoptions_set_iterate_lower_bound(readOptions, key, keyLength)
 
   fun setManaged(
-    arg1: Boolean, 
-  ): Unit = 
-    rocksdb_readoptions_set_managed(readOptions, arg1.toUByte()) 
+    arg1: Boolean,
+  ): Unit =
+    rocksdb_readoptions_set_managed(readOptions, arg1.toUByte())
 
   fun setTimestamp(
-    ts: String?, 
-    tsLength: ULong, 
-  ): Unit = 
-    rocksdb_readoptions_set_timestamp(readOptions, ts, tsLength) 
+    ts: String?,
+    tsLength: ULong,
+  ): Unit =
+    rocksdb_readoptions_set_timestamp(readOptions, ts, tsLength)
 
   fun setIterStartTs(
-    ts: String?, 
-    tsLength: ULong, 
-  ): Unit = 
-    rocksdb_readoptions_set_iter_start_ts(readOptions, ts, tsLength) 
+    ts: String?,
+    tsLength: ULong,
+  ): Unit =
+    rocksdb_readoptions_set_iter_start_ts(readOptions, ts, tsLength)
 
   var verifyChecksums: Boolean
     get() = rocksdb_readoptions_get_verify_checksums(readOptions).toBoolean()
@@ -98,4 +99,8 @@ class ReadOptions(
   var ioTimeout: ULong
     get() = rocksdb_readoptions_get_io_timeout(readOptions)
     set(value) = rocksdb_readoptions_set_io_timeout(readOptions, value)
+
+  var asyncIo: Boolean
+    get() = rocksdb_readoptions_get_async_io(readOptions).toBoolean()
+    set(value) = rocksdb_readoptions_set_async_io(readOptions, value.toUByte())
 }

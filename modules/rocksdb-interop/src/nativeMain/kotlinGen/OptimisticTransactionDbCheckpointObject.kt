@@ -11,7 +11,10 @@ class OptimisticTransactionDbCheckpointObject(
     optimisticTransactionDbCheckpointObject.getPointer(scope)
 
   constructor(
-    otxnDb: CValuesRef<rocksdb_optimistictransactiondb_t>?, 
-    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?, 
-  ): this(rocksdb_optimistictransactiondb_checkpoint_object_create(otxnDb, errorPointer) ?: error("could not instantiate new OptimisticTransactionDbCheckpointObject"))
+    otxnDb: CValuesRef<rocksdb_optimistictransactiondb_t>?,
+    errorPointer: CValuesRef<CPointerVarOf<CPointer<ByteVar>>>?,
+  ): this(
+    rocksdb_optimistictransactiondb_checkpoint_object_create(otxnDb, errorPointer) 
+      ?: error("could not instantiate new OptimisticTransactionDbCheckpointObject")
+  )
 }
